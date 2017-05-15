@@ -1,6 +1,6 @@
 Name:		lld
 Version:	4.0.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -78,5 +78,8 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.0.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
+
 * Tue Mar 14 2017 Tom Stellard <tstellar@redhat.com> - 4.0.0-1
 - lld 4.0.0 Final Release
