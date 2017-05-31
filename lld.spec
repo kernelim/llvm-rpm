@@ -1,6 +1,6 @@
 Name:		lld
 Version:	4.0.0
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -10,7 +10,6 @@ Source0:	http://llvm.org/releases/%{version}/lld-%{version}.src.tar.xz
 Patch0:		0001-CMake-Fix-pthread-handling-for-out-of-tree-builds.patch
 
 BuildRequires: cmake
-BuildRequires: llvm-static = %{version}
 BuildRequires: llvm-devel = %{version}
 BuildRequires: ncurses-devel
 BuildRequires: zlib-devel
@@ -78,6 +77,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Wed May 31 2017 Tom Stellard <tstellar@redhat.com> - 4.0.0-3
+- Remove llvm-static dependency
+
 * Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
 
