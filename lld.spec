@@ -1,6 +1,6 @@
 Name:		lld
 Version:	4.0.0
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -41,6 +41,7 @@ cd %{_target_platform}
 
 %cmake .. \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
+	-DLLVM_DYLIB_COMPONENTS="all" \
 %if 0%{?__isa_bits} == 64
 	-DLLVM_LIBDIR_SUFFIX=64
 %else
@@ -77,6 +78,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Jul 04 2017 Tom Stellard <tstellar@redhat.com> - 4.0.0-4
+- Fix build without llvm-static
+
 * Wed May 31 2017 Tom Stellard <tstellar@redhat.com> - 4.0.0-3
 - Remove llvm-static dependency
 
