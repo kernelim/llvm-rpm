@@ -1,13 +1,11 @@
 Name:		lld
-Version:	4.0.0
-Release:	4%{?dist}
+Version:	4.0.1
+Release:	1%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
 Source0:	http://llvm.org/releases/%{version}/lld-%{version}.src.tar.xz
-
-Patch0:		0001-CMake-Fix-pthread-handling-for-out-of-tree-builds.patch
 
 BuildRequires: cmake
 BuildRequires: llvm-devel = %{version}
@@ -78,6 +76,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Jul 04 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-1
+- 4.0.1 Release
+
 * Tue Jul 04 2017 Tom Stellard <tstellar@redhat.com> - 4.0.0-4
 - Fix build without llvm-static
 
