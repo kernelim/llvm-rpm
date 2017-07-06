@@ -1,11 +1,13 @@
 Name:		lld
 Version:	4.0.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
 Source0:	http://llvm.org/releases/%{version}/lld-%{version}.src.tar.xz
+
+Patch0:		0001-ELF-Only-unlink-regular-files.patch
 
 BuildRequires: cmake
 BuildRequires: llvm-devel = %{version}
@@ -76,6 +78,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Jul 06 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-2
+- Backport r307092
+
 * Tue Jul 04 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-1
 - 4.0.1 Release
 

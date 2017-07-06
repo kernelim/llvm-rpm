@@ -1,0 +1,48 @@
+From d146e98b7f94940386f60a902031b2a9b6237730 Mon Sep 17 00:00:00 2001
+From: Tom Stellard <tstellar@redhat.com>
+Date: Tue, 4 Jul 2017 16:03:34 +0000
+Subject: [PATCH] ELF: Only unlink regular files
+
+Summary:
+If the output file is a character file (e.g. /dev/null) unlinking it could
+potentially destabilize the user's system.  For example,
+unlinking causes `lld %input -o /dev/null` to replace /dev/null with a
+regular file, which will lead to unexpected behavior in other programs
+that read from /dev/null, and worse than expected peformance for
+programs that write to /dev/null.
+
+This makes it possible to run the test-release.sh script as root.
+Prior to this patch, the ELF/basic.s test would replace
+/dev/null with a regular file, which would cause crashes in llvm
+test-suite programs that piped /dev/null to stdin.
+
+For example, if you run the test-relase.sh script as root,
+
+Reviewers: ruiu
+
+Reviewed By: ruiu
+
+Subscribers: emaste, llvm-commits
+
+Differential Revision: https://reviews.llvm.org/D34917
+---
+ ELF/Writer.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ELF/Writer.cpp b/ELF/Writer.cpp
+index b004a4f..d52165b 100644
+--- a/ELF/Writer.cpp
++++ b/ELF/Writer.cpp
+@@ -1650,7 +1650,8 @@ template <class ELFT> void Writer<ELFT>::writeHeader() {
+ // This function spawns a background thread to call unlink.
+ // The calling thread returns almost immediately.
+ static void unlinkAsync(StringRef Path) {
+-  if (!Config->Threads || !sys::fs::exists(Config->OutputFile))
++  if (!Config->Threads || !sys::fs::exists(Config->OutputFile) ||
++      !sys::fs::is_regular_file(Config->OutputFile))
+     return;
+ 
+   // First, rename Path to avoid race condition. We cannot remove
+-- 
+1.8.3.1
+
