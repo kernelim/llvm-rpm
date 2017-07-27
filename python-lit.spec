@@ -10,7 +10,7 @@
 
 Name: python-%{srcname}
 Version: 0.5.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -90,5 +90,8 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.5.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Thu Mar 09 2017 Tom Stellard <tstellar@redhat.com> - 0.5.0-1
 - Initial version
