@@ -1,13 +1,11 @@
 Name:		lld
-Version:	4.0.1
-Release:	4%{?dist}
+Version:	5.0.0
+Release:	1%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
 Source0:	http://llvm.org/releases/%{version}/lld-%{version}.src.tar.xz
-
-Patch0:		0001-ELF-Only-unlink-regular-files.patch
 
 BuildRequires: cmake
 BuildRequires: llvm-devel = %{version}
@@ -78,6 +76,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Sep 11 2017 Tom Stellard <tstellar@redhat.com> - 5.0.0-1
+- 5.0.0 Release
+
 * Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.0.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
