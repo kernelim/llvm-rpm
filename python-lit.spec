@@ -90,7 +90,7 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Oct 03 2017 Tom Stellard <tstellar@redhat.com> - 0.5.1-2
+* Tue Oct 03 2017 Tom Stellard <tstellar@redhat.com> - 0.5.1-1
 - Rebase to 0.5.1
 
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.5.0-2
