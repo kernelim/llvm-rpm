@@ -10,7 +10,7 @@
 
 Name: python-%{srcname}
 Version: 0.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -20,9 +20,10 @@ URL: https://pypi.python.org/pypi/lit
 Source0: https://pypi.python.org/packages/5b/a0/dbed2c8dfb220eb9a5a893257223cd0ff791c0fbc34ce2f1a957fa4b6c6f/lit-%{version}.tar.gz
 
 BuildRequires: python2-devel
-BuildRequires: python-setuptools
+BuildRequires: python2-setuptools
 %if 0%{?with_python3}
 BuildRequires: python3-devel
+BuildRequires: python3-setuptools
 %endif
 
 %description
@@ -90,6 +91,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Dec 06 2017 Tom Stellard <tstellar@redhat.com> - 0.5.1-2
+- Fix python prefix in BuildRequires
+
 * Tue Oct 03 2017 Tom Stellard <tstellar@redhat.com> - 0.5.1-1
 - Rebase to 0.5.1
 
