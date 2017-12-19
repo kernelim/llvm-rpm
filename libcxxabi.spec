@@ -1,6 +1,6 @@
 Name:		libcxxabi
 Version:	5.0.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -36,7 +36,7 @@ sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeList
 %build
 %ifarch armv7hl
 # disable ARM exception handling
-sed -i 's|LIBCXXABI_ARM_EHABI 1|LIBCXXABI_ARM_EHABI 0|g' include/__cxxabi_config.h
+sed -i 's|#define _LIBCXXABI_ARM_EHABI||g' include/__cxxabi_config.h
 %endif
 
 mkdir _build
@@ -88,6 +88,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Dec 19 2017 Tom Stellard <tstellar@redhat.com> - 5.0.0-2
+- Fix disabling of ARM exception handling
+
 * Fri Sep  8 2017 Tom Callaway <spot@fedoraproject.org> - 5.0.0-1
 - update to 5.0.0
 
