@@ -1,5 +1,5 @@
 Name:		lld
-Version:	5.0.0
+Version:	5.0.1
 Release:	1%{?dist}
 Summary:	The LLVM Linker
 
@@ -76,6 +76,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Dec 21 2017 Tom Stellard <tstellar@redhat.com> - 5.0.1-1
+- 5.0.1 Release
+
 * Mon Sep 11 2017 Tom Stellard <tstellar@redhat.com> - 5.0.0-1
 - 5.0.0 Release
 
