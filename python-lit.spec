@@ -1,6 +1,6 @@
 %global srcname lit
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} > 7
 %global with_python3 1
 %endif
 
@@ -10,7 +10,7 @@
 
 Name: python-%{srcname}
 Version: 0.5.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -91,6 +91,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Jan 15 2018 Merlin Mathesius <mmathesi@redhat.com> - 0.5.1-3
+- Cleanup spec file conditionals
+
 * Wed Dec 06 2017 Tom Stellard <tstellar@redhat.com> - 0.5.1-2
 - Fix python prefix in BuildRequires
 
