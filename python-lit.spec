@@ -8,16 +8,18 @@
 %{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
+%global rc_ver 1
+
 Name: python-%{srcname}
-Version: 0.5.1
-Release: 4%{?dist}
+Version: 0.6.0
+Release: 0.1.rc%{rc_ver}%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Group: Development/Languages
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://pypi.python.org/packages/5b/a0/dbed2c8dfb220eb9a5a893257223cd0ff791c0fbc34ce2f1a957fa4b6c6f/lit-%{version}.tar.gz
+Source0: https://pypi.python.org/packages/b7/38/8bbbaca02c8f98e797db9b265bab6e9fc9c3402ffdebd825c6fcf05a49fb/lit-0.6.0rc1.tar.gz
 
 BuildRequires: python2-devel
 BuildRequires: python2-setuptools
@@ -48,7 +50,7 @@ lit is a tool used by the LLVM project for executing its test suites.
 %endif
 
 %prep
-%autosetup -n %{srcname}-%{version}
+%autosetup -n %{srcname}-%{version}%{?rc_ver:rc%{rc_ver}}
 
 %build
 %py2_build
@@ -93,6 +95,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Jan 23 2018 Tom Stellard <tstellar@redhat.com> - 0.6.0-0.1.rc1
+- 0.6.0 rc1
+
 * Tue Jan 23 2018 John Dulaney <jdulaney@fedoraproject.org> - 0.5.1-4
 - Add a missed python3 conditional around a sed operation
 
