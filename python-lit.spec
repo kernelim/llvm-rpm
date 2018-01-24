@@ -10,7 +10,7 @@
 
 Name: python-%{srcname}
 Version: 0.5.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -64,7 +64,9 @@ lit is a tool used by the LLVM project for executing its test suites.
 
 # Strip out #!/usr/bin/env python
 sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcname}/*.py
+%if 0%{?with_python3}
 sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcname}/*.py
+%endif
 
 %check
 %{__python2} setup.py test
@@ -91,6 +93,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Jan 23 2018 John Dulaney <jdulaney@fedoraproject.org> - 0.5.1-4
+- Add a missed python3 conditional around a sed operation
+
 * Mon Jan 15 2018 Merlin Mathesius <mmathesi@redhat.com> - 0.5.1-3
 - Cleanup spec file conditionals
 
