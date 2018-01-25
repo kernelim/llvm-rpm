@@ -1,11 +1,14 @@
+
+%global rc_ver 1
+
 Name:		lld
-Version:	5.0.1
-Release:	1%{?dist}
+Version:	6.0.0
+Release:	0.1.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
-Source0:	http://llvm.org/releases/%{version}/lld-%{version}.src.tar.xz
+Source0:	http://llvm.org/releases/%{version}/lld-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
 
 BuildRequires: cmake
 BuildRequires: llvm-devel = %{version}
@@ -30,7 +33,7 @@ Summary:	LLD shared libraries
 Shared libraries for LLD.
 
 %prep
-%autosetup -n %{name}-%{version}.src -p1
+%autosetup -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src -p1
 
 %build
 
@@ -67,6 +70,8 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %files
 %{_bindir}/lld*
 %{_bindir}/ld.lld
+%{_bindir}/ld64.lld
+%{_bindir}/wasm-ld
 
 %files devel
 %{_includedir}/lld
@@ -76,6 +81,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Jan 25 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.1.rc1
+- 6.0.0-rc1 Release
+
 * Thu Dec 21 2017 Tom Stellard <tstellar@redhat.com> - 5.0.1-1
 - 5.0.1 Release
 
