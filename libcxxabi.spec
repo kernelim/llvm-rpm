@@ -1,10 +1,12 @@
+%global rc_ver 1
+
 Name:		libcxxabi
-Version:	5.0.1
-Release:	1%{?dist}
+Version:	6.0.0
+Release:	0.1.rc%{rc_ver}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
-Source0:	http://llvm.org/releases/%{version}/libcxxabi-%{version}.src.tar.xz
+Source0:	http://llvm.org/releases/%{version}/libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
 BuildRequires:	clang llvm-devel cmake llvm-static
 BuildRequires:	libcxx-devel >= %{version}
 %if 0%{?rhel}
@@ -29,7 +31,7 @@ Summary:	Static libraries for libcxxabi
 %{summary}.
 
 %prep
-%setup -q -n %{name}-%{version}.src
+%setup -q -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeLists.txt
 
@@ -88,6 +90,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Thu Dec 21 2017 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.1.rc1
+- 6.0.1-rc1 Release
+
 * Thu Dec 21 2017 Tom Stellard <tstellar@redhat.com> - 5.0.1-1
 - 5.0.1 Release
 
