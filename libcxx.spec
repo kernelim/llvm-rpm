@@ -2,13 +2,15 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 
+%global rc_ver 1
+
 Name:		libcxx
-Version:	5.0.1
-Release:	1%{?dist}
+Version:	6.0.0
+Release:	0.1.rc%{rc_ver}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
-Source0:	http://llvm.org/releases/%{version}/libcxx-%{version}.src.tar.xz
+Source0:	http://llvm.org/releases/%{version}/libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
 BuildRequires:	clang llvm-devel cmake llvm-static
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
@@ -41,7 +43,7 @@ Summary:	Static libraries for libcxx
 %{summary}.
 
 %prep
-%setup -q -n %{name}-%{version}.src
+%setup -q -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 %build
 mkdir _build
@@ -54,6 +56,8 @@ cd _build
 %endif
 %endif
 export LDFLAGS="-Wl,--build-id"
+#Filter out cxxflags not supported by clang
+export CXXFLAGS=`echo $CXXFLAGS | sed 's/-fstack-clash-protection//g'`
 # Clang in older releases than f24 can't build this code without crashing.
 # So, we use gcc there. But the really old version in RHEL 6 works. Huh.
 %cmake .. \
@@ -108,6 +112,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Sat Jan 20 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.1.rc1
+- 6.0.0-rc1
+
 * Thu Dec  21 2017 Tom Stellard <tstellar@redhat.com> - 5.0.1-1
 - 5.0.1 Release
 
