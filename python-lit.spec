@@ -12,7 +12,7 @@
 
 Name: python-%{srcname}
 Version: 0.6.0
-Release: 0.1.rc%{rc_ver}%{?dist}
+Release: 0.2.rc%{rc_ver}%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 0.6.0-0.2.rc1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Tue Jan 23 2018 Tom Stellard <tstellar@redhat.com> - 0.6.0-0.1.rc1
 - 0.6.0 rc1
 
