@@ -1,9 +1,9 @@
 
-%global rc_ver 1
+%global rc_ver 2
 
 Name:		lld
 Version:	6.0.0
-Release:	0.2.rc%{rc_ver}%{?dist}
+Release:	0.3.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -81,6 +81,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Feb 13 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.3.rc2
+- 6.0.0-rc2 Release
+
 * Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.0-0.2.rc1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
