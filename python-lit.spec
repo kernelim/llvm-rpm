@@ -77,9 +77,6 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 #{__python3} setup.py test
 %endif
 
-%clean
-rm -rf %{buildroot}
-
 %files -n python2-%{srcname}
 %doc README.txt
 %{python2_sitelib}/*
