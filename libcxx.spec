@@ -2,11 +2,11 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 
-%global rc_ver 1
+# %%global rc_ver 1
 
 Name:		libcxx
 Version:	6.0.0
-Release:	0.2.rc%{rc_ver}%{?dist}
+Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -57,7 +57,8 @@ cd _build
 %endif
 export LDFLAGS="-Wl,--build-id"
 #Filter out cxxflags not supported by clang
-export CXXFLAGS=`echo $CXXFLAGS | sed 's/-fstack-clash-protection//g'`
+export CXXFLAGS=`echo $CXXFLAGS -Qunused-arguments | sed 's/-fstack-clash-protection//g'`
+export CFLAGS=`echo $CFLAGS -Qunused-arguments`
 # Clang in older releases than f24 can't build this code without crashing.
 # So, we use gcc there. But the really old version in RHEL 6 works. Huh.
 %cmake .. \
@@ -112,6 +113,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Wed Mar 14 2018 Tom Callaway <spot@fedoraproject.org> - 6.0.0-1
+- 6.0.0 final
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.0-0.2.rc1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
