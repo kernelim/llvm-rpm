@@ -10,7 +10,7 @@
 
 Name: python-%{srcname}
 Version: 0.6.0
-Release: 1
+Release: 1%{?dist}
 BuildArch: noarch
 
 License: NCSA
