@@ -8,18 +8,16 @@
 %{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
-%global rc_ver 1
-
 Name: python-%{srcname}
 Version: 0.6.0
-Release: 0.2.rc%{rc_ver}%{?dist}
+Release: 1
 BuildArch: noarch
 
 License: NCSA
 Group: Development/Languages
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://pypi.python.org/packages/b7/38/8bbbaca02c8f98e797db9b265bab6e9fc9c3402ffdebd825c6fcf05a49fb/lit-0.6.0rc1.tar.gz
+Source0: https://pypi.python.org/packages/a8/a4/2d745ab56032113bb8ade76fc2c37b159b24a5a0c68c4def88bc26ceaa97/lit-0.6.0.tar.gz
 
 BuildRequires: python2-devel
 BuildRequires: python2-setuptools
@@ -92,6 +90,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 %endif
 
 %changelog
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 0.6.0-1
+- 0.6.0 Release
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 0.6.0-0.2.rc1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
