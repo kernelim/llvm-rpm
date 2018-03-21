@@ -6,7 +6,7 @@
 
 Name:		libcxx
 Version:	6.0.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -55,10 +55,10 @@ cd _build
 %global optflags %(echo %{optflags} | sed 's/-march=z9-109 /-march=z10 /')
 %endif
 %endif
-export LDFLAGS="-Wl,--build-id"
-#Filter out cxxflags not supported by clang
-export CXXFLAGS=`echo $CXXFLAGS -Qunused-arguments | sed 's/-fstack-clash-protection//g'`
-export CFLAGS=`echo $CFLAGS -Qunused-arguments`
+
+# Filter out cflags not supported by clang.
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g')
+
 # Clang in older releases than f24 can't build this code without crashing.
 # So, we use gcc there. But the really old version in RHEL 6 works. Huh.
 %cmake .. \
@@ -113,6 +113,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Wed Mar 21 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-2
+- Use default LDFLAGS/CXXFLAGS/CFLAGS and filter out flags not supported by clang
+
 * Wed Mar 14 2018 Tom Callaway <spot@fedoraproject.org> - 6.0.0-1
 - 6.0.0 final
 
