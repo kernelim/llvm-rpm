@@ -2,7 +2,7 @@
 
 Name:		libcxxabi
 Version:	6.0.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -51,9 +51,9 @@ cd _build
 %endif
 %endif
 
-export CFLAGS=`echo $CFLAGS -Qunused-arguments`
-export CXXFLAGS=`echo $CXXFLAGS -Qunused-arguments`
-export LDFLAGS="-Wl,--build-id"
+# Filter out cflags not supported by clang.
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g')
+
 %cmake .. \
 	-DCMAKE_C_COMPILER=/usr/bin/clang \
 	-DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
@@ -92,6 +92,10 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Wed Mar 21 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-2
+- Use default LDFLAGS/CXXFLAGS/CFLAGS and filter out flags not supported by
+  clang
+
 * Wed Mar 14 2018 Tom Callaway <spot@fedoraproject.org> - 6.0.0-1
 - update to 6.0.0 final
 
