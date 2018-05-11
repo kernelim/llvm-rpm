@@ -1,6 +1,8 @@
+%global rc_ver 1
+
 Name:		lld
-Version:	6.0.0
-Release:	1%{?dist}
+Version:	6.0.1
+Release:	0.1.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -78,6 +80,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Fri May 11 2018 Tom Stellard <tstellar@redhat.com> - 6.0.1-0.1.rc1
+- 6.0.1-rc1 Release
+
 * Thu Mar 08 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-1
 - 6.0.0 Release
 
