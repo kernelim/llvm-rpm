@@ -5,8 +5,8 @@
 # %%global rc_ver 1
 
 Name:		libcxx
-Version:	6.0.0
-Release:	2%{?dist}
+Version:	6.0.1
+Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -113,6 +113,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Tue Jun 26 2018 Tom Callaway <spot@fedoraproject.org> - 6.0.1-1
+- update to 6.0.1
+
 * Wed Mar 21 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-2
 - Use default LDFLAGS/CXXFLAGS/CFLAGS and filter out flags not supported by clang
 
