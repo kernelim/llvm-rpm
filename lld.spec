@@ -7,6 +7,8 @@ License:	NCSA
 URL:		http://llvm.org
 Source0:	http://llvm.org/releases/%{version}/lld-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
 
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires: cmake
 BuildRequires: llvm-devel = %{version}
 BuildRequires: ncurses-devel
