@@ -2,7 +2,7 @@
 
 Name:		libcxxabi
 Version:	6.0.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -92,6 +92,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Tue Jun 26 2018 Tom Callaway <spot@fedoraproject.org>  - 6.0.1-1
 - update to 6.0.1
 
