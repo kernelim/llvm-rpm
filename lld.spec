@@ -1,11 +1,15 @@
+%global rc_ver 1
+
+%global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
+
 Name:		lld
-Version:	6.0.1
-Release:	2%{?dist}
+Version:	7.0.0
+Release:	0.1.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
-Source0:	http://llvm.org/releases/%{version}/lld-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
+Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -80,6 +84,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Aug 13 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.1.rc1
+- 7.0.0-rc1 Release
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
