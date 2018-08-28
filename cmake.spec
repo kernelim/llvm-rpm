@@ -500,7 +500,7 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
-* Fri Aug 17 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.12.2-1
+* Fri Aug 17 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.12.1-1
 - Update to 3.12.1 (# 1614572)
 
 * Fri Jul 27 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.12.0-1
