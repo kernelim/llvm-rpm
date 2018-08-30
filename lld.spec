@@ -4,12 +4,17 @@
 
 Name:		lld
 Version:	7.0.0
-Release:	0.1.rc%{rc_ver}%{?dist}
+Release:	0.2.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
 Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz
+
+Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
+Patch1:		0001-lld-Prefer-using-the-newest-installed-python-version.patch
+Patch2:		0001-lld-Add-missing-REQUIRES-to-tests.patch
+Patch3:		0001-MachO-Fix-out-of-bounds-memory-access-in-getString16.patch
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -18,6 +23,10 @@ BuildRequires: llvm-devel = %{version}
 BuildRequires: ncurses-devel
 BuildRequires: zlib-devel
 BuildRequires: chrpath
+
+# For make check:
+BuildRequires: python3-lit
+BuildRequires: llvm-googletest
 
 %description
 The LLVM project linker.
@@ -46,6 +55,14 @@ cd %{_target_platform}
 %cmake .. \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_DYLIB_COMPONENTS="all" \
+	-DLLVM_INCLUDE_TESTS=ON \
+	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
+	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
+	-DLLVM_LIT_ARGS="-sv \
+		-DFileCheck=%{_libdir}/llvm/FileCheck \
+		-Dcount=%{_libdir}/llvm/count \
+		-Dnot=%{_libdir}/llvm/not \
+		--path %{_libdir}/llvm" \
 %if 0%{?__isa_bits} == 64
 	-DLLVM_LIBDIR_SUFFIX=64
 %else
@@ -63,9 +80,7 @@ chrpath --delete %{buildroot}%{_bindir}/*
 chrpath --delete %{buildroot}%{_libdir}/*.so*
 
 %check
-# Need to install llvm utils for check to pass
-#cd _build
-#make %{?_smp_mflags} check-lld
+make -C %{_target_platform} %{?_smp_mflags} check-lld
 
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
@@ -84,6 +99,9 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Aug 30 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.2.rc1
+- Enable make check
+
 * Mon Aug 13 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.1.rc1
 - 7.0.0-rc1 Release
 

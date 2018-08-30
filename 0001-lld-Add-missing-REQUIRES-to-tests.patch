@@ -1,0 +1,95 @@
+From 3b6223b0573aff553fc4424ca9d96c22f20ffd0a Mon Sep 17 00:00:00 2001
+From: Tom Stellard <tstellar@redhat.com>
+Date: Fri, 31 Aug 2018 10:04:13 -0700
+Subject: [PATCH] lld: Add missing REQUIRES to tests
+
+---
+ test/COFF/guardcf-align.s       | 2 ++
+ test/ELF/icf13.s                | 2 ++
+ test/ELF/icf15.s                | 2 ++
+ test/ELF/icf16.s                | 2 ++
+ test/ELF/icf17.s                | 2 ++
+ test/ELF/lto/libcall-archive.ll | 2 ++
+ 6 files changed, 12 insertions(+)
+
+diff --git a/test/COFF/guardcf-align.s b/test/COFF/guardcf-align.s
+index a0caabc..c7aea52 100644
+--- a/test/COFF/guardcf-align.s
++++ b/test/COFF/guardcf-align.s
+@@ -5,6 +5,8 @@
+ # RUN:     %t.obj %T/guardcf-align-foobar.obj
+ # RUN: llvm-readobj -coff-load-config %T/guardcf-align.exe | FileCheck %s
+ 
++# REQUIRES: x86_64
++
+ # Check that the gfids table contains at least one entry that ends in 0
+ # and no entries that end in something other than 0.
+ # CHECK: GuardFidTable [
+diff --git a/test/ELF/icf13.s b/test/ELF/icf13.s
+index 2fe707f..7db915c 100644
+--- a/test/ELF/icf13.s
++++ b/test/ELF/icf13.s
+@@ -1,6 +1,8 @@
+ # RUN: llvm-mc -filetype=obj -triple=x86_64-unknown-linux %s -o %t1
+ # RUN: ld.lld -shared -z notext %t1 -o /dev/null --icf=all --print-icf-sections 2>&1 | FileCheck -allow-empty %s
+ 
++# REQUIRES: x86_64
++
+ ## Check that ICF does not merge sections which relocations point to symbols
+ ## that are not of the regular defined kind. 
+ 
+diff --git a/test/ELF/icf15.s b/test/ELF/icf15.s
+index 57c1735..9b125fa 100644
+--- a/test/ELF/icf15.s
++++ b/test/ELF/icf15.s
+@@ -1,6 +1,8 @@
+ # RUN: llvm-mc -filetype=obj -triple=x86_64-unknown-linux %s -o %t1
+ # RUN: ld.lld %t1 -o /dev/null --icf=all --print-icf-sections 2>&1 | FileCheck -allow-empty %s
+ 
++# REQUIRES: x86_64
++
+ ## Check that ICF does not merge sections which relocations have equal addends,
+ ## but different target values.
+ 
+diff --git a/test/ELF/icf16.s b/test/ELF/icf16.s
+index e7650af..f054c74 100644
+--- a/test/ELF/icf16.s
++++ b/test/ELF/icf16.s
+@@ -1,6 +1,8 @@
+ # RUN: llvm-mc -filetype=obj -triple=x86_64-unknown-linux %s -o %t1
+ # RUN: ld.lld -shared -z notext %t1 -o /dev/null --icf=all --print-icf-sections 2>&1 | FileCheck -allow-empty %s
+ 
++# REQUIRES: x86_64
++
+ ## ICF is able to merge sections which relocations referring regular input sections
+ ## or mergeable sections. .eh_frame is represented with a different kind of section,
+ ## here we check that ICF code is able to handle and will not merge sections which
+diff --git a/test/ELF/icf17.s b/test/ELF/icf17.s
+index 5d28aeb..697bd75 100644
+--- a/test/ELF/icf17.s
++++ b/test/ELF/icf17.s
+@@ -1,6 +1,8 @@
+ # RUN: llvm-mc -filetype=obj -triple=x86_64-unknown-linux %s -o %t1
+ # RUN: ld.lld %t1 -o /dev/null --icf=all --print-icf-sections 2>&1 | FileCheck -allow-empty %s
+ 
++# REQUIRES: x86_64
++
+ # CHECK-NOT: selected
+ 
+ .section .text
+diff --git a/test/ELF/lto/libcall-archive.ll b/test/ELF/lto/libcall-archive.ll
+index 731e259..920b3ed 100644
+--- a/test/ELF/lto/libcall-archive.ll
++++ b/test/ELF/lto/libcall-archive.ll
+@@ -5,6 +5,8 @@
+ ; RUN: ld.lld -o %t %t.o %t.a
+ ; RUN: llvm-nm %t | FileCheck %s
+ 
++; REQUIRES: x86_64
++
+ ; CHECK: T _start
+ ; CHECK: T memcpy
+ 
+-- 
+1.8.3.1
+
