@@ -1,10 +1,10 @@
-%global rc_ver 1
+%global rc_ver 2
 
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
 Version:	7.0.0
-Release:	0.2.rc%{rc_ver}%{?dist}
+Release:	0.3.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -99,6 +99,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Fri Aug 31 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.3.rc2
+- 7.0.0-rc2 Release
+
 * Thu Aug 30 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.2.rc1
 - Enable make check
 
