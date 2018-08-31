@@ -12,7 +12,7 @@
 
 Name: python-%{srcname}
 Version: 0.7.0
-Release: 0.1.rc%{rc_ver}%{?dist}
+Release: 0.2.rc%{rc_ver}%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -35,10 +35,14 @@ lit is a tool used by the LLVM project for executing its test suites.
 Summary: LLVM lit test runner for Python 2
 Group: Development/Languages
 
+Requires: python2-setuptools
+
 %if 0%{?with_python3}
 %package -n python3-lit
 Summary: LLVM lit test runner for Python 3
 Group: Development/Languages
+
+Requires: python3-setuptools
 %endif
 
 %description -n python2-lit
@@ -92,6 +96,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 %endif
 
 %changelog
+* Fri Aug 31 2018 Tom Stellard <tstellar@redhat.com> - 0.7.0-0.2.rc1
+- Add Requires: python[23]-setuptools
+
 * Mon Aug 13 2018 Tom Stellard <tstellar@redhat.com> - 0.7.0-0.1.rc1
 - 0.7.0 rc1
 
