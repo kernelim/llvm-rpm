@@ -1,10 +1,10 @@
-%global rc_ver 2
+%global rc_ver 3
 
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
 Version:	7.0.0
-Release:	0.3.rc%{rc_ver}%{?dist}
+Release:	0.4.rc%{rc_ver}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -13,8 +13,6 @@ Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 Patch1:		0001-lld-Prefer-using-the-newest-installed-python-version.patch
-Patch2:		0001-lld-Add-missing-REQUIRES-to-tests.patch
-Patch3:		0001-MachO-Fix-out-of-bounds-memory-access-in-getString16.patch
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -99,6 +97,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Sep 11 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.4.rc3
+- 7.0.0-rc3 Release
+
 * Fri Aug 31 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.3.rc2
 - 7.0.0-rc2 Release
 
