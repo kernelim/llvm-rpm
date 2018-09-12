@@ -2,11 +2,11 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 
-# %%global rc_ver 1
+%global rc_ver 3
 
 Name:		libcxx
-Version:	6.0.1
-Release:	2%{?dist}
+Version:	7.0.0
+Release:	0.1.rc%{rc_ver}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -113,6 +113,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Wed Sep 12 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.1.rc3
+- 7.0.0-rc3 Release
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
