@@ -1,10 +1,8 @@
-%global rc_ver 3
-
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
 Version:	7.0.0
-Release:	0.4.rc%{rc_ver}%{?dist}
+Release:	1%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -97,6 +95,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Sep 24 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-1
+- 7.0.1 Release
+
 * Tue Sep 11 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.4.rc3
 - 7.0.0-rc3 Release
 
