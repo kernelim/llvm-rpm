@@ -2,11 +2,9 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 
-%global rc_ver 3
-
 Name:		libcxx
 Version:	7.0.0
-Release:	0.1.rc%{rc_ver}%{?dist}
+Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -113,6 +111,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Tue Sep 25 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-1
+- 7.0.0 Release
+
 * Wed Sep 12 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-0.1.rc3
 - 7.0.0-rc3 Release
 
