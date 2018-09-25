@@ -10,7 +10,7 @@
 
 Name: python-%{srcname}
 Version: 0.7.0
-Release: 1
+Release: 2%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -94,6 +94,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 %endif
 
 %changelog
+* Tue Sep 25 2018 Tom Stellard <tstellar@redhat.com> - 0.7.0-2
+- Add missing dist to release tag
+
 * Fri Sep 21 2018 Tom Stellard <tstellar@redhat.com> - 0.7.0-1
 - 0.7.0 Release
 
