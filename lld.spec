@@ -1,8 +1,9 @@
+#%%global rc_ver 3
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
-Version:	7.0.0
-Release:	2%{?dist}
+Version:	7.0.1
+Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -21,8 +22,9 @@ BuildRequires:	zlib-devel
 BuildRequires:	chrpath
 
 # For make check:
-BuildRequires:	python3-lit
-BuildRequires:	llvm-googletest
+BuildRequires:	python3-rpm-macros
+BuildRequires:	python3-lit = 0.7.0
+BuildRequires:	llvm-googletest = %{version}
 
 %description
 The LLVM project linker.
@@ -51,6 +53,7 @@ cd %{_target_platform}
 %cmake .. \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_DYLIB_COMPONENTS="all" \
+	-DPYTHON_EXECUTABLE=%{__python3} \
 	-DLLVM_INCLUDE_TESTS=ON \
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
@@ -95,6 +98,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Dec 17 2018 sguelton@redhat.com - 7.0.1-1
+- 7.0.1 Release
+
 * Tue Dec 04 2018 sguelton@redhat.com - 7.0.0-2
 - Ensure rpmlint passes on specfile
 
