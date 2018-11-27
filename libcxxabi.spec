@@ -1,10 +1,14 @@
+%global rc_ver 3
+%global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
+
+
 Name:		libcxxabi
-Version:	7.0.0
-Release:	2%{?dist}
+Version:	7.0.1
+Release:	0.1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
-Source0:	http://llvm.org/releases/%{version}/libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
+Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz
 BuildRequires:	clang llvm-devel cmake llvm-static
 BuildRequires:	libcxx-devel >= %{version}
 %if 0%{?rhel}
@@ -90,6 +94,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Mon Dec 10 2018 sguelton@redhat.com - 7.0.1-0.1.rc3
+- 7.0.1-rc3 Release
+
 * Tue Dec 04 2018 sguelton@redhat.com - 7.0.0-2
 - Ensure rpmlint passes on specfile
 
