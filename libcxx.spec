@@ -1,14 +1,16 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
+%global rc_ver 3
+%global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	7.0.0
-Release:	1%{?dist}
+Version:	7.0.1
+Release:	0.1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
-Source0:	http://llvm.org/releases/%{version}/libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
+Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
 BuildRequires:	clang llvm-devel cmake llvm-static
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
@@ -111,6 +113,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Dec 10 2018 sguelton@redhat.com - 7.0.1-0.1.rc3
+- 7.0.1-rc3 Release
+
 * Tue Sep 25 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-1
 - 7.0.0 Release
 
