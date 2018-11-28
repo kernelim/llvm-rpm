@@ -52,7 +52,7 @@
 %{!?_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 %global major_version 3
-%global minor_version 12
+%global minor_version 13
 # Set to RC version if building RC, else %%{nil}
 #global rcsuf rc3
 %{?rcsuf:%global relsuf .%{rcsuf}}
@@ -63,7 +63,7 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.2
+Version:        %{major_version}.%{minor_version}.1
 Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
@@ -500,6 +500,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+* Wed Nov 28 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.13.1-1
+- 3.13.1
+
 * Sat Sep 08 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.12.2-1
 - Update to 3.12.2
 
