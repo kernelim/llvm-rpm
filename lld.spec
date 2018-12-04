@@ -2,7 +2,7 @@
 
 Name:		lld
 Version:	7.0.0
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -12,17 +12,17 @@ Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 Patch1:		0001-lld-Prefer-using-the-newest-installed-python-version.patch
 
-BuildRequires:  gcc
-BuildRequires:  gcc-c++
-BuildRequires: cmake
-BuildRequires: llvm-devel = %{version}
-BuildRequires: ncurses-devel
-BuildRequires: zlib-devel
-BuildRequires: chrpath
+BuildRequires:	gcc
+BuildRequires:	gcc-c++
+BuildRequires:	cmake
+BuildRequires:	llvm-devel = %{version}
+BuildRequires:	ncurses-devel
+BuildRequires:	zlib-devel
+BuildRequires:	chrpath
 
 # For make check:
-BuildRequires: python3-lit
-BuildRequires: llvm-googletest
+BuildRequires:	python3-lit
+BuildRequires:	llvm-googletest
 
 %description
 The LLVM project linker.
@@ -55,10 +55,10 @@ cd %{_target_platform}
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
 	-DLLVM_LIT_ARGS="-sv \
-		-DFileCheck=%{_libdir}/llvm/FileCheck \
-		-Dcount=%{_libdir}/llvm/count \
-		-Dnot=%{_libdir}/llvm/not \
-		--path %{_libdir}/llvm" \
+	-DFileCheck=%{_libdir}/llvm/FileCheck \
+	-Dcount=%{_libdir}/llvm/count \
+	-Dnot=%{_libdir}/llvm/not \
+	--path %{_libdir}/llvm" \
 %if 0%{?__isa_bits} == 64
 	-DLLVM_LIBDIR_SUFFIX=64
 %else
@@ -95,6 +95,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Dec 04 2018 sguelton@redhat.com - 7.0.0-2
+- Ensure rpmlint passes on specfile
+
 * Mon Sep 24 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-1
 - 7.0.1 Release
 
