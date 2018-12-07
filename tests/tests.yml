@@ -9,13 +9,3 @@
       - lit:
           dir: ./
           run: lit --version
-
-- hosts: localhost
-  roles:
-  - role: standard-test-basic
-    tags:
-      - classic
-    tests:
-      - lit:
-          dir: ./
-          run: ! lit --version
