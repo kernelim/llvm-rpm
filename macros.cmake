@@ -2,6 +2,7 @@
 # Macros for cmake
 #
 %_cmake_lib_suffix64 -DLIB_SUFFIX=64
+%_cmake_shared_libs -DBUILD_SHARED_LIBS:BOOL=ON
 %_cmake_skip_rpath -DCMAKE_SKIP_RPATH:BOOL=ON
 %_cmake_version @@CMAKE_VERSION@@
 %__cmake /usr/bin/cmake
@@ -31,6 +32,6 @@
 %if "%{?_lib}" == "lib64" \
         %{?_cmake_lib_suffix64} \\\
 %endif \
-        -DBUILD_SHARED_LIBS:BOOL=ON
+	%{?_cmake_shared_libs}
 
 %cmake@@CMAKE_MAJOR_VERSION@@ %cmake

@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.1
-Release:        1%{?relsuf}%{?dist}
+Release:        2%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -500,6 +500,9 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %changelog
+* Sat Dec 08 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.13.1-2
+- macros.cmake: introduce %%_cmake_shared_libs macro
+
 * Wed Nov 28 2018 Rex Dieter <rdieter@fedoraproject.org> - 3.13.1-1
 - 3.13.1
 
