@@ -1,10 +1,10 @@
-%global rc_ver 3
+#%%global rc_ver 3
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
 Version:	7.0.1
-Release:	0.1%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -94,6 +94,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Mon Dec 17 2018 sguelton@redhat.com - 7.0.1-1
+- 7.0.1 Release
+
 * Mon Dec 10 2018 sguelton@redhat.com - 7.0.1-0.1.rc3
 - 7.0.1-rc3 Release
 
