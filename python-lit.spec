@@ -9,15 +9,15 @@
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
 Name: python-%{srcname}
-Version: 0.7.0
-Release: 2%{?dist}
+Version: 0.7.1
+Release: 1%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Group: Development/Languages
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://files.pythonhosted.org/packages/e5/0c/2f40cd6be5c79e15c5456b2aff6aea2e6196e8c42c0836a4da52d4df8d43/lit-0.7.0.tar.gz
+Source0: https://files.pythonhosted.org/packages/ee/19/89553646a07f35c49f9540f519c8d9543e8799736276756d203c697c0a13/lit-0.7.1.tar.gz
 
 BuildRequires: python2-devel
 BuildRequires: python2-setuptools
@@ -94,6 +94,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 %endif
 
 %changelog
+* Mon Dec 17 2018 sguelton@redhat.com - 0.7.1-1
+- 7.0.1 Release
+
 * Tue Sep 25 2018 Tom Stellard <tstellar@redhat.com> - 0.7.0-2
 - Add missing dist to release tag
 
