@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	7.0.1
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	2%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -23,7 +23,7 @@ BuildRequires:	chrpath
 
 # For make check:
 BuildRequires:	python3-rpm-macros
-BuildRequires:	python3-lit = 0.7.0
+BuildRequires:	python3-lit
 BuildRequires:	llvm-googletest = %{version}
 
 %description
@@ -98,6 +98,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Dec 17 2018 sguelton@redhat.com - 7.0.1-2
+- Update lit dependency
+
 * Mon Dec 17 2018 sguelton@redhat.com - 7.0.1-1
 - 7.0.1 Release
 
