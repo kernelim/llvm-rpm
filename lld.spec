@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	7.0.1
-Release:	2%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	3%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -12,6 +12,7 @@ Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 Patch1:		0001-lld-Prefer-using-the-newest-installed-python-version.patch
+Patch2:		0001-Partial-support-of-SHT_GROUP-without-flag.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -98,6 +99,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Jan 14 2019 sguelton@redhat.com - 7.0.1-3
+- Fix lld + annobin integration & Setup basic CI tests
+
 * Mon Dec 17 2018 sguelton@redhat.com - 7.0.1-2
 - Update lit dependency
 

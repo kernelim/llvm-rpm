@@ -1,0 +1,121 @@
+diff -r -u --new-file lld-7.0.1.src.orig/ELF/InputFiles.cpp lld-7.0.1.src/ELF/InputFiles.cpp
+--- lld-7.0.1.src.orig/ELF/InputFiles.cpp	2019-01-25 10:12:56.412850573 +0000
++++ lld-7.0.1.src/ELF/InputFiles.cpp	2019-01-25 10:14:50.557726268 +0000
+@@ -324,17 +324,6 @@
+   return Signature;
+ }
+ 
+-template <class ELFT>
+-ArrayRef<typename ObjFile<ELFT>::Elf_Word>
+-ObjFile<ELFT>::getShtGroupEntries(const Elf_Shdr &Sec) {
+-  const ELFFile<ELFT> &Obj = this->getObj();
+-  ArrayRef<Elf_Word> Entries =
+-      CHECK(Obj.template getSectionContentsAsArray<Elf_Word>(&Sec), this);
+-  if (Entries.empty() || Entries[0] != GRP_COMDAT)
+-    fatal(toString(this) + ": unsupported SHT_GROUP format");
+-  return Entries.slice(1);
+-}
+-
+ template <class ELFT> bool ObjFile<ELFT>::shouldMerge(const Elf_Shdr &Sec) {
+   // On a regular link we don't merge sections if -O0 (default is -O1). This
+   // sometimes makes the linker significantly faster, although the output will
+@@ -439,22 +428,33 @@
+     case SHT_GROUP: {
+       // De-duplicate section groups by their signatures.
+       StringRef Signature = getShtGroupSignature(ObjSections, Sec);
+-      bool IsNew = ComdatGroups.insert(CachedHashStringRef(Signature)).second;
+       this->Sections[I] = &InputSection::Discarded;
+ 
+-      // If it is a new section group, we want to keep group members.
+-      // Group leader sections, which contain indices of group members, are
+-      // discarded because they are useless beyond this point. The only
+-      // exception is the -r option because in order to produce re-linkable
+-      // object files, we want to pass through basically everything.
++      ArrayRef<Elf_Word> Entries =
++          CHECK(Obj.template getSectionContentsAsArray<Elf_Word>(&Sec), this);
++      if (Entries.empty())
++        fatal(toString(this) + ": empty SHT_GROUP");
++
++      // The first word of a SHT_GROUP section contains flags. Currently,
++      // the standard defines only "GRP_COMDAT" flag for the COMDAT group.
++      // An group with the empty flag doesn't define anything; such sections
++      // are just skipped.
++      if (Entries[0] == 0)
++        continue;
++
++      if (Entries[0] != GRP_COMDAT)
++        fatal(toString(this) + ": unsupported SHT_GROUP format");
++
++      bool IsNew = ComdatGroups.insert(CachedHashStringRef(Signature)).second;
+       if (IsNew) {
+         if (Config->Relocatable)
+           this->Sections[I] = createInputSection(Sec);
+         continue;
+       }
+ 
++
+       // Otherwise, discard group members.
+-      for (uint32_t SecIndex : getShtGroupEntries(Sec)) {
++      for (uint32_t SecIndex : Entries.slice(1)) {
+         if (SecIndex >= Size)
+           fatal(toString(this) +
+                 ": invalid section index in group: " + Twine(SecIndex));
+diff -r -u --new-file lld-7.0.1.src.orig/test/ELF/sht-group-empty.test lld-7.0.1.src/test/ELF/sht-group-empty.test
+--- lld-7.0.1.src.orig/test/ELF/sht-group-empty.test	1970-01-01 00:00:00.000000000 +0000
++++ lld-7.0.1.src/test/ELF/sht-group-empty.test	2019-01-25 10:13:19.312026250 +0000
+@@ -0,0 +1,55 @@
++# RUN: yaml2obj %s -o %t.o
++# RUN: ld.lld %t.o %t.o -o %t -r
++# RUN: llvm-readobj -s %t | FileCheck %s
++
++# CHECK:     Name: .text.foo
++# CHECK:     Name: .rela.text.foo
++
++--- !ELF
++FileHeader:
++  Class:           ELFCLASS64
++  Data:            ELFDATA2LSB
++  Type:            ET_REL
++  Machine:         EM_X86_64
++Sections:
++  - Name:            .group
++    Type:            SHT_GROUP
++    Link:            .symtab
++    Info:            foo
++    Members:
++      - SectionOrType:    GRP_COMDAT
++      - SectionOrType:    .text.foo
++      - SectionOrType:    .text.bar
++      - SectionOrType:    .note
++  - Name:            .note
++    Type:            SHT_NOTE
++    Flags:           [ SHF_GROUP ]
++  - Name:            .text.foo
++    Type:            SHT_PROGBITS
++    Flags:           [ SHF_ALLOC, SHF_EXECINSTR, SHF_GROUP ]
++  - Name:            .text.bar
++    Type:            SHT_PROGBITS
++    Flags:           [ SHF_ALLOC, SHF_EXECINSTR, SHF_GROUP ]
++  - Name:            .rela.text.foo
++    Type:            SHT_RELA
++    Flags:           [ SHF_INFO_LINK, SHF_GROUP ]
++    Link:            .symtab
++    Info:            .text.foo
++    Relocations:
++      - Offset:          0x0000000000000000
++        Symbol:          foo
++        Type:            R_X86_64_64
++  - Name:            .rela.text.bar
++    Type:            SHT_RELA
++    Flags:           [ SHF_INFO_LINK, SHF_GROUP ]
++    Link:            .symtab
++    Info:            .text.bar
++    Relocations:
++      - Offset:          0x0000000000000000
++        Symbol:          bar
++        Type:            R_X86_64_64
++Symbols:
++  Global:
++    - Name:            foo
++    - Name:            bar
++
