@@ -94,9 +94,7 @@ make %{?_smp_mflags}
 cd _build
 make install DESTDIR=%{buildroot}
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 %files
 %license LICENSE.TXT
