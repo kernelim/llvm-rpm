@@ -81,8 +81,7 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %check
 make -C %{_target_platform} %{?_smp_mflags} check-lld
 
-%post libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets libs
 
 %files
 %{_bindir}/lld*
