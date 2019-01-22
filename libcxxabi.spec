@@ -77,9 +77,7 @@ mkdir -p %{buildroot}%{_includedir}
 cd ..
 cp -a include/* %{buildroot}%{_includedir}
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 %files
 %license LICENSE.TXT
