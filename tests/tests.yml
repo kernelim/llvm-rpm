@@ -1,0 +1,16 @@
+- hosts: localhost
+  roles:
+  - role: standard-test-basic
+    tags:
+      - classic
+    required_packages:
+      - lld
+      - clang
+      - gcc
+    tests:
+      - basic:
+          dir: ./
+          run: echo "int main(){ return 0; }" | clang -x c -fuse-ld=lld -
+      - gcc-compat-basic:
+          dir: ./
+          run: echo "int main(){ return 0; }" | gcc -x c -fuse-ld=lld -
