@@ -417,27 +417,6 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 %endif
 
 
-%if %{with gui}
-%post gui
-update-desktop-database &> /dev/null || :
-/bin/touch --no-create %{_datadir}/mime || :
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-
-%postun gui
-update-desktop-database &> /dev/null || :
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/mime || :
-    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-%posttrans gui
-update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-%endif
-
-
 %files -f lib_files.mf
 %doc %dir %{_pkgdocdir}
 %license Copyright.txt*
