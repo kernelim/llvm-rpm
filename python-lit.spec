@@ -14,7 +14,6 @@ Release: 1%{?dist}
 BuildArch: noarch
 
 License: NCSA
-Group: Development/Languages
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
 Source0: https://files.pythonhosted.org/packages/ee/19/89553646a07f35c49f9540f519c8d9543e8799736276756d203c697c0a13/lit-0.7.1.tar.gz
@@ -31,14 +30,12 @@ lit is a tool used by the LLVM project for executing its test suites.
 
 %package -n python2-lit
 Summary: LLVM lit test runner for Python 2
-Group: Development/Languages
 
 Requires: python2-setuptools
 
 %if 0%{?with_python3}
 %package -n python3-lit
 Summary: LLVM lit test runner for Python 3
-Group: Development/Languages
 
 Requires: python3-setuptools
 %endif
