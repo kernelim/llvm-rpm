@@ -6,7 +6,7 @@
 
 Name:		libcxx
 Version:	7.0.1
-Release:	0.1%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	0.2%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -111,6 +111,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.1-0.2.rc3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Mon Dec 10 2018 sguelton@redhat.com - 7.0.1-0.1.rc3
 - 7.0.1-rc3 Release
 
