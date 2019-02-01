@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	7.0.1
-Release:	3%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	3%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -98,6 +98,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.1-3.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Mon Jan 14 2019 sguelton@redhat.com - 7.0.1-3
 - Fix lld + annobin integration & Setup basic CI tests
 
