@@ -63,8 +63,8 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.3
-Release:        2%{?relsuf}%{?dist}
+Version:        %{major_version}.%{minor_version}.4
+Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -479,6 +479,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Sat Feb 2 2019 Orion Poplawski <orion@nwra.com> - 3.13.4-1
+- 3.13.4
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.13.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
