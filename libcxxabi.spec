@@ -4,7 +4,7 @@
 
 Name:		libcxxabi
 Version:	7.0.1
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
+Release:	2%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -54,7 +54,7 @@ cd _build
 %endif
 
 # Filter out cflags not supported by clang.
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g')
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
 
 %cmake .. \
 	-DCMAKE_C_COMPILER=/usr/bin/clang \
@@ -92,6 +92,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Wed Feb  6 2019 Tom Callaway <spot@fedoraproject.org> - 7.0.1-2
+- remove -fstack-clash-protection
+
 * Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
