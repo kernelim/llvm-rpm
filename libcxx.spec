@@ -1,11 +1,11 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-# %%global rc_ver 3
+%global rc_ver 1
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	7.0.1
+Version:	8.0.0
 Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
@@ -111,6 +111,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Feb 11 2019 sguelton@redhat.com - 8.0.0-1.rc1
+- 8.0.0 Release candidate 1
+
 * Wed Feb 06 2019 sguelton@redhat.com - 7.0.1-1
 - 7.0.1 Release
 
