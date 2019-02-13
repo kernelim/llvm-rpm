@@ -1,7 +1,7 @@
-diff -r -u --new-file lld-7.0.1.src.orig/ELF/InputFiles.cpp lld-7.0.1.src/ELF/InputFiles.cpp
---- lld-7.0.1.src.orig/ELF/InputFiles.cpp	2019-01-25 10:12:56.412850573 +0000
-+++ lld-7.0.1.src/ELF/InputFiles.cpp	2019-01-25 10:14:50.557726268 +0000
-@@ -324,17 +324,6 @@
+diff -ru --new-file lld-8.0.0rc1.src.orig/ELF/InputFiles.cpp lld-8.0.0rc1.src/ELF/InputFiles.cpp
+--- lld-8.0.0rc1.src.orig/ELF/InputFiles.cpp	2019-02-12 08:09:21.746416886 +0000
++++ lld-8.0.0rc1.src/ELF/InputFiles.cpp	2019-02-13 10:41:49.565275043 +0000
+@@ -320,17 +320,6 @@
    return Signature;
  }
  
@@ -19,13 +19,17 @@ diff -r -u --new-file lld-7.0.1.src.orig/ELF/InputFiles.cpp lld-7.0.1.src/ELF/In
  template <class ELFT> bool ObjFile<ELFT>::shouldMerge(const Elf_Shdr &Sec) {
    // On a regular link we don't merge sections if -O0 (default is -O1). This
    // sometimes makes the linker significantly faster, although the output will
-@@ -439,22 +428,33 @@
+@@ -440,18 +429,24 @@
      case SHT_GROUP: {
        // De-duplicate section groups by their signatures.
        StringRef Signature = getShtGroupSignature(ObjSections, Sec);
 -      bool IsNew = ComdatGroups.insert(CachedHashStringRef(Signature)).second;
        this->Sections[I] = &InputSection::Discarded;
  
+-      // We only support GRP_COMDAT type of group. Get the all entries of the
+-      // section here to let getShtGroupEntries to check the type early for us.
+-      ArrayRef<Elf_Word> Entries = getShtGroupEntries(Sec);
+-
 -      // If it is a new section group, we want to keep group members.
 -      // Group leader sections, which contain indices of group members, are
 -      // discarded because they are useless beyond this point. The only
@@ -50,19 +54,18 @@ diff -r -u --new-file lld-7.0.1.src.orig/ELF/InputFiles.cpp lld-7.0.1.src/ELF/In
        if (IsNew) {
          if (Config->Relocatable)
            this->Sections[I] = createInputSection(Sec);
-         continue;
+@@ -459,7 +454,7 @@
        }
  
-+
        // Otherwise, discard group members.
--      for (uint32_t SecIndex : getShtGroupEntries(Sec)) {
+-      for (uint32_t SecIndex : Entries) {
 +      for (uint32_t SecIndex : Entries.slice(1)) {
          if (SecIndex >= Size)
            fatal(toString(this) +
                  ": invalid section index in group: " + Twine(SecIndex));
-diff -r -u --new-file lld-7.0.1.src.orig/test/ELF/sht-group-empty.test lld-7.0.1.src/test/ELF/sht-group-empty.test
---- lld-7.0.1.src.orig/test/ELF/sht-group-empty.test	1970-01-01 00:00:00.000000000 +0000
-+++ lld-7.0.1.src/test/ELF/sht-group-empty.test	2019-01-25 10:13:19.312026250 +0000
+diff -ru --new-file lld-8.0.0rc1.src.orig/test/ELF/sht-group-empty.test lld-8.0.0rc1.src/test/ELF/sht-group-empty.test
+--- lld-8.0.0rc1.src.orig/test/ELF/sht-group-empty.test	1970-01-01 00:00:00.000000000 +0000
++++ lld-8.0.0rc1.src/test/ELF/sht-group-empty.test	2019-02-13 10:40:11.958253274 +0000
 @@ -0,0 +1,55 @@
 +# RUN: yaml2obj %s -o %t.o
 +# RUN: ld.lld %t.o %t.o -o %t -r

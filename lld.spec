@@ -1,9 +1,9 @@
-#%%global rc_ver 3
+%global rc_ver 1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
-Version:	7.0.1
-Release:	3%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
+Version:	8.0.0
+Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -58,6 +58,7 @@ cd %{_target_platform}
 	-DLLVM_INCLUDE_TESTS=ON \
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
+	-DLLVM_TABLEGEN_EXE=%{_libdir}/llvm/llvm-tblgen\
 	-DLLVM_LIT_ARGS="-sv \
 	-DFileCheck=%{_libdir}/llvm/FileCheck \
 	-Dcount=%{_libdir}/llvm/count \
@@ -79,6 +80,12 @@ cd %{_target_platform}
 chrpath --delete %{buildroot}%{_bindir}/*
 chrpath --delete %{buildroot}%{_libdir}/*.so*
 
+for target in ld.lld ld64.lld wasm-ld
+do
+    ln -s lld %{buildroot}%{_bindir}/${target}
+done
+
+
 %check
 make -C %{_target_platform} %{?_smp_mflags} check-lld
 
@@ -98,6 +105,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Mon Feb 11 2019 sguelton@redhat.com - 8.0.0-1.rc1
+- 8.0.0 Release candidate 1
+
 * Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.1-3.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
