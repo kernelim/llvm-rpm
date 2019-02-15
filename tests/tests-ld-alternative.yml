@@ -1,0 +1,14 @@
+# The ld-alternative test uninstalls lld, so it needs to be run by
+# itself in a separate .yml file so it doesn't modify the test
+# environment for other tests. 
+
+- hosts: localhost
+  roles:
+  - role: standard-test-basic
+    tags:
+      - classic
+    required_packages:
+      - binutils
+      - lld
+    tests:
+      - ld-alternative

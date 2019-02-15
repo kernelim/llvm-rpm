@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	8.0.0
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
+Release:	2%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -26,6 +26,9 @@ BuildRequires:	chrpath
 BuildRequires:	python3-rpm-macros
 BuildRequires:	python3-lit
 BuildRequires:	llvm-googletest = %{version}
+
+Requires(post): %{_sbindir}/alternatives
+Requires(preun): %{_sbindir}/alternatives
 
 %description
 The LLVM project linker.
@@ -76,6 +79,13 @@ cd %{_target_platform}
 chrpath --delete %{buildroot}%{_bindir}/*
 chrpath --delete %{buildroot}%{_libdir}/*.so*
 
+%post
+%{_sbindir}/update-alternatives --install %{_bindir}/ld ld %{_bindir}/ld.lld 1
+
+%postun
+if [ $1 -eq 0 ] ; then
+  %{_sbindir}/update-alternatives --remove ld %{_bindir}/ld.lld
+fi
 
 %check
 
@@ -87,6 +97,7 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %ldconfig_scriptlets libs
 
 %files
+%ghost %{_bindir}/ld
 %{_bindir}/lld*
 %{_bindir}/ld.lld
 %{_bindir}/ld64.lld
@@ -100,6 +111,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Aug 13 2019 Tom Stellard <tstellar@redhat.com> - 8.0.0-2
+- Add update-alternative for ld
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 8.0.0-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
