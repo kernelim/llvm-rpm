@@ -1,10 +1,10 @@
-%global rc_ver 1
+%global rc_ver 2
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
 Version:	8.0.0
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	0.2%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -92,8 +92,11 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
-* Mon Feb 11 2019 sguelton@redhat.com - 8.0.0-1.rc1
-- remove -fstack-clash-protection
+* Sun Feb 24 2019 sguelton@redhat.com - 8.0.0-0.2.rc2
+- 8.0.0 Release candidate 2
+
+* Mon Feb 11 2019 sguelton@redhat.com - 8.0.0-0.1.rc1
+- 8.0.0 Release candidate 1
 
 * Wed Feb  6 2019 Tom Callaway <spot@fedoraproject.org> - 7.0.1-2
 - remove -fstack-clash-protection
