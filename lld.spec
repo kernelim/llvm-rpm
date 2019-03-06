@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	8.0.0
-Release:	0.3%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	0.4%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -17,6 +17,7 @@ BuildRequires:	gcc
 BuildRequires:	gcc-c++
 BuildRequires:	cmake
 BuildRequires:	llvm-devel = %{version}
+BuildRequires:	llvm-test = %{version}
 BuildRequires:	ncurses-devel
 BuildRequires:	zlib-devel
 BuildRequires:	chrpath
@@ -57,11 +58,7 @@ cd %{_target_platform}
 	-DLLVM_INCLUDE_TESTS=ON \
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
-	-DLLVM_TABLEGEN_EXE=%{_libdir}/llvm/llvm-tblgen\
 	-DLLVM_LIT_ARGS="-sv \
-	-DFileCheck=%{_libdir}/llvm/FileCheck \
-	-Dcount=%{_libdir}/llvm/count \
-	-Dnot=%{_libdir}/llvm/not \
 	--path %{_libdir}/llvm" \
 %if 0%{?__isa_bits} == 64
 	-DLLVM_LIBDIR_SUFFIX=64
@@ -78,11 +75,6 @@ cd %{_target_platform}
 # Remove rpath
 chrpath --delete %{buildroot}%{_bindir}/*
 chrpath --delete %{buildroot}%{_libdir}/*.so*
-
-for target in ld.lld ld64.lld wasm-ld
-do
-    ln -s lld %{buildroot}%{_bindir}/${target}
-done
 
 
 %check
@@ -104,6 +96,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Mar 5 2019 sguelton@redhat.com - 8.0.0-0.4.rc3
+- Cleanup specfile after llvm specfile update
+
 * Mon Mar 4 2019 sguelton@redhat.com - 8.0.0-0.3.rc3
 - 8.0.0 Release candidate 3
 
