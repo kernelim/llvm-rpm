@@ -92,7 +92,7 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
-* Mon Mar 4 2019 sguelton@redhat.com - 8.0.0-0.2.rc3
+* Mon Mar 4 2019 sguelton@redhat.com - 8.0.0-0.3.rc3
 - 8.0.0 Release candidate 3
 
 * Sun Feb 24 2019 sguelton@redhat.com - 8.0.0-0.2.rc2
