@@ -1,10 +1,10 @@
-%global rc_ver 3
+%global rc_ver 4
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
 Version:	8.0.0
-Release:	0.3%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	0.4%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -92,6 +92,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Mar 12 2019 sguelton@redhat.com - 8.0.0-0.4.rc4
+- 8.0.0 Release candidate 4
+
 * Mon Mar 4 2019 sguelton@redhat.com - 8.0.0-0.3.rc3
 - 8.0.0 Release candidate 3
 
