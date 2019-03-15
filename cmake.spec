@@ -52,7 +52,7 @@
 %{!?_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 %global major_version 3
-%global minor_version 13
+%global minor_version 14
 # Set to RC version if building RC, else %%{nil}
 #global rcsuf rc3
 %{?rcsuf:%global relsuf .%{rcsuf}}
@@ -63,7 +63,7 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.4
+Version:        %{major_version}.%{minor_version}.0
 Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
@@ -479,6 +479,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Fri Mar 15 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.0-1
+- 3.14.0
+
 * Sat Feb 2 2019 Orion Poplawski <orion@nwra.com> - 3.13.4-1
 - 3.13.4
 
