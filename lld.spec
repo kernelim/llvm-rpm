@@ -1,9 +1,9 @@
-%global rc_ver 4
+#%%global rc_ver 4
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
 Version:	8.0.0
-Release:	0.5%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -96,6 +96,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Wed Mar 20 2019 sguelton@redhat.com - 8.0.0-1
+- 8.0.0 final
+
 * Tue Mar 12 2019 sguelton@redhat.com - 8.0.0-0.4.rc4
 - 8.0.0 Release candidate 4
 
