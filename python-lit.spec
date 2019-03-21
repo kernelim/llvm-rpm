@@ -9,14 +9,14 @@
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
 Name: python-%{srcname}
-Version: 0.7.1
-Release: 2%{?dist}
+Version: 0.8.0
+Release: 1%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://files.pythonhosted.org/packages/ee/19/89553646a07f35c49f9540f519c8d9543e8799736276756d203c697c0a13/lit-0.7.1.tar.gz
+Source0: https://files.pythonhosted.org/packages/ba/da/c4b2b6ab24c840169e090d6e8f4c1bfa1e8a6b9d0ef3f8ed57ee9f72a317/lit-0.8.0.tar.gz
 
 BuildRequires: python2-devel
 BuildRequires: python2-setuptools
@@ -91,6 +91,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 %endif
 
 %changelog
+* Thu Mar 21 2019 sguelton@redhat.com - 8.0.0-1
+- 0.8.0 Release
+
 * Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.7.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
