@@ -80,9 +80,7 @@ chrpath --delete %{buildroot}%{_libdir}/*.so*
 %check
 
 # armv7lhl tests disabled because of arm issue, see https://koji.fedoraproject.org/koji/taskinfo?taskID=33660162
-%ifarch armv7lhl
-true
-%else
+%ifnarch %{arm}
 make -C %{_target_platform} %{?_smp_mflags} check-lld
 %endif
 
