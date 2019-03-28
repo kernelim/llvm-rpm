@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.0
-Release:        1%{?relsuf}%{?dist}
+Release:        2%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -95,6 +95,9 @@ Patch101:       %{name}-fedora-flag_release.patch
 # Add dl to CMAKE_DL_LIBS on MINGW
 # https://gitlab.kitware.com/cmake/cmake/issues/17600
 Patch102:       %{name}-mingw-dl.patch
+
+## upstream fix for FindFontConfig.cmake conflict with ECM
+Patch299: 0299-FindFontconfig-Convert-module-variables-to-camel-cas.patch
 
 # Patch for renaming on EPEL
 %if 0%{?name_suffix:1}
@@ -479,6 +482,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Thu Mar 28 2019 Rex Dieter <rdieter@fedoraproject.org> - 3.14.0-2
+- pull in upstream fix for conflict with ECM/FindFontConfig
+
 * Fri Mar 15 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.0-1
 - 3.14.0
 
