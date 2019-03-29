@@ -96,9 +96,6 @@ Patch101:       %{name}-fedora-flag_release.patch
 # https://gitlab.kitware.com/cmake/cmake/issues/17600
 Patch102:       %{name}-mingw-dl.patch
 
-## upstream fix for FindFontConfig.cmake conflict with ECM
-Patch299: 0299-FindFontconfig-Convert-module-variables-to-camel-cas.patch
-
 # Patch for renaming on EPEL
 %if 0%{?name_suffix:1}
 Patch1:      %{name}-rename.patch
