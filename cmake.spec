@@ -63,7 +63,7 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.2
+Version:        %{major_version}.%{minor_version}.3
 Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
@@ -479,6 +479,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Mon Apr 22 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.3-1
+- 3.14.3
+
 * Fri Apr 12 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.2-1
 - 3.14.2
 
