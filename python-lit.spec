@@ -1,7 +1,9 @@
 %global srcname lit
 
 %if 0%{?fedora} || 0%{?rhel} > 7
-%global with_python3 1
+%global with_python2 0
+%else
+%global with_python2 1
 %endif
 
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
@@ -10,7 +12,7 @@
 
 Name: python-%{srcname}
 Version: 0.8.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -18,33 +20,33 @@ Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
 Source0: https://files.pythonhosted.org/packages/ba/da/c4b2b6ab24c840169e090d6e8f4c1bfa1e8a6b9d0ef3f8ed57ee9f72a317/lit-0.8.0.tar.gz
 
-BuildRequires: python2-devel
-BuildRequires: python2-setuptools
-%if 0%{?with_python3}
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
+%if 0%{?with_python2}
+BuildRequires: python2-devel
+BuildRequires: python2-setuptools
 %endif
 
 %description
 lit is a tool used by the LLVM project for executing its test suites.
 
-%package -n python2-lit
-Summary: LLVM lit test runner for Python 2
-
-Requires: python2-setuptools
-
-%if 0%{?with_python3}
 %package -n python3-lit
 Summary: LLVM lit test runner for Python 3
 
 Requires: python3-setuptools
+
+%if 0%{?with_python2}
+%package -n python2-lit
+Summary: LLVM lit test runner for Python 2
+
+Requires: python2-setuptools
 %endif
 
-%description -n python2-lit
+%description -n python3-lit
 lit is a tool used by the LLVM project for executing its test suites.
 
-%if 0%{?with_python3}
-%description -n python3-lit
+%if 0%{?with_python2}
+%description -n python2-lit
 lit is a tool used by the LLVM project for executing its test suites.
 %endif
 
@@ -52,45 +54,47 @@ lit is a tool used by the LLVM project for executing its test suites.
 %autosetup -n %{srcname}-%{version}%{?rc_ver:rc%{rc_ver}}
 
 %build
-%py2_build
-%if 0%{?with_python3}
 %py3_build
+%if 0%{?with_python2}
+%py2_build
 %endif
 
 %install
-%py2_install
-%if 0%{?with_python3}
 %py3_install
+%if 0%{?with_python2}
+%py2_install
 %endif
 
 # Strip out #!/usr/bin/env python
-sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcname}/*.py
-%if 0%{?with_python3}
 sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcname}/*.py
+%if 0%{?with_python2}
+sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcname}/*.py
 %endif
 
 %check
-%{__python2} setup.py test
-%if 0%{?with_python3}
-# FIXME: Tests fail with python3
-#{__python3} setup.py test
+%{__python3} setup.py test
+%if 0%{?with_python2}
+{__python2} setup.py test
 %endif
 
-%files -n python2-%{srcname}
-%doc README.txt
-%{python2_sitelib}/*
-%if %{undefined with_python3}
-%{_bindir}/lit
-%endif
-
-%if 0%{?with_python3}
 %files -n python3-%{srcname}
 %doc README.txt
 %{python3_sitelib}/*
 %{_bindir}/lit
+
+%if 0%{?with_python2}
+%files -n python2-%{srcname}
+%doc README.txt
+%{python2_sitelib}/*
+%if %{undefined with_python2}
+%{_bindir}/lit
+%endif
 %endif
 
 %changelog
+* Fri Jun 28 2019 sguelton@redhat.com - 8.0.0-2
+- Fix rhbz#1725155
+
 * Thu Mar 21 2019 sguelton@redhat.com - 8.0.0-1
 - 0.8.0 Release
 
