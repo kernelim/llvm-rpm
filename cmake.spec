@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.5
-Release:        1%{?relsuf}%{?dist}
+Release:        2%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -479,6 +479,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Wed Jul 03 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-2
+- Rebuild (jsoncpp)
+
 * Fri May 31 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-1
 - 3.14.5
 
