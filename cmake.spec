@@ -17,7 +17,7 @@
 %bcond_without git_test
 
 # Set to bcond_with or use --without gui to disable qt4 gui build
-%bcond_with gui
+%bcond_without gui
 
 # Use ncurses for colorful output
 %bcond_without ncurses
@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.5
-Release:        2%{?relsuf}%{?dist}
+Release:        3%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -479,6 +479,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Wed Jul 03 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-3
+- Rebuild (jsoncpp), qt5 enabled
+
 * Wed Jul 03 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-2
 - Rebuild (jsoncpp), bootstrap without qt5
 
