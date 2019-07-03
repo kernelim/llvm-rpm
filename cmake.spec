@@ -34,7 +34,7 @@
 
 # Sphinx-build cannot import CMakeLexer on EPEL <= 6
 %if 0%{?rhel} && 0%{?rhel} <= 6
-%bcond_with sphin
+%bcond_with sphinx
 %else
 %bcond_without sphinx
 %endif
