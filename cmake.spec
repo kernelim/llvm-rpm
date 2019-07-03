@@ -17,7 +17,7 @@
 %bcond_without git_test
 
 # Set to bcond_with or use --without gui to disable qt4 gui build
-%bcond_without gui
+%bcond_with gui
 
 # Use ncurses for colorful output
 %bcond_without ncurses
@@ -480,7 +480,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 %changelog
 * Wed Jul 03 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-2
-- Rebuild (jsoncpp)
+- Rebuild (jsoncpp), bootstrap without qt5
 
 * Fri May 31 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-1
 - 3.14.5
