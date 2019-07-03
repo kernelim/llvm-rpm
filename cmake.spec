@@ -404,6 +404,7 @@ pushd build
 #CMake.FileDownload, CTestTestUpload, and curl require internet access
 # RunCMake.CPack_RPM is broken if disttag contains "+", bug #1499151
 NO_TEST="CMake.FileDownload|CTestTestUpload|curl|RunCMake.CPack_RPM"
+NO_TEST="$NO_TEST|CPackComponentsForAll-RPM-IgnoreGroup"
 # RunCMake.File_Generate fails on S390X
 %ifarch s390x
 NO_TEST="$NO_TEST|RunCMake.File_Generate"
@@ -481,6 +482,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 %changelog
 * Wed Jul 03 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-2
 - Rebuild (jsoncpp), bootstrap without qt5
+- Ignore a test failing with rpm-4.15
 
 * Fri May 31 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-1
 - 3.14.5
