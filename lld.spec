@@ -1,15 +1,22 @@
 #%%global rc_ver 3
-%global baserelease 2
+%global baserelease 3
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%global maj_ver 9
+
+# Don't include unittests in automatic generation of provides or requires.
+%global __provides_exclude_from ^%{_libdir}/lld/.*$
+%global __requires_exclude ^libgtest.*$
 
 Name:		lld
-Version:	9.0.0
+Version:	%{maj_ver}.0.0
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
 Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz
+Source1:	run-lit-tests
+Source2:	lit.lld-test.cfg.py
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 
@@ -49,6 +56,15 @@ Summary:	LLD shared libraries
 %description libs
 Shared libraries for LLD.
 
+%package test
+Summary: LLD regression tests
+Requires:	%{name}%{?_isa} = %{version}-%{release}
+Requires:	python3-lit
+Requires:	llvm-test(major) = %{maj_ver}
+
+%description test
+LLVM regression tests.
+
 %prep
 %autosetup -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src -p1
 
@@ -74,7 +90,41 @@ cd %{_target_platform}
 
 %make_build
 
+# Build the unittests so we can install them.
+%make_build lld-test-depends
+
 %install
+
+%global lit_cfg test/%{_arch}.site.cfg.py
+%global lit_unit_cfg test/Unit/%{_arch}.site.cfg.py
+%global lit_lld_test_cfg_install_path %{_datadir}/lld/lit.lld-test.cfg.py
+
+# Generate lit config files.  Strip off the last line that initiates the
+# test run, so we can customize the configuration.
+head -n -1 %{_target_platform}/test/lit.site.cfg.py >> %{lit_cfg}
+head -n -1 %{_target_platform}/test/Unit/lit.site.cfg.py >> %{lit_unit_cfg}
+
+# Patch lit config files to load custom config:
+for f in %{lit_cfg} %{lit_unit_cfg}; do
+  echo "lit_config.load_config(config, '%{lit_lld_test_cfg_install_path}')" >> $f
+done
+
+# Install test files
+install -d %{buildroot}%{_datadir}/lld/src
+cp %{SOURCE2} %{buildroot}%{_datadir}/lld/
+
+tar -czf %{buildroot}%{_datadir}/lld/src/test.tar.gz test/
+install -d %{buildroot}%{_libexecdir}/tests/lld
+cp %{SOURCE1} %{buildroot}%{_libexecdir}/tests/lld
+
+# Install unit test binaries
+install -d %{buildroot}%{_libdir}/lld/
+cp -R %{_target_platform}/unittests %{buildroot}%{_libdir}/lld/
+
+# Install gtest libraries
+cp %{_target_platform}/%{_lib}/libgtest*so* %{buildroot}%{_libdir}/lld/
+
+# Install libraries and binaries
 cd %{_target_platform}
 %make_install
 
@@ -117,7 +167,16 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %files libs
 %{_libdir}/liblld*.so.*
 
+%files test
+%{_libexecdir}/tests/lld/
+%{_libdir}/lld/
+%{_datadir}/lld/src/test.tar.gz
+%{_datadir}/lld/lit.lld-test.cfg.py
+
 %changelog
+* Thu Dec 05 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-3
+- Add lld-test package
+
 * Thu Nov 14 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-2
 - Add explicit lld-libs requires to fix rpmdiff errors
 
