@@ -6,19 +6,26 @@
 %global with_python2 1
 %endif
 
+%bcond_without check
+
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
 %{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
 Name: python-%{srcname}
 Version: 0.8.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
 Source0: https://files.pythonhosted.org/packages/ba/da/c4b2b6ab24c840169e090d6e8f4c1bfa1e8a6b9d0ef3f8ed57ee9f72a317/lit-0.8.0.tar.gz
+
+# for file check
+%if %{with check}
+BuildRequires: llvm-test
+%endif
 
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
@@ -71,10 +78,12 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python3_sitelib}/%{srcna
 sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcname}/*.py
 %endif
 
+%if %{with check}
 %check
-%{__python3} setup.py test
+%{__python3} lit.py tests
 %if 0%{?with_python2}
-{__python2} setup.py test
+%{__python2} lit.py tests
+%endif
 %endif
 
 %files -n python3-%{srcname}
@@ -92,6 +101,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Tue Jul 16 2019 sguelton@redhat.com - 8.0.0-3
+- Fix rhbz#1728067
+
 * Fri Jun 28 2019 sguelton@redhat.com - 8.0.0-2
 - Fix rhbz#1725155
 
