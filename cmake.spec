@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.5
-Release:        3%{?relsuf}%{?dist}
+Release:        4%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -480,6 +480,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.14.5-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Wed Jul 03 2019 Björn Esser <besser82@fedoraproject.org> - 3.14.5-3
 - Rebuild (jsoncpp), qt5 enabled
 
