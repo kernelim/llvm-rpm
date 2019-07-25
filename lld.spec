@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	8.0.0
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -100,6 +100,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 8.0.0-1.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Wed Mar 20 2019 sguelton@redhat.com - 8.0.0-1
 - 8.0.0 final
 
