@@ -6,7 +6,7 @@
 
 Name:		libcxx
 Version:	8.0.0
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -111,6 +111,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 8.0.0-1.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Wed Mar 20 2019 sguelton@redhat.com - 8.0.0-1
 - 8.0.0 final
 
