@@ -14,7 +14,7 @@
 
 Name: python-%{srcname}
 Version: 0.8.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -101,6 +101,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 0.8.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Tue Jul 16 2019 sguelton@redhat.com - 8.0.0-3
 - Fix rhbz#1728067
 
