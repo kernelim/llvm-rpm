@@ -6,6 +6,7 @@
 %global with_python2 1
 %endif
 
+%global rc_ver 4
 %bcond_without check
 
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
@@ -13,14 +14,14 @@
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
 Name: python-%{srcname}
-Version: 0.8.0
-Release: 7%{?dist}
+Version: 0.9.0
+Release: 0.1.rc%{rc_ver}%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://files.pythonhosted.org/packages/ba/da/c4b2b6ab24c840169e090d6e8f4c1bfa1e8a6b9d0ef3f8ed57ee9f72a317/lit-0.8.0.tar.gz
+Source0: https://files.pythonhosted.org/packages/f3/e1/65e92f7ba0ff478b96ece03ae43e9d67183967472589ef1e891a3494d3dd/lit-0.9.0rc4.tar.gz
 
 # for file check
 %if %{with check}
@@ -101,6 +102,8 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Thu Aug 22 2019 Tom Stellard <tstellar@redhat.com> - 0.9.0-0.1.rc4
+- 0.9.0 rc4 Release
 
 * Tue Aug 20 2019 sguelton@redhat.com - 8.0.0-7
 - Rebuild for Python 3.8 with test, preparatory work for rhbz#1715016
