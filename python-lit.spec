@@ -6,7 +6,7 @@
 %global with_python2 1
 %endif
 
-%bcond_with check
+%bcond_without check
 
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
 %{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
@@ -14,7 +14,7 @@
 
 Name: python-%{srcname}
 Version: 0.8.0
-Release: 6%{?dist}
+Release: 7%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -101,6 +101,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+
+* Tue Aug 20 2019 sguelton@redhat.com - 8.0.0-7
+- Rebuild for Python 3.8 with test, preparatory work for rhbz#1715016
 
 * Tue Aug 20 2019 sguelton@redhat.com - 8.0.0-6
 - Rebuild for Python 3.8 without test, preparatory work for rhbz#1715016
