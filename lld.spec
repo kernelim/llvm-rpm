@@ -3,7 +3,7 @@
 
 Name:		lld
 Version:	8.0.0
-Release:	2%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Release:	3%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -79,6 +79,10 @@ cd %{_target_platform}
 chrpath --delete %{buildroot}%{_bindir}/*
 chrpath --delete %{buildroot}%{_libdir}/*.so*
 
+# Required when using update-alternatives:
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Alternatives/
+touch %{buildroot}%{_bindir}/ld
+
 %post
 %{_sbindir}/update-alternatives --install %{_bindir}/ld ld %{_bindir}/ld.lld 1
 
@@ -111,6 +115,10 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Tue Aug 20 2019 Tom Stellard <tstellar@redhat.com> - 8.0.0-3
+- touch /usr/bin/ld as required by the packaging guidelines for
+  update-alternatives
+
 * Tue Aug 13 2019 Tom Stellard <tstellar@redhat.com> - 8.0.0-2
 - Add update-alternative for ld
 
