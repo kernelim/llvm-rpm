@@ -1,9 +1,10 @@
-#%%global rc_ver 4
+%global rc_ver 3
+%global baserelease 0.1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
-Version:	8.0.0
-Release:	3%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Version:	9.0.0
+Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -11,7 +12,6 @@ URL:		http://llvm.org
 Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
-Patch1:		0001-lld-Prefer-using-the-newest-installed-python-version.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -115,6 +115,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Aug 22 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-0.1.rc3
+- 9.0.0-rc3 Release
+
 * Tue Aug 20 2019 Tom Stellard <tstellar@redhat.com> - 8.0.0-3
 - touch /usr/bin/ld as required by the packaging guidelines for
   update-alternatives
