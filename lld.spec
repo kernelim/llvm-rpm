@@ -1,5 +1,5 @@
-%global rc_ver 3
-%global baserelease 0.1
+#%%global rc_ver 3
+%global baserelease 1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
@@ -115,6 +115,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Sep 19 2019 Tom Stellard <tstellar@redhat.com> -9.0.0-1
+- 9.0.0 Release
+
 * Thu Aug 22 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-0.1.rc3
 - 9.0.0-rc3 Release
 
