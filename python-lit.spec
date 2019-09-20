@@ -7,7 +7,7 @@
 %endif
 
 #%%global rc_ver 4
-%bcond_with check
+%bcond_without check
 
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
 %{!?py2_build: %global py2_build %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} build --executable="%{__python2} -s"}}
@@ -15,7 +15,7 @@
 
 Name: python-%{srcname}
 Version: 0.9.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -102,6 +102,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Fri Sep 20 2019 Tom Stellard <tstellar@redhat.com> - 0.9.0-3
+- Re-enable tests
+
 * Fri Sep 20 2019 Tom Stellard <tstellar@redhat.com> - 0.9.0-2
 - Disable check to avoid circular dependency with llvm-test
 
