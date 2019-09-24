@@ -2,11 +2,13 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 #%%global rc_ver 4
+%global baserelease 1
+
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	8.0.0
-Release:	1%{?rc_ver:.rc%{rc_ver}}%{?dist}.1
+Version:	9.0.0
+Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -111,6 +113,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Sep 23 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-1
+- 9.0.0 Release
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 8.0.0-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
