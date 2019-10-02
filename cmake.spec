@@ -52,7 +52,7 @@
 %{!?_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 %global major_version 3
-%global minor_version 14
+%global minor_version 15
 # Set to RC version if building RC, else %%{nil}
 #global rcsuf rc3
 %{?rcsuf:%global relsuf .%{rcsuf}}
@@ -63,8 +63,8 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.5
-Release:        4%{?relsuf}%{?dist}
+Version:        %{major_version}.%{minor_version}.3
+Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -480,6 +480,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Mon Sep 30 2019 Orion Poplawski <orion@nwra.com> - 3.15.3-1
+- Update to 3.15.3
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.14.5-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
