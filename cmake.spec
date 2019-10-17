@@ -63,7 +63,7 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.3
+Version:        %{major_version}.%{minor_version}.4
 Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
@@ -480,6 +480,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Wed Oct 16 2019 Orion Poplawski <orion@nwra.com> - 3.15.4-1
+- Update to 3.15.4
+
 * Mon Sep 30 2019 Orion Poplawski <orion@nwra.com> - 3.15.3-1
 - Update to 3.15.3
 
