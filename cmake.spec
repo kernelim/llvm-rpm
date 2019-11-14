@@ -8,7 +8,7 @@
 
 # Set to bcond_without or use --with bootstrap if bootstrapping a new release
 # or architecture
-%bcond_with bootstrap
+%bcond_without bootstrap
 
 # Build with Emacs support
 %bcond_without emacs
@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.5
-Release:        1%{?relsuf}%{?dist}
+Release:        2%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -480,6 +480,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Thu Nov 14 2019 Björn Esser <besser82@fedoraproject.org> - 3.15.5-2
+- Rebuild (jsoncpp)
+
 * Wed Oct 30 2019 Orion Poplawski <orion@nwra.com> - 3.15.5-1
 - Update to 3.15.5
 
