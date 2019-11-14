@@ -1,5 +1,5 @@
 #%%global rc_ver 3
-%global baserelease 1
+%global baserelease 2
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		lld
@@ -30,11 +30,14 @@ BuildRequires:	llvm-googletest = %{version}
 Requires(post): %{_sbindir}/alternatives
 Requires(preun): %{_sbindir}/alternatives
 
+Requires: lld-libs = %{version}-%{release}
+
 %description
 The LLVM project linker.
 
 %package devel
 Summary:	Libraries and header files for LLD
+Requires: lld-libs = %{version}-%{release}
 
 %description devel
 This package contains library and header files needed to develop new native
@@ -115,6 +118,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Thu Nov 14 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-2
+- Add explicit lld-libs requires to fix rpmdiff errors
+
 * Thu Sep 19 2019 Tom Stellard <tstellar@redhat.com> -9.0.0-1
 - 9.0.0 Release
 
