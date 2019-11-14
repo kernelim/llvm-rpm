@@ -8,7 +8,7 @@
 
 # Set to bcond_without or use --with bootstrap if bootstrapping a new release
 # or architecture
-%bcond_without bootstrap
+%bcond_with bootstrap
 
 # Build with Emacs support
 %bcond_without emacs
