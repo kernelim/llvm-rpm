@@ -486,6 +486,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 %changelog
 * Thu Nov 14 2019 Björn Esser <besser82@fedoraproject.org> - 3.15.5-2
 - Rebuild (jsoncpp)
+- Exclude more tests failing on s390x
 
 * Wed Oct 30 2019 Orion Poplawski <orion@nwra.com> - 3.15.5-1
 - Update to 3.15.5
