@@ -408,6 +408,9 @@ NO_TEST="$NO_TEST|CPackComponentsForAll-RPM-IgnoreGroup"
 # RunCMake.File_Generate fails on S390X
 %ifarch s390x
 NO_TEST="$NO_TEST|RunCMake.File_Generate"
+NO_TEST="$NO_TEST|kwsys.testProcess-4"
+NO_TEST="$NO_TEST|kwsys.testProcess-5"
+NO_TEST="$NO_TEST|CTestTestTimeout"
 %endif
 export NO_TEST
 bin/ctest%{?name_suffix} -V -E "$NO_TEST" %{?_smp_mflags}
