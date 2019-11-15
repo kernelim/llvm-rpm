@@ -411,6 +411,7 @@ NO_TEST="$NO_TEST|RunCMake.File_Generate"
 NO_TEST="$NO_TEST|kwsys.testProcess-4"
 NO_TEST="$NO_TEST|kwsys.testProcess-5"
 NO_TEST="$NO_TEST|CTestTestTimeout"
+NO_TEST="$NO_TEST|CTestTestRerunFailed"
 %endif
 export NO_TEST
 bin/ctest%{?name_suffix} -V -E "$NO_TEST" %{?_smp_mflags}
