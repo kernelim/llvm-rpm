@@ -52,9 +52,9 @@
 %{!?_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
 %global major_version 3
-%global minor_version 15
+%global minor_version 16
 # Set to RC version if building RC, else %%{nil}
-#global rcsuf rc3
+%global rcsuf rc4
 %{?rcsuf:%global relsuf .%{rcsuf}}
 %{?rcsuf:%global versuf -%{rcsuf}}
 
@@ -63,8 +63,8 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.5
-Release:        2%{?relsuf}%{?dist}
+Version:        %{major_version}.%{minor_version}.0
+Release:        0.1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -142,6 +142,7 @@ BuildRequires:  zlib-devel
 %if %{with emacs}
 BuildRequires:  emacs
 %endif
+BuildRequires:  openssl-devel
 %if %{with rpm}
 %if %{with python3}
 %{!?python3_pkgversion: %global python3_pkgversion 3}
@@ -401,20 +402,12 @@ find %{buildroot}%{_bindir} -type f -or -type l -or -xtype l | \
 mv -f Modules/FindLibArchive.cmake Modules/FindLibArchive.disabled
 %endif
 pushd build
-#CMake.FileDownload, CTestTestUpload, and curl require internet access
-# RunCMake.CPack_RPM is broken if disttag contains "+", bug #1499151
-NO_TEST="CMake.FileDownload|CTestTestUpload|curl|RunCMake.CPack_RPM"
-NO_TEST="$NO_TEST|CPackComponentsForAll-RPM-IgnoreGroup"
-# RunCMake.File_Generate fails on S390X
-%ifarch s390x
-NO_TEST="$NO_TEST|RunCMake.File_Generate"
-NO_TEST="$NO_TEST|kwsys.testProcess-.*"
-NO_TEST="$NO_TEST|CTestTestTimeout"
-NO_TEST="$NO_TEST|CTestTestRerunFailed"
-NO_TEST="$NO_TEST|Server"
-%endif
-export NO_TEST
-bin/ctest%{?name_suffix} -V -E "$NO_TEST" %{?_smp_mflags}
+# CTestTestUpload require internet access
+# CPackComponentsForAll-RPM-IgnoreGroup failing wih rpm 4.15 - https://gitlab.kitware.com/cmake/cmake/issues/19983
+NO_TEST="CTestTestUpload|CPackComponentsForAll-RPM-IgnoreGroup"
+bin/ctest%{?name_suffix} %{?_smp_mflags} -V -E "$NO_TEST" --output-on-failure
+# Keep an eye on failing tests
+bin/ctest%{?name_suffix} %{?_smp_mflags} -V -R "$NO_TEST" --output-on-failure || :
 popd
 %if 0%{?rhel} && 0%{?rhel} <= 6
 mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
@@ -484,6 +477,10 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Mon Nov 18 2019 Orion Poplawski <orion@nwra.com> - 3.16.0-0.1.rc4
+- Update to 3.16.0-rc4
+- Cleanup %%check
+
 * Thu Nov 14 2019 Björn Esser <besser82@fedoraproject.org> - 3.15.5-2
 - Rebuild (jsoncpp)
 - Exclude more tests failing on s390x
