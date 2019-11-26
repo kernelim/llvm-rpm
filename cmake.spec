@@ -54,7 +54,7 @@
 %global major_version 3
 %global minor_version 16
 # Set to RC version if building RC, else %%{nil}
-%global rcsuf rc4
+#global rcsuf %%{nil}
 %{?rcsuf:%global relsuf .%{rcsuf}}
 %{?rcsuf:%global versuf -%{rcsuf}}
 
@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.0
-Release:        0.1%{?relsuf}%{?dist}
+Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -477,6 +477,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Tue Nov 26 2019 Björn Esser <besser82@fedoraproject.org> - 3.16.0-1
+- Update to 3.16.0
+
 * Mon Nov 18 2019 Orion Poplawski <orion@nwra.com> - 3.16.0-0.1.rc4
 - Update to 3.16.0-rc4
 - Cleanup %%check
