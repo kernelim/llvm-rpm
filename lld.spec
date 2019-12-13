@@ -1,5 +1,5 @@
 #%%global rc_ver 3
-%global baserelease 4
+%global baserelease 5
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 9
 
@@ -126,6 +126,7 @@ cp %{SOURCE1} %{buildroot}%{_libexecdir}/tests/lld
 # Install unit test binaries
 install -d %{buildroot}%{_libdir}/lld/
 cp -R %{_target_platform}/unittests %{buildroot}%{_libdir}/lld/
+rm -rf `find %{buildroot}%{_libdir}/lld/ -iname '*make*'`
 
 # Install gtest libraries
 cp %{_target_platform}/%{_lib}/libgtest*so* %{buildroot}%{_libdir}/lld/
@@ -180,6 +181,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Fri Dec 13 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-5
+- Remove build artifacts installed with unittests
+
 * Thu Dec 05 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-4
 - Enable GPG-based source file verification
 
