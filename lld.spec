@@ -1,5 +1,5 @@
 #%%global rc_ver 3
-%global baserelease 5
+%global baserelease 6
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 9
 
@@ -66,6 +66,7 @@ Summary: LLD regression tests
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	python3-lit
 Requires:	llvm-test(major) = %{maj_ver}
+Requires:	lld-libs = %{version}-%{release}
 
 %description test
 LLVM regression tests.
@@ -138,6 +139,7 @@ cd %{_target_platform}
 # Remove rpath
 chrpath --delete %{buildroot}%{_bindir}/*
 chrpath --delete %{buildroot}%{_libdir}/*.so*
+chrpath --delete `find %{buildroot}%{_libdir}/lld/ -type f`
 
 # Required when using update-alternatives:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Alternatives/
@@ -181,6 +183,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Sat Dec 14 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-6
+- Fix some rpmdiff errors
+
 * Fri Dec 13 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-5
 - Remove build artifacts installed with unittests
 
