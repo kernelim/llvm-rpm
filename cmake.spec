@@ -63,7 +63,7 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.0
+Version:        %{major_version}.%{minor_version}.1
 Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
@@ -483,6 +483,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Sat Dec 14 2019 Björn Esser <besser82@fedoraproject.org> - 3.16.1-1
+- Update to 3.16.1
+
 * Tue Nov 26 2019 Björn Esser <besser82@fedoraproject.org> - 3.16.0-1
 - Update to 3.16.0
 - Exclude test "kwsys.testProcess-5" on S390X
