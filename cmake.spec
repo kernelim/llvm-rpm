@@ -405,12 +405,6 @@ pushd build
 # CTestTestUpload require internet access
 # CPackComponentsForAll-RPM-IgnoreGroup failing wih rpm 4.15 - https://gitlab.kitware.com/cmake/cmake/issues/19983
 NO_TEST="CTestTestUpload|CPackComponentsForAll-RPM-IgnoreGroup"
-
-# kwsys.testProcess-5 fails on S390X
-%ifarch s390x
-NO_TEST="$NO_TEST|kwsys.testProcess-5"
-%endif
-
 bin/ctest%{?name_suffix} %{?_smp_mflags} -V -E "$NO_TEST" --output-on-failure
 # Keep an eye on failing tests
 bin/ctest%{?name_suffix} %{?_smp_mflags} -V -R "$NO_TEST" --output-on-failure || :
@@ -485,6 +479,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 %changelog
 * Sat Dec 14 2019 Björn Esser <besser82@fedoraproject.org> - 3.16.1-1
 - Update to 3.16.1
+- Re-enable test "kwsys.testProcess-5" on S390X
 
 * Tue Nov 26 2019 Björn Esser <besser82@fedoraproject.org> - 3.16.0-1
 - Update to 3.16.0
