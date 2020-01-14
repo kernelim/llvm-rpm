@@ -64,7 +64,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.1
-Release:        1%{?relsuf}%{?dist}
+Release:        2%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -95,6 +95,10 @@ Patch101:       %{name}-fedora-flag_release.patch
 # Add dl to CMAKE_DL_LIBS on MINGW
 # https://gitlab.kitware.com/cmake/cmake/issues/17600
 Patch102:       %{name}-mingw-dl.patch
+# FindPython: Add support for version 3.9
+# https://gitlab.kitware.com/cmake/cmake/merge_requests/4225
+Patch103:       %{name}-python39.patch
+
 
 # Patch for renaming on EPEL
 %if 0%{?name_suffix:1}
@@ -477,6 +481,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Tue Jan 14 2020 Miro Hrončok <mhroncok@redhat.com> - 3.16.1-2
+- FindPython: Add support for version 3.9
+
 * Sat Dec 14 2019 Björn Esser <besser82@fedoraproject.org> - 3.16.1-1
 - Update to 3.16.1
 - Re-enable test "kwsys.testProcess-5" on S390X
