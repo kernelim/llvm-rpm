@@ -51,6 +51,9 @@
 # Setup _pkgdocdir if not defined already
 %{!?_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
+# Setup _vpath_builddir if not defined already
+%{!?_vpath_builddir:%global _vpath_builddir %{_target_platform}}
+
 %global major_version 3
 %global minor_version 16
 # Set to RC version if building RC, else %%{nil}
@@ -270,25 +273,27 @@ tail -n +2 %{SOURCE5} >> %{name}.req
 export CFLAGS="%{optflags}"
 export CXXFLAGS="%{optflags}"
 export LDFLAGS="%{?__global_ldflags}"
-mkdir build
-pushd build
-../bootstrap --prefix=%{_prefix} --datadir=/share/%{name} \
-             --docdir=/share/doc/%{name} --mandir=/share/man \
-             --%{?with_bootstrap:no-}system-libs \
-             --parallel=`/usr/bin/getconf _NPROCESSORS_ONLN` \
+SRCDIR="$(/usr/bin/pwd)"
+mkdir %{_vpath_builddir}
+pushd %{_vpath_builddir}
+$SRCDIR/bootstrap --prefix=%{_prefix} --datadir=/share/%{name} \
+                  --docdir=/share/doc/%{name} --mandir=/share/man \
+                  --%{?with_bootstrap:no-}system-libs \
+                  --parallel=`/usr/bin/getconf _NPROCESSORS_ONLN` \
 %if %{with sphinx}
-             --sphinx-man --sphinx-html \
+                  --sphinx-man --sphinx-html \
 %else
-             --sphinx-build=%{_bindir}/false \
+                  --sphinx-build=%{_bindir}/false \
 %endif
-             --%{!?with_gui:no-}qt-gui \
+                  --%{!?with_gui:no-}qt-gui \
 ;
-%make_build VERBOSE=1
+popd
+%make_build -C %{_vpath_builddir} VERBOSE=1
 
 
 %install
 mkdir -p %{buildroot}%{_pkgdocdir}
-%make_install -C build CMAKE_DOC_DIR=%{buildroot}%{_pkgdocdir}
+%make_install -C %{_vpath_builddir} CMAKE_DOC_DIR=%{buildroot}%{_pkgdocdir}
 find %{buildroot}%{_datadir}/%{name}/Modules -type f | xargs chmod -x
 [ -n "$(find %{buildroot}%{_datadir}/%{name}/Modules -name \*.orig)" ] &&
   echo "Found .orig files in %{_datadir}/%{name}/Modules, rebase patches" &&
@@ -405,7 +410,7 @@ find %{buildroot}%{_bindir} -type f -or -type l -or -xtype l | \
 %if 0%{?rhel} && 0%{?rhel} <= 6
 mv -f Modules/FindLibArchive.cmake Modules/FindLibArchive.disabled
 %endif
-pushd build
+pushd %{_vpath_builddir}
 # CTestTestUpload require internet access
 # CPackComponentsForAll-RPM-IgnoreGroup failing wih rpm 4.15 - https://gitlab.kitware.com/cmake/cmake/issues/19983
 NO_TEST="CTestTestUpload|CPackComponentsForAll-RPM-IgnoreGroup"
@@ -483,6 +488,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 %changelog
 * Wed Jan 15 2020 Björn Esser <besser82@fedoraproject.org> - 3.16.2-1
 - Update to 3.16.2
+- Use %%_vpath_builddir for out-of-tree build
 
 * Tue Jan 14 2020 Miro Hrončok <mhroncok@redhat.com> - 3.16.1-2
 - FindPython: Add support for version 3.9
