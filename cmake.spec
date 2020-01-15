@@ -63,8 +63,8 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.1
-Release:        2%{?relsuf}%{?dist}
+Version:        %{major_version}.%{minor_version}.2
+Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -481,6 +481,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Wed Jan 15 2020 Björn Esser <besser82@fedoraproject.org> - 3.16.2-1
+- Update to 3.16.2
+
 * Tue Jan 14 2020 Miro Hrončok <mhroncok@redhat.com> - 3.16.1-2
 - FindPython: Add support for version 3.9
 
