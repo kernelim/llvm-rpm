@@ -496,6 +496,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 - Update to 3.16.2
 - Use %%_vpath_builddir for out-of-tree build
 - Use %%set_build_flags to export build flags if available
+- Use %%set_build_flags inside macros.cmake if available
 
 * Tue Jan 14 2020 Miro Hrončok <mhroncok@redhat.com> - 3.16.1-2
 - FindPython: Add support for version 3.9

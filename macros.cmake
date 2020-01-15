@@ -14,11 +14,15 @@
 # - Set default install prefixes and library install directories
 # - Turn on shared libraries by default
 %cmake \
+  %if 0%{?set_build_flags:1} \
+  %set_build_flags \
+  %else \
   CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS ; \
   CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; \
   FFLAGS="${FFLAGS:-%optflags%{?_fmoddir: -I%_fmoddir}}" ; export FFLAGS ; \
   FCFLAGS="${FCFLAGS:-%optflags%{?_fmoddir: -I%_fmoddir}}" ; export FCFLAGS ; \
   %{?__global_ldflags:LDFLAGS="${LDFLAGS:-%__global_ldflags}" ; export LDFLAGS ;} \
+  %endif \
   %__cmake \\\
         -DCMAKE_C_FLAGS_RELEASE:STRING="-DNDEBUG" \\\
         -DCMAKE_CXX_FLAGS_RELEASE:STRING="-DNDEBUG" \\\
