@@ -270,9 +270,15 @@ tail -n +2 %{SOURCE5} >> %{name}.req
 
 
 %build
-export CFLAGS="%{optflags}"
-export CXXFLAGS="%{optflags}"
-export LDFLAGS="%{?__global_ldflags}"
+%if 0%{?set_build_flags:1}
+%{set_build_flags}
+%else
+CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS
+FFLAGS="${FFLAGS:-%optflags%{?_fmoddir: -I%_fmoddir}}" ; export FFLAGS
+FCFLAGS="${FCFLAGS:-%optflags%{?_fmoddir: -I%_fmoddir}}" ; export FCFLAGS
+%{?__global_ldflags:LDFLAGS="${LDFLAGS:-%__global_ldflags}" ; export LDFLAGS ;}
+%endif
 SRCDIR="$(/usr/bin/pwd)"
 mkdir %{_vpath_builddir}
 pushd %{_vpath_builddir}
@@ -489,6 +495,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 * Wed Jan 15 2020 Björn Esser <besser82@fedoraproject.org> - 3.16.2-1
 - Update to 3.16.2
 - Use %%_vpath_builddir for out-of-tree build
+- Use %%set_build_flags to export build flags if available
 
 * Tue Jan 14 2020 Miro Hrončok <mhroncok@redhat.com> - 3.16.1-2
 - FindPython: Add support for version 3.9
