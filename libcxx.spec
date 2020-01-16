@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 #%%global rc_ver 4
-%global baserelease 1
+%global baserelease 2
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -13,7 +13,7 @@ Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
 Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
-BuildRequires:	clang llvm-devel cmake llvm-static
+BuildRequires:	gcc-c++ llvm-devel cmake llvm-static
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
 BuildRequires:	python3
@@ -50,32 +50,8 @@ Summary:	Static libraries for libcxx
 %build
 mkdir _build
 cd _build
-%ifarch s390 s390x
-%if 0%{?fedora} < 26
-# clang requires z10 at minimum
-# workaround until we change the defaults for Fedora
-%global optflags %(echo %{optflags} | sed 's/-march=z9-109 /-march=z10 /')
-%endif
-%endif
 
-# Filter out cflags not supported by clang.
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
-
-# Clang in older releases than f24 can't build this code without crashing.
-# So, we use gcc there. But the really old version in RHEL 6 works. Huh.
 %cmake .. \
-%if 0%{?rhel} == 6
-	-DCMAKE_C_COMPILER=/usr/bin/clang \
-	-DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-%else
-%if 0%{?fedora} >= 24
-	-DCMAKE_C_COMPILER=/usr/bin/clang \
-	-DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-%else
-	-DCMAKE_C_COMPILER=/usr/bin/gcc \
-	-DCMAKE_CXX_COMPILER=/usr/bin/g++ \
-%endif
-%endif
 	-DLLVM_CONFIG=%{_bindir}/llvm-config \
 %if %{bootstrap} < 1
 	-DLIBCXX_CXX_ABI=libcxxabi \
@@ -113,6 +89,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Thu Jan 16 2020 Tom Stellard <tstellar@redhat.com> - 9.0.0-2
+- Build with gcc on all arches
+
 * Mon Sep 23 2019 Tom Stellard <tstellar@redhat.com> - 9.0.0-1
 - 9.0.0 Release
 
