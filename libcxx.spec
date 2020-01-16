@@ -2,12 +2,12 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 #%%global rc_ver 4
-%global baserelease 2
+%global baserelease 1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	9.0.0
+Version:	9.0.1
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
@@ -89,6 +89,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Thu Jan 16 2020 Tom Stellard <tstellar@redhat.com> - 9.0.1-1
+- 9.0.1 Release
+
 * Thu Jan 16 2020 Tom Stellard <tstellar@redhat.com> - 9.0.0-2
 - Build with gcc on all arches
 
