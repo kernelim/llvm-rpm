@@ -98,9 +98,6 @@ Patch101:       %{name}-fedora-flag_release.patch
 # Add dl to CMAKE_DL_LIBS on MINGW
 # https://gitlab.kitware.com/cmake/cmake/issues/17600
 Patch102:       %{name}-mingw-dl.patch
-# FindPython: Add support for version 3.9
-# https://gitlab.kitware.com/cmake/cmake/merge_requests/4225
-Patch103:       %{name}-python39.patch
 
 
 # Patch for renaming on EPEL
