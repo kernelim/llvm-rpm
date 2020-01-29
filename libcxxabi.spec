@@ -1,5 +1,5 @@
 #%%global rc_ver 4
-%global baserelease 1
+%global baserelease 2
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -93,6 +93,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 9.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Thu Jan 16 2020 Tom Stellard <tstellar@redhat.com> - 9.0.1-1
 - 9.0.1 Release
 
