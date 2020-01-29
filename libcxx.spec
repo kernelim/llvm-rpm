@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 #%%global rc_ver 4
-%global baserelease 1
+%global baserelease 2
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -89,6 +89,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 9.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Thu Jan 16 2020 Tom Stellard <tstellar@redhat.com> - 9.0.1-1
 - 9.0.1 Release
 
