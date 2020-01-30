@@ -15,7 +15,7 @@
 
 Name: python-%{srcname}
 Version: 0.9.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 BuildArch: noarch
 
 License: NCSA
@@ -102,6 +102,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.9.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Fri Sep 20 2019 Tom Stellard <tstellar@redhat.com> - 0.9.0-3
 - Re-enable tests
 
