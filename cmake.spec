@@ -66,8 +66,8 @@
 %global orig_name cmake
 
 Name:           %{orig_name}%{?name_suffix}
-Version:        %{major_version}.%{minor_version}.3
-Release:        2%{?relsuf}%{?dist}
+Version:        %{major_version}.%{minor_version}.4
+Release:        1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -489,6 +489,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Wed Feb 05 2020 Björn Esser <besser82@fedoraproject.org> - 3.16.4-1
+- Update to 3.16.4
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.16.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
