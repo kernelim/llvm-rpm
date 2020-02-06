@@ -1,8 +1,8 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
-%global bootstrap 1
+%global bootstrap 0
 %global rc_ver 1
-%global baserelease 0.1
+%global baserelease 0.2
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -92,6 +92,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Thu Feb 6 2020 sguelton@redhat.com - 10.0.0-0.2.rc1
+- bootstrap off
+
 * Fri Jan 31 2020 sguelton@redhat.com - 10.0.0-0.1.rc1
 - 10.0.0 rc1
 
