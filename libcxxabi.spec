@@ -1,15 +1,18 @@
-#%%global rc_ver 4
-%global baserelease 2
+%global rc_ver 1
+%global baserelease 0.1
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
-Version:	9.0.1
+Version:	10.0.0
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
 Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz
+Source3:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz.sig
+Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+
 BuildRequires:	clang llvm-devel cmake llvm-static
 BuildRequires:	libcxx-devel >= %{version}
 %if 0%{?rhel}
@@ -93,6 +96,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Fri Jan 31 2020 sguelton@redhat.com - 10.0.0-0.1.rc1
+- 10.0.0 rc1
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 9.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
