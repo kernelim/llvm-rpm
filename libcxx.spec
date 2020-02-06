@@ -1,18 +1,21 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
-%global bootstrap 0
-#%%global rc_ver 4
-%global baserelease 2
+%global bootstrap 1
+%global rc_ver 1
+%global baserelease 0.1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	9.0.1
+Version:	10.0.0
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
 Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
+Source1:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz.sig
+Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
@@ -89,6 +92,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Fri Jan 31 2020 sguelton@redhat.com - 10.0.0-0.1.rc1
+- 10.0.0 rc1
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 9.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
