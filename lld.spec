@@ -1,14 +1,16 @@
-#%%global rc_ver 3
-%global baserelease 2
+%global rc_ver 1
+%global baserelease 0.1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
-%global maj_ver 9
+%global maj_ver 10
+%global min_ver 0
+%global patch_ver 0
 
 # Don't include unittests in automatic generation of provides or requires.
 %global __provides_exclude_from ^%{_libdir}/lld/.*$
 %global __requires_exclude ^libgtest.*$
 
 Name:		lld
-Version:	%{maj_ver}.0.1
+Version:	%{maj_ver}.%{min_ver}.%{patch_ver}
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	The LLVM Linker
 
@@ -18,7 +20,7 @@ Source0:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver
 Source1:	run-lit-tests
 Source2:	lit.lld-test.cfg.py
 Source3:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz.sig
-Source4:	https://releases.llvm.org/9.0.1/tstellar-gpg-key.asc
+Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 
@@ -183,6 +185,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Fri Jan 31 2020 sguelton@redhat.com - 10.0.0-0.1.rc1
+- 10.0.0 rc1
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 9.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
