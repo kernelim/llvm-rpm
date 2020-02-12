@@ -1,0 +1,42 @@
+diff --git a/llvm/utils/lit/lit/cl_arguments.py b/llvm/utils/lit/lit/cl_arguments.py
+index bac2be2..402fadb 100644
+--- a/llvm/utils/lit/lit/cl_arguments.py
++++ b/llvm/utils/lit/lit/cl_arguments.py
+@@ -15,7 +15,9 @@ def parse_args():
+     parser.add_argument("--version",
+             dest="show_version",
+             help="Show version and exit",
+-            action="store_true")
++            version="lit " + lit.__version__,
++            action="version")
++
+     parser.add_argument("-j", "--threads", "--workers",
+             dest="workers",
+             metavar="N",
+diff --git a/llvm/utils/lit/lit/main.py b/llvm/utils/lit/lit/main.py
+index c58b06c..0f0c76b 100755
+--- a/llvm/utils/lit/lit/main.py
++++ b/llvm/utils/lit/lit/main.py
+@@ -21,10 +21,6 @@ import lit.util
+ def main(builtin_params={}):
+     opts = lit.cl_arguments.parse_args()
+ 
+-    if opts.show_version:
+-        print("lit %s" % lit.__version__)
+-        return
+-
+     params = create_params(builtin_params, opts.user_params)
+     is_windows = platform.system() == 'Windows'
+ 
+diff --git a/llvm/utils/lit/tests/version.py b/llvm/utils/lit/tests/version.py
+new file mode 100644
+index 0000000..6d1d0fc
+--- /dev/null
++++ b/llvm/utils/lit/tests/version.py
+@@ -0,0 +1,5 @@
++# Basic sanity check that --version works.
++#
++# RUN: %{lit} --version | FileCheck %s
++#
++# CHECK: lit {{[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z0-9]*}}
+

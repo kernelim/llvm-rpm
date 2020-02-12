@@ -6,7 +6,7 @@
 %global with_python2 1
 %endif
 
-#%%global rc_ver 4
+%global rc_ver 1
 %bcond_without check
 
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
@@ -14,14 +14,16 @@
 %{!?py2_install: %global py2_install %{expand: CFLAGS="%{optflags}" %{__python2} setup.py %{?py_setup_args} install -O1 --skip-build --root %{buildroot}}}
 
 Name: python-%{srcname}
-Version: 0.9.0
-Release: 4%{?dist}
+Version: 0.10.0
+Release: 0.1%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://files.pythonhosted.org/packages/11/96/79e3eb8508926bc47f8be4a371a310453beaa1eb8e6c94140d45c8029adf/lit-0.9.0.tar.gz
+Source0: https://files.pythonhosted.org/packages/31/55/d69460169307b71f610977841ded96857147048c0764dd6369dde3ee11c1/lit-0.10.0rc1.tar.gz
+
+Patch0: version.patch
 
 # for file check
 %if %{with check}
@@ -59,7 +61,7 @@ lit is a tool used by the LLVM project for executing its test suites.
 %endif
 
 %prep
-%autosetup -n %{srcname}-%{version}%{?rc_ver:rc%{rc_ver}}
+%autosetup -n %{srcname}-%{version}%{?rc_ver:rc%{rc_ver}} -p4
 
 %build
 %py3_build
@@ -102,6 +104,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Tue Feb 11 2020 sguelton@redhat.com - 0.10.0-0.1.rc1
+- 0.10.0 rc1 Release
+
 * Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.9.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
