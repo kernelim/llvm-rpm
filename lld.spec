@@ -1,5 +1,5 @@
-%global rc_ver 1
-%global baserelease 0.1
+%global rc_ver 2
+%global baserelease 0.2
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -41,8 +41,8 @@ BuildRequires:	llvm-googletest = %{version}
 # For gpg source verification
 BuildRequires:	gnupg2
 
-Requires(post): %{_sbindir}/alternatives
-Requires(preun): %{_sbindir}/alternatives
+Requires(post): %{_sbindir}/update-alternatives
+Requires(preun): %{_sbindir}/update-alternatives
 
 Requires: lld-libs = %{version}-%{release}
 
@@ -185,6 +185,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Fri Feb 14 2020 sguelton@redhat.com - 10.0.0-0.2.rc2
+- 10.0.0 rc2
+
 * Fri Jan 31 2020 sguelton@redhat.com - 10.0.0-0.1.rc1
 - 10.0.0 rc1
 

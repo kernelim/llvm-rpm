@@ -27,6 +27,6 @@ ls -l /etc/alternatives/ld | grep ld.lld
 /usr/bin/ld --version | grep 'LLD'
 
 # Uninstall lld and make sure the /usr/bin/ld is reset to ld.bfd
-dnf -y remove lld
+dnf -y remove --noautoremove lld
 
 verify_ld_bfd
