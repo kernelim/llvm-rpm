@@ -67,7 +67,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.0
-Release:        1%{?relsuf}%{?dist}
+Release:        0.1%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -489,7 +489,7 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
-* Mon Feb 17 2020 Björn Esser <besser82@fedoraproject.org> - 3.17.0-1.rc1
+* Mon Feb 17 2020 Björn Esser <besser82@fedoraproject.org> - 3.17.0-0.1.rc1
 - Update to 3.17.0-rc1
 
 * Wed Feb 05 2020 Björn Esser <besser82@fedoraproject.org> - 3.16.4-1
