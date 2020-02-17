@@ -3,8 +3,8 @@
 %global maj_ver 10
 %global min_ver 0
 %global patch_ver 0
-%global rc_ver 2
-%global baserelease 0.1
+%global rc_ver 4
+%global baserelease 0.3
 
 %global clang_tools_binaries \
 	%{_bindir}/clang-apply-replacements \
@@ -209,7 +209,7 @@ Requires:	python3
 %description -n git-clang-format
 clang-format integration for git.
 
- 
+
 %package -n python3-clang
 Summary:       Python3 bindings for clang
 Requires:      %{name}-libs%{?_isa} = %{version}-%{release}
@@ -391,15 +391,10 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} ninja check-all -C _build || \
 %if !0%{?compat_build}
 %files
 %{clang_binaries}
-%{_bindir}/c-index-test
 %{_mandir}/man1/clang.1.gz
 %{_mandir}/man1/clang++.1.gz
 %{_mandir}/man1/clang-%{maj_ver}.1.gz
 %{_mandir}/man1/clang++-%{maj_ver}.1.gz
-%{_mandir}/man1/diagtool.1.gz
-%{_emacs_sitestartdir}/clang-format.el
-%{_datadir}/clang/clang-format.py*
-%{_datadir}/clang/clang-format-diff.py*
 %endif
 
 %files libs
@@ -437,10 +432,15 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} ninja check-all -C _build || \
 
 %files tools-extra
 %{clang_tools_binaries}
+%{_bindir}/c-index-test
 %{_bindir}/find-all-symbols
 %{_bindir}/modularize
+%{_mandir}/man1/diagtool.1.gz
+%{_emacs_sitestartdir}/clang-format.el
 %{_emacs_sitestartdir}/clang-rename.el
 %{_emacs_sitestartdir}/clang-include-fixer.el
+%{_datadir}/clang/clang-format.py*
+%{_datadir}/clang/clang-format-diff.py*
 %{_datadir}/clang/clang-include-fixer.py*
 %{_datadir}/clang/clang-tidy-diff.py*
 %{_datadir}/clang/run-clang-tidy.py*
@@ -456,6 +456,9 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} ninja check-all -C _build || \
 
 %endif
 %changelog
+* Sat Mar 14 2020 sguelton@redhat.com - 10.0.0-0.3.rc4
+- 10.0.0 rc4
+
 * Fri Feb 14 2020 sguelton@redhat.com - 10.0.0-0.1.rc2
 - 10.0.0 rc2
 
@@ -560,7 +563,7 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} ninja check-all -C _build || \
 - Ensure rpmlint passes on specfile
 
 * Fri Nov 30 2018 Tom Stellard <tstellar@redhat.com> - 7.0.0-7
-- Drop python2 dependency from clang-tools-extra 
+- Drop python2 dependency from clang-tools-extra
 
 * Wed Nov 21 2018 sguelton@redhat.com - 7.0.0-6
 - Prune unneeded reference to llvm-test-suite sub-package
