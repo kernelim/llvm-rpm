@@ -67,7 +67,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.0
-Release:        0.1%{?relsuf}%{?dist}
+Release:        0.2%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -489,6 +489,10 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Thu Feb 27 2020 Orion Poplawski <orion@nwra.com> - 3.17.0-0.2.rc1
+- Use python3 for rpm generators
+- Use lowercase names for cmake provides in generator (in addition to old names)
+
 * Mon Feb 17 2020 Björn Esser <besser82@fedoraproject.org> - 3.17.0-0.1.rc1
 - Update to 3.17.0-rc1
 
