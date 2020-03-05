@@ -1,5 +1,5 @@
-%global rc_ver 2
-%global baserelease 0.2
+%global rc_ver 3
+%global baserelease 0.3
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -185,6 +185,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Thu Mar 05 2020 sguelton@redhat.com - 10.0.0-0.3.rc3
+- 10.0.0 rc3
+
 * Fri Feb 14 2020 sguelton@redhat.com - 10.0.0-0.2.rc2
 - 10.0.0 rc2
 
