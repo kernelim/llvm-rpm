@@ -57,7 +57,7 @@
 %global major_version 3
 %global minor_version 17
 # Set to RC version if building RC, else %%{nil}
-%global rcsuf rc2
+%global rcsuf rc3
 %{?rcsuf:%global relsuf .%{rcsuf}}
 %{?rcsuf:%global versuf -%{rcsuf}}
 
@@ -67,7 +67,7 @@
 
 Name:           %{orig_name}%{?name_suffix}
 Version:        %{major_version}.%{minor_version}.0
-Release:        0.3%{?relsuf}%{?dist}
+Release:        0.4%{?relsuf}%{?dist}
 Summary:        Cross-platform make system
 
 # most sources are BSD
@@ -493,6 +493,9 @@ mv -f Modules/FindLibArchive.disabled Modules/FindLibArchive.cmake
 
 
 %changelog
+* Fri Mar 13 2020 Björn Esser <besser82@fedoraproject.org> - 3.17.0-0.4.rc3
+- Update to 3.17.0-rc3
+
 * Tue Mar 03 2020 Björn Esser <besser82@fedoraproject.org> - 3.17.0-0.3.rc2
 - Update to 3.17.0-rc2
 
