@@ -1,5 +1,5 @@
-%global rc_ver 4
-%global baserelease 0.3
+%global rc_ver 5
+%global baserelease 0.4
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -96,6 +96,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Sat Mar 21 2020 sguelton@redhat.com - 10.0.0-0.4.rc5
+- 10.0.0 rc5
+
 * Sun Mar 15 2020 sguelton@redhat.com - 10.0.0-0.3.rc4
 - 10.0.0 rc4
 
