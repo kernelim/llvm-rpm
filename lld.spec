@@ -1,5 +1,5 @@
-%global rc_ver 6
-%global baserelease 0.6
+#%%global rc_ver 6
+%global baserelease 1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -16,10 +16,15 @@ Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
-Source0:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz
+%if 0%{?rc_ver:1}
+Source0:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{lld_srcdir}.tar.xz
+Source3:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{lld_srcdir}.tar.xz.sig
+%else
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{lld_srcdir}.tar.xz
+Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{lld_srcdir}.tar.xz.sig
+%endif
 Source1:	run-lit-tests
 Source2:	lit.lld-test.cfg.py
-Source3:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{lld_srcdir}.tar.xz.sig
 Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
@@ -75,7 +80,7 @@ LLVM regression tests.
 
 %prep
 %{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE3}' --data='%{SOURCE0}'
-%autosetup -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src -p1
+%autosetup -n %{lld_srcdir} -p1
 
 %build
 
@@ -185,6 +190,9 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Mar 30 2020 sguelton@redhat.com - 10.0.0-1
+- 10.0.0 final
+
 * Wed Mar 25 2020 sguelton@redhat.com - 10.0.0-0.6.rc6
 - 10.0.0 rc6
 
