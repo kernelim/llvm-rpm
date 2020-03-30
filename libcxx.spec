@@ -1,8 +1,8 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-%global rc_ver 6
-%global baserelease 0.6
+#%%global rc_ver 6
+%global baserelease 1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -12,8 +12,13 @@ Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
-Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
-Source1:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz.sig
+%if 0%{?rc_ver:1}
+Source0:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxx_srcdir}.tar.xz
+Source1:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxx_srcdir}.tar.xz.sig
+%else
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxx_srcdir}.tar.xz
+Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxx_srcdir}.tar.xz.sig
+%endif
 Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static
@@ -92,6 +97,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Mar 30 2020 sguelton@redhat.com - 10.0.0-1
+- 10.0.0 final
+
 * Wed Mar 25 2020 sguelton@redhat.com - 10.0.0-0.6.rc6
 - 10.0.0 rc6
 
