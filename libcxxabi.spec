@@ -1,5 +1,5 @@
-%global rc_ver 6
-%global baserelease 0.5
+#%%global rc_ver 6
+%global baserelease 1
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -9,8 +9,13 @@ Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
-Source0:	http://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz
-Source3:	https://%{?rc_ver:pre}releases.llvm.org/%{version}/%{?rc_ver:rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz.sig
+%if 0%{?rc_ver:1}
+Source0:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxxabi_srcdir}.tar.xz
+Source3:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxxabi_srcdir}.tar.xz.sig
+%else
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxxabi_srcdir}.tar.xz
+Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxxabi_srcdir}.tar.xz.sig
+%endif
 Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
 BuildRequires:	clang llvm-devel cmake llvm-static
@@ -37,7 +42,7 @@ Summary:	Static libraries for libcxxabi
 %{summary}.
 
 %prep
-%setup -q -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%setup -q -n %{libcxxabi_srcdir}
 
 sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeLists.txt
 
@@ -96,6 +101,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Mar 31 2020 sguelton@redhat.com - 10.0.0-1
+- 10.0.0 final
+
 * Wed Mar 25 2020 sguelton@redhat.com - 10.0.0-0.5.rc6
 - 10.0.0 rc6
 
