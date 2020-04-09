@@ -6,7 +6,9 @@
 %global with_python2 1
 %endif
 
-%global rc_ver 1
+#%%global rc_ver 1
+%global baserelease 1
+
 %bcond_without check
 
 # FIXME: Work around for rhel not having py2_build/py2_install macro.
@@ -15,13 +17,13 @@
 
 Name: python-%{srcname}
 Version: 0.10.0
-Release: 0.1%{?dist}
+Release: %{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 BuildArch: noarch
 
 License: NCSA
 Summary: Tool for executing llvm test suites
 URL: https://pypi.python.org/pypi/lit
-Source0: https://files.pythonhosted.org/packages/31/55/d69460169307b71f610977841ded96857147048c0764dd6369dde3ee11c1/lit-0.10.0rc1.tar.gz
+Source0: https://files.pythonhosted.org/packages/e7/56/7967ff7ea510c12a4f3d5f6582a416ff74bd6b1194be265c979df6701c56/lit-0.10.0.tar.gz
 
 Patch0: version.patch
 
@@ -104,6 +106,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Thu Apr 9 2020 sguelton@redhat.com - 0.10.0-1
+- 0.10.0 final release
+
 * Tue Feb 11 2020 sguelton@redhat.com - 0.10.0-0.1.rc1
 - 0.10.0 rc1 Release
 
