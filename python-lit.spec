@@ -1,3 +1,4 @@
+%global _without_check 1
 %global srcname lit
 
 %if 0%{?fedora} || 0%{?rhel} > 7
@@ -7,7 +8,7 @@
 %endif
 
 #%%global rc_ver 1
-%global baserelease 1
+%global baserelease 2
 
 %bcond_without check
 
@@ -106,6 +107,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Mon May 25 2020 Miro Hrončok <mhroncok@redhat.com> - 0.10.0-2
+- Bootstrap for Python 3.9
+
 * Thu Apr 9 2020 sguelton@redhat.com - 0.10.0-1
 - 0.10.0 final release
 
