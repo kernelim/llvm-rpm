@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 1
+%global baserelease 2
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -127,7 +127,12 @@ done
 install -d %{buildroot}%{_datadir}/lld/src
 cp %{SOURCE2} %{buildroot}%{_datadir}/lld/
 
-tar -czf %{buildroot}%{_datadir}/lld/src/test.tar.gz test/
+# The various tar options are there to make sur the archive is the same on 32 and 64 bit arch, i.e.
+# the archive creation is reproducible. Move arch-specific content out of the tarball
+mv %{lit_cfg} %{buildroot}%{_datadir}/lld/src/%{_arch}.site.cfg.py
+mv %{lit_unit_cfg} %{buildroot}%{_datadir}/lld/src/%{_arch}.Unit.site.cfg.py
+tar --sort=name --mtime='UTC 2020-01-01' -c test/ | gzip -n > %{buildroot}%{_datadir}/lld/src/test.tar.gz
+
 install -d %{buildroot}%{_libexecdir}/tests/lld
 cp %{SOURCE1} %{buildroot}%{_libexecdir}/tests/lld
 
@@ -187,9 +192,14 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_libexecdir}/tests/lld/
 %{_libdir}/lld/
 %{_datadir}/lld/src/test.tar.gz
+%{_datadir}/lld/src/%{_arch}.site.cfg.py
+%{_datadir}/lld/src/%{_arch}.Unit.site.cfg.py
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Fri Jul 17 2020 sguelton@redhat.com - 10.0.0-2
+- Make test archive arch-independent
+
 * Mon Mar 30 2020 sguelton@redhat.com - 10.0.0-1
 - 10.0.0 final
 

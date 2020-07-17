@@ -56,8 +56,8 @@ esac
 cd $(mktemp -d)
 ln -s /usr/include include
 tar -xzf /usr/share/lld/src/test.tar.gz
-ln -s $ARCH.site.cfg.py test/lit.site.cfg.py
-ln -s $ARCH.site.cfg.py test/Unit/lit.site.cfg.py
+ln -s /usr/share/lld/src/$ARCH.site.cfg.py test/lit.site.cfg.py
+ln -s /usr/share/lld/src/$ARCH.Unit.site.cfg.py test/Unit/lit.site.cfg.py
 
 LD_LIBRARY_PATH=$LIB_DIR/lld:$LD_LIBRARY_PATH \
 lit -v -s $threads_arg test \
