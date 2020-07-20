@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 #%%global rc_ver 6
-%global baserelease 1
+%global baserelease 2
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -17,15 +17,19 @@ Source0:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxx_srcdir}.ta
 Source1:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxx_srcdir}.tar.xz.sig
 %else
 Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxx_srcdir}.tar.xz
-Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxx_srcdir}.tar.xz.sig
+Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxx_srcdir}.tar.xz.sig
 %endif
 Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
-BuildRequires:	gcc-c++ llvm-devel cmake llvm-static
+BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
 BuildRequires:	python3
 %endif
+
+# For origin certification
+BuildRequires:	gnupg2
+
 # PPC64 (on EL7) doesn't like this code.
 # /builddir/build/BUILD/libcxx-3.8.0.src/include/thread:431:73: error: '(9.223372036854775807e+18 / 1.0e+9)' is not a constant expression
 # _LIBCPP_CONSTEXPR duration<long double> _Max = nanoseconds::max();
@@ -53,13 +57,12 @@ Summary:	Static libraries for libcxx
 %{summary}.
 
 %prep
-%setup -q -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
+%autosetup -n %{libcxx_srcdir}
 
 %build
-mkdir _build
-cd _build
 
-%cmake .. \
+%cmake  -GNinja \
 	-DLLVM_CONFIG=%{_bindir}/llvm-config \
 %if %{bootstrap} < 1
 	-DLIBCXX_CXX_ABI=libcxxabi \
@@ -74,11 +77,11 @@ cd _build
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 
-make %{?_smp_mflags}
+%cmake_build
 
 %install
-cd _build
-make install DESTDIR=%{buildroot}
+
+%cmake_install
 
 %ldconfig_scriptlets
 
@@ -97,6 +100,10 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Jul 20 2020 sguelton@redhat.com - 10.0.0-2
+- Use modern cmake macros
+- Finalize source verification
+
 * Mon Mar 30 2020 sguelton@redhat.com - 10.0.0-1
 - 10.0.0 final
 
