@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 1
+%global baserelease 2
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -11,19 +11,22 @@ License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
 %if 0%{?rc_ver:1}
 Source0:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxxabi_srcdir}.tar.xz
-Source3:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxxabi_srcdir}.tar.xz.sig
+Source1:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{libcxxabi_srcdir}.tar.xz.sig
 %else
 Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxxabi_srcdir}.tar.xz
-Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxxabi_srcdir}.tar.xz.sig
+Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxxabi_srcdir}.tar.xz.sig
 %endif
-Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
-BuildRequires:	clang llvm-devel cmake llvm-static
+BuildRequires:	clang llvm-devel cmake llvm-static ninja-build
 BuildRequires:	libcxx-devel >= %{version}
 %if 0%{?rhel}
 # libcxx-devel has this, so we need to as well.
 ExcludeArch:	ppc64 ppc64le
 %endif
+
+# For origin certification
+BuildRequires:	gnupg2
 
 %description
 libcxxabi provides low level support for a standard C++ library.
@@ -42,7 +45,8 @@ Summary:	Static libraries for libcxxabi
 %{summary}.
 
 %prep
-%setup -q -n %{libcxxabi_srcdir}
+%{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
+%autosetup -n %{libcxxabi_srcdir}
 
 sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeLists.txt
 
@@ -52,8 +56,6 @@ sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeList
 sed -i 's|#define _LIBCXXABI_ARM_EHABI||g' include/__cxxabi_config.h
 %endif
 
-mkdir _build
-cd _build
 %ifarch s390 s390x
 %if 0%{?fedora} < 26
 # clang requires z10 at minimum
@@ -65,7 +67,7 @@ cd _build
 # Filter out cflags not supported by clang.
 %global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
 
-%cmake .. \
+%cmake  -GNinja \
 	-DCMAKE_C_COMPILER=/usr/bin/clang \
 	-DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
 	-DLLVM_CONFIG=%{_bindir}/llvm-config \
@@ -77,13 +79,12 @@ cd _build
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 
-make %{?_smp_mflags}
+%cmake_build
 
 %install
-cd _build
-make install DESTDIR=%{buildroot}
+%cmake_install
+
 mkdir -p %{buildroot}%{_includedir}
-cd ..
 cp -a include/* %{buildroot}%{_includedir}
 
 %ldconfig_scriptlets
@@ -101,6 +102,10 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Mon Jul 20 2020 sguelton@redhat.com - 10.0.0-2
+- Use modern cmake macro
+- Finalize source verification
+
 * Tue Mar 31 2020 sguelton@redhat.com - 10.0.0-1
 - 10.0.0 final
 
