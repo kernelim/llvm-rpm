@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 2
+%global baserelease 3
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -32,11 +32,11 @@ Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
 BuildRequires:	cmake
+BuildRequires:	ninja-build
 BuildRequires:	llvm-devel = %{version}
 BuildRequires:	llvm-test = %{version}
 BuildRequires:	ncurses-devel
 BuildRequires:	zlib-devel
-BuildRequires:	chrpath
 
 # For make check:
 BuildRequires:	python3-rpm-macros
@@ -84,12 +84,11 @@ LLVM regression tests.
 
 %build
 
-mkdir %{_target_platform}
-cd %{_target_platform}
-
-%cmake .. \
+%cmake \
+	-GNinja \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_DYLIB_COMPONENTS="all" \
+	-DCMAKE_SKIP_RPATH:BOOL=ON \
 	-DPYTHON_EXECUTABLE=%{__python3} \
 	-DLLVM_INCLUDE_TESTS=ON \
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
@@ -102,10 +101,10 @@ cd %{_target_platform}
 	-DLLVM_LIBDIR_SUFFIX=
 %endif
 
-%make_build
+%cmake_build
 
 # Build the unittests so we can install them.
-%make_build lld-test-depends
+%cmake_build --target lld-test-depends
 
 %install
 
@@ -145,13 +144,7 @@ rm -rf `find %{buildroot}%{_libdir}/lld/ -iname '*make*'`
 cp %{_target_platform}/%{_lib}/libgtest*so* %{buildroot}%{_libdir}/lld/
 
 # Install libraries and binaries
-cd %{_target_platform}
-%make_install
-
-# Remove rpath
-chrpath --delete %{buildroot}%{_bindir}/*
-chrpath --delete %{buildroot}%{_libdir}/*.so*
-chrpath --delete `find %{buildroot}%{_libdir}/lld/ -type f`
+%cmake_install
 
 # Required when using update-alternatives:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Alternatives/
@@ -169,7 +162,7 @@ fi
 
 # armv7lhl tests disabled because of arm issue, see https://koji.fedoraproject.org/koji/taskinfo?taskID=33660162
 %ifnarch %{arm}
-make -C %{_target_platform} %{?_smp_mflags} check-lld
+%cmake_build --target check-lld
 %endif
 
 %ldconfig_scriptlets libs
@@ -197,6 +190,11 @@ make -C %{_target_platform} %{?_smp_mflags} check-lld
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Jul 20 2020 sguelton@redhat.com - 10.0.0-3
+- Use generic cmake macros
+- Use Ninja as build system
+- Remove chrpath dependency
+
 * Fri Jul 17 2020 sguelton@redhat.com - 10.0.0-2
 - Make test archive arch-independent
 
