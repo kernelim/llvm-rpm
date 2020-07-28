@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 2
+%global baserelease 3
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -102,6 +102,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Mon Jul 20 2020 sguelton@redhat.com - 10.0.0-2
 - Use modern cmake macro
 - Finalize source verification
