@@ -7,7 +7,7 @@
 %endif
 
 #%%global rc_ver 1
-%global baserelease 3
+%global baserelease 4
 
 %bcond_without check
 
@@ -106,6 +106,9 @@ sed -i -e '1{\@^#!/usr/bin/env python@d}' %{buildroot}%{python2_sitelib}/%{srcna
 %endif
 
 %changelog
+* Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 0.10.0-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Mon May 25 2020 Miro Hrončok <mhroncok@redhat.com> - 0.10.0-3
 - Rebuilt for Python 3.9
 
