@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 6
+%global baserelease 7
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -171,6 +171,7 @@ fi
 %ldconfig_scriptlets libs
 
 %files
+%license LICENSE.TXT
 %ghost %{_bindir}/ld
 %{_bindir}/lld*
 %{_bindir}/ld.lld
@@ -193,6 +194,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Aug 10 2020 sguelton@redhat.com - 10.0.0-7
+- use %%license macro
+
 * Mon Aug 10 2020 Tom Stellard <tstellar@redhat.com> - 10.0.0-6
 - Disable LTO
 
