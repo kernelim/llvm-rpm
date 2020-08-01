@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 4
+%global baserelease 5
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -190,6 +190,10 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.0-5
+- Second attempt - Rebuilt for
+  https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
