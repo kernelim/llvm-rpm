@@ -1,5 +1,6 @@
+%global toolchain clang
 #%%global rc_ver 6
-%global baserelease 4
+%global baserelease 5
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -102,6 +103,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Thu Aug 06 2020 Jeff Law <law@redhat.com> - 10.0.0-5
+- Set toolchain to clang
+
 * Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.0-4
 - Second attempt - Rebuilt for
   https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
