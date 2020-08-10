@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 5
+%global baserelease 6
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 10
 %global min_ver 0
@@ -83,6 +83,9 @@ LLVM regression tests.
 %autosetup -n %{lld_srcdir} -p1
 
 %build
+
+# Disable lto since it causes the COFF/libpath.test lit test to crash.
+%global _lto_cflags %{nil}
 
 %cmake \
 	-GNinja \
@@ -190,6 +193,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Aug 10 2020 Tom Stellard <tstellar@redhat.com> - 10.0.0-6
+- Disable LTO
+
 * Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.0-5
 - Second attempt - Rebuilt for
   https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
