@@ -1,7 +1,7 @@
-#%%global rc_ver 6
-%global baserelease 7
+%global rc_ver 1
+%global baserelease 0.1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
-%global maj_ver 10
+%global maj_ver 11
 %global min_ver 0
 %global patch_ver 0
 
@@ -28,6 +28,7 @@ Source2:	lit.lld-test.cfg.py
 Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
+Patch1:		0001-Revert-lld-Initial-commit-for-new-Mach-O-backend.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -56,7 +57,10 @@ The LLVM project linker.
 
 %package devel
 Summary:	Libraries and header files for LLD
-Requires: lld-libs = %{version}-%{release}
+Requires: lld-libs%{?_isa} = %{version}-%{release}
+# lld tools are referenced in the cmake files, so we need to add lld as a
+# dependency.
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains library and header files needed to develop new native
@@ -80,7 +84,14 @@ LLVM regression tests.
 
 %prep
 %{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE3}' --data='%{SOURCE0}'
-%autosetup -n %{lld_srcdir} -p1
+%setup -q -n %{lld_srcdir}
+
+%patch0 -p1 -b .gtest-fix
+# Remove the MachO backend since it doesn't seem to work on big-endian hosts.
+%ifarch s390x
+%patch1 -p2 -b .remove-MachO
+%endif
+
 
 %build
 
@@ -181,6 +192,7 @@ fi
 %files devel
 %{_includedir}/lld
 %{_libdir}/liblld*.so
+%{_libdir}/cmake/lld/
 
 %files libs
 %{_libdir}/liblld*.so.*
@@ -194,6 +206,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Aug 10 2020 Tom Stellard <tstellar@redhat.com> - 11.0.0-0.1.rc1
+- 11.0.0-rc1 Release
+
 * Mon Aug 10 2020 sguelton@redhat.com - 10.0.0-7
 - use %%license macro
 
