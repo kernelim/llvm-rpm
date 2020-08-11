@@ -1,13 +1,13 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-#%%global rc_ver 6
-%global baserelease 3
+%global rc_ver 1
+%global baserelease 0.1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	10.0.0
+Version:	11.0.0
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
@@ -21,11 +21,17 @@ Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 %endif
 Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
+Patch0:		0001-libcxx-Remove-monorepo-requirement.patch
+
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
+# We need python3-devel for pathfix.py.
+BuildRequires:  python3-devel
+
 %if %{bootstrap} < 1
 BuildRequires:	libcxxabi-devel
 BuildRequires:	python3
 %endif
+
 
 # For origin certification
 BuildRequires:	gnupg2
@@ -58,12 +64,15 @@ Summary:	Static libraries for libcxx
 
 %prep
 %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
-%autosetup -n %{libcxx_srcdir}
+%autosetup -n %{libcxx_srcdir} -p2
+
+pathfix.py -i %{__python3} -pn \
+	utils/*.py
 
 %build
 
 %cmake  -GNinja \
-	-DLLVM_CONFIG=%{_bindir}/llvm-config \
+	-DLIBCXX_STANDALONE_BUILD=ON \
 %if %{bootstrap} < 1
 	-DLIBCXX_CXX_ABI=libcxxabi \
 	-DLIBCXX_CXX_ABI_INCLUDE_PATHS=%{_includedir} \
@@ -100,6 +109,9 @@ Summary:	Static libraries for libcxx
 
 
 %changelog
+* Tue Aug 11 2020 Tom Stellard <tstellar@redhat.com> - 11.0.0-0.1.rc1
+- 11.0.0-rc1 Release
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 10.0.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
