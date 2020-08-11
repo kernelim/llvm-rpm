@@ -1,11 +1,11 @@
 %global toolchain clang
-#%%global rc_ver 6
-%global baserelease 5
+%global rc_ver 1
+%global baserelease 0.1
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
-Version:	10.0.0
+Version:	11.0.0
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
@@ -18,6 +18,8 @@ Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{libcxxabi_srcdir}.tar.xz.sig
 %endif
 Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+
+Patch0:		0001-libcxxabi-Remove-monorepo-requirement.patch
 
 BuildRequires:	clang llvm-devel cmake llvm-static ninja-build
 BuildRequires:	libcxx-devel >= %{version}
@@ -47,12 +49,15 @@ Summary:	Static libraries for libcxxabi
 
 %prep
 %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
-%autosetup -n %{libcxxabi_srcdir}
+%autosetup -n %{libcxxabi_srcdir} -p2
 
 sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeLists.txt
 
 %build
 %ifarch armv7hl
+# Disable LTO on ARM. bfd crashes during some of the CMake compiler checks with:
+# /usr/bin/ld: BFD version 2.35-10.fc33 internal error, aborting at elfcode.h:224 in bfd_elf32_swap_symbol_out
+%global _lto_cflags %{nil}
 # disable ARM exception handling
 sed -i 's|#define _LIBCXXABI_ARM_EHABI||g' include/__cxxabi_config.h
 %endif
@@ -64,9 +69,6 @@ sed -i 's|#define _LIBCXXABI_ARM_EHABI||g' include/__cxxabi_config.h
 %global optflags %(echo %{optflags} | sed 's/-march=z9-109 /-march=z10 /')
 %endif
 %endif
-
-# Filter out cflags not supported by clang.
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
 
 %cmake  -GNinja \
 	-DCMAKE_C_COMPILER=/usr/bin/clang \
@@ -103,6 +105,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Aug 11 2020 Tom Stellard <tstellar@redhat.com> - 11.0.0-0.1.rc1
+- 11.0.0-rc1 Release
+
 * Thu Aug 06 2020 Jeff Law <law@redhat.com> - 10.0.0-5
 - Set toolchain to clang
 
