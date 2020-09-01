@@ -1,4 +1,4 @@
-%global rc_ver 1
+%global rc_ver 2
 %global baserelease 0.1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 11
@@ -16,16 +16,11 @@ Summary:	The LLVM Linker
 
 License:	NCSA
 URL:		http://llvm.org
-%if 0%{?rc_ver:1}
-Source0:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{lld_srcdir}.tar.xz
-Source3:	https://prereleases.llvm.org/%{version}/rc%{rc_ver}/%{lld_srcdir}.tar.xz.sig
-%else
-Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{lld_srcdir}.tar.xz
-Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}/%{lld_srcdir}.tar.xz.sig
-%endif
-Source1:	run-lit-tests
-Source2:	lit.lld-test.cfg.py
-Source4:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{lld_srcdir}.tar.xz
+Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{lld_srcdir}.tar.xz.sig
+Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+Source3:	run-lit-tests
+Source4:	lit.lld-test.cfg.py
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 Patch1:		0001-Revert-lld-Initial-commit-for-new-Mach-O-backend.patch
@@ -83,7 +78,7 @@ Requires:	lld-libs = %{version}-%{release}
 LLVM regression tests.
 
 %prep
-%{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE3}' --data='%{SOURCE0}'
+%{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
 %setup -q -n %{lld_srcdir}
 
 %patch0 -p1 -b .gtest-fix
@@ -138,7 +133,7 @@ done
 
 # Install test files
 install -d %{buildroot}%{_datadir}/lld/src
-cp %{SOURCE2} %{buildroot}%{_datadir}/lld/
+cp %{SOURCE4} %{buildroot}%{_datadir}/lld/
 
 # The various tar options are there to make sur the archive is the same on 32 and 64 bit arch, i.e.
 # the archive creation is reproducible. Move arch-specific content out of the tarball
@@ -147,7 +142,7 @@ mv %{lit_unit_cfg} %{buildroot}%{_datadir}/lld/src/%{_arch}.Unit.site.cfg.py
 tar --sort=name --mtime='UTC 2020-01-01' -c test/ | gzip -n > %{buildroot}%{_datadir}/lld/src/test.tar.gz
 
 install -d %{buildroot}%{_libexecdir}/tests/lld
-cp %{SOURCE1} %{buildroot}%{_libexecdir}/tests/lld
+cp %{SOURCE3} %{buildroot}%{_libexecdir}/tests/lld
 
 # Install unit test binaries
 install -d %{buildroot}%{_libdir}/lld/
@@ -206,6 +201,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Tue Sep 01 2020 sguelton@redhat.com - 11.0.0-0.1.rc2
+- 11.0.0-rc2 Release
+
 * Mon Aug 10 2020 Tom Stellard <tstellar@redhat.com> - 11.0.0-0.1.rc1
 - 11.0.0-rc1 Release
 
