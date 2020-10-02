@@ -6,13 +6,14 @@
     required_packages:
       - lld
       - clang
-      - gcc
+#     - gcc
       - lld-test
     tests:
       - basic:
           dir: ./
           run: echo "int main(){ return 0; }" | clang -x c -fuse-ld=lld -
-      - gcc-compat-basic:
-          dir: ./
-          run: echo "int main(){ return 0; }" | gcc -x c -fuse-ld=lld -
+# disabled to free space for lit-tests, no more gcc dep
+#     - gcc-compat-basic:
+#         dir: ./
+#         run: echo "int main(){ return 0; }" | gcc -x c -fuse-ld=lld -
       - lit-tests
