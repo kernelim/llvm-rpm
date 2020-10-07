@@ -1,5 +1,5 @@
 %global rc_ver 5
-%global baserelease 0.3
+%global baserelease 0.4
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 11
 %global min_ver 0
@@ -201,6 +201,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Wed Oct 07 2020 sguelton@redhat.com - 11.0.0-0.4.rc5
+- Update CI tests
+
 * Fri Oct 02 2020 sguelton@redhat.com - 11.0.0-0.3.rc5
 - 11.0.0-rc5 Release
 
