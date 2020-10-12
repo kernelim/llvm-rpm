@@ -1,5 +1,5 @@
-%global rc_ver 6
-%global baserelease 0.5
+#%%global rc_ver 6
+%global baserelease 0.6
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 11
 %global min_ver 0
@@ -201,6 +201,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Oct 12 2020 sguelton@redhat.com - 11.0.0-0.6
+- llvm 11.0.0 - final release
+
 * Thu Oct 08 2020 sguelton@redhat.com - 11.0.0-0.5.rc6
 - 11.0.0-rc6
 
