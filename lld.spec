@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 0.6
+%global baserelease 1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 11
 %global min_ver 0
@@ -201,6 +201,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Thu Oct 15 2020 sguelton@redhat.com - 11.0.0-1
+- Fix NVR
+
 * Mon Oct 12 2020 sguelton@redhat.com - 11.0.0-0.6
 - llvm 11.0.0 - final release
 
