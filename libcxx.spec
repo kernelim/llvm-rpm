@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 #%%global rc_ver 6
-%global baserelease 0.5
+%global baserelease 1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -104,6 +104,9 @@ pathfix.py -i %{__python3} -pn \
 
 
 %changelog
+* Thu Oct 15 2020 sguelton@redhat.com - 11.0.0-1
+- Fix NVR
+
 * Mon Oct 12 2020 sguelton@redhat.com - 11.0.0-0.5
 - llvm 11.0.0 - final release
 
