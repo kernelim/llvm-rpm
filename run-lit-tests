@@ -53,7 +53,7 @@ case $ARCH in
         ;;
 esac
 
-cd $(mktemp -d)
+cd $(mktemp -d -p /var/tmp)
 ln -s /usr/include include
 tar -xzf /usr/share/lld/src/test.tar.gz
 ln -s /usr/share/lld/src/$ARCH.site.cfg.py test/lit.site.cfg.py

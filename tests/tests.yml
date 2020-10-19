@@ -15,5 +15,4 @@
       - gcc-compat-basic:
           dir: ./
           run: echo "int main(){ return 0; }" | gcc -x c -fuse-ld=lld -
-# Causes filesystem issues on Fedora CI
-#      - lit-tests
+      - lit-tests
