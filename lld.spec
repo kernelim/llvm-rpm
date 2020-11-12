@@ -1,5 +1,5 @@
 #%%global rc_ver 6
-%global baserelease 2
+%global baserelease 3
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 11
 %global min_ver 0
@@ -21,6 +21,8 @@ Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 Source3:	run-lit-tests
 Source4:	lit.lld-test.cfg.py
+
+ExcludeArch:	s390x
 
 Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
 Patch1:		0001-Revert-lld-Initial-commit-for-new-Mach-O-backend.patch
@@ -201,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Thu Nov 12 2020 sguelton@redhat.com - 11.0.0-3
+- Exclude s390x, unsupported upstream
+
 * Mon Oct 19 2020 sguelton@redhat.com - 11.0.0-2
 - Rebuilt with all gating tests on
 
