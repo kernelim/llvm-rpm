@@ -1,18 +1,18 @@
 %global toolchain clang
-#%%global rc_ver 6
+%global rc_ver 1
 %global baserelease 1
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
-Version:	11.0.0
+Version:	11.0.1
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
 Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz
 Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz.sig
-Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+Source2:	tstellar-gpg-key.asc
 
 Patch0:		0001-libcxxabi-Remove-monorepo-requirement.patch
 
@@ -100,6 +100,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Dec 01 2020 sguelton@redhat.com - 11.0.1-1.rc1
+- llvm 11.0.1-rc1
+
 * Thu Oct 15 2020 sguelton@redhat.com - 11.0.0-1
 - Fix NVR
 
