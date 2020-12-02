@@ -1,9 +1,9 @@
-#%%global rc_ver 6
-%global baserelease 3
+%global rc_ver 1
+%global baserelease 1
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 11
 %global min_ver 0
-%global patch_ver 0
+%global patch_ver 1
 
 # Don't include unittests in automatic generation of provides or requires.
 %global __provides_exclude_from ^%{_libdir}/lld/.*$
@@ -18,7 +18,7 @@ License:	NCSA
 URL:		http://llvm.org
 Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{lld_srcdir}.tar.xz
 Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{lld_srcdir}.tar.xz.sig
-Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+Source2:	tstellar-gpg-key.asc
 Source3:	run-lit-tests
 Source4:	lit.lld-test.cfg.py
 
@@ -203,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Tue Dec 01 2020 sguelton@redhat.com - 11.0.1-1.rc1
+- llvm 11.0.1-rc1
+
 * Thu Nov 12 2020 sguelton@redhat.com - 11.0.0-3
 - Exclude s390x, unsupported upstream
 
