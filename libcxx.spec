@@ -1,20 +1,20 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-#%%global rc_ver 6
+%global rc_ver 1
 %global baserelease 1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	11.0.0
+Version:	11.0.1
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
 Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
 Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz.sig
-Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
+Source2:	tstellar-gpg-key.asc
 
 Patch0:		0001-libcxx-Remove-monorepo-requirement.patch
 
@@ -104,6 +104,9 @@ pathfix.py -i %{__python3} -pn \
 
 
 %changelog
+* Tue Dec 01 2020 sguelton@redhat.com - 11.0.1-1.rc1
+- llvm 11.0.1-rc1
+
 * Thu Oct 15 2020 sguelton@redhat.com - 11.0.0-1
 - Fix NVR
 
