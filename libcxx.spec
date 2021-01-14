@@ -1,14 +1,14 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-#%%global rc_ver 2
-%global baserelease 3
+%global rc_ver 1
+%global baserelease 1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	11.0.1
-Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Version:	11.1.0
+Release:	%{?rc_ver:0.}%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -104,6 +104,9 @@ pathfix.py -i %{__python3} -pn \
 
 
 %changelog
+* Thu Jan 14 2021 Serge Guelton - 11.1.0-0.1.rc1
+- 11.1.0-rc1 release
+
 * Wed Jan 06 2021 Serge Guelton - 11.0.1-3
 - LLVM 11.0.1 final
 
