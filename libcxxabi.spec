@@ -1,6 +1,6 @@
 %global toolchain clang
-%global rc_ver 1
-%global baserelease 1
+%global rc_ver 2
+%global baserelease 2
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -100,6 +100,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Fri Jan 22 2021 Serge Guelton - 11.1.0-0.2.rc2
+- llvm 11.1.0-rc2 release
+
 * Thu Jan 14 2021 Serge Guelton - 11.1.0-0.1.rc1
 - 11.1.0-rc1 release
 
