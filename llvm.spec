@@ -38,6 +38,8 @@
 
 %global build_install_prefix %{buildroot}%{install_prefix}
 
+%define  debug_package %{nil}
+
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}
 Release:	%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
@@ -72,7 +74,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	libffi-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	python3-sphinx
-BuildRequires:	python3-recommonmark
+# BuildRequires:	python3-recommonmark
 BuildRequires:	multilib-rpm-config
 %if %{with gold}
 BuildRequires:	binutils-devel
@@ -85,6 +87,10 @@ BuildRequires:	valgrind-devel
 BuildRequires:	libedit-devel
 # We need python3-devel for pathfix.py.
 BuildRequires:	python3-devel
+BuildRequires:  devtoolset-7-gcc
+BuildRequires:  devtoolset-7-make
+BuildRequires:  devtoolset-7-toolchain
+BuildRequires:  devtoolset-7-gdb
 
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -112,14 +118,6 @@ Provides:	llvm-devel(major) = %{maj_ver}
 %description devel
 This package contains library and header files needed to develop new native
 programs that use the LLVM infrastructure.
-
-%package doc
-Summary:	Documentation for LLVM
-BuildArch:	noarch
-Requires:	%{name} = %{version}-%{release}
-
-%description doc
-Documentation for the LLVM compiler infrastructure.
 
 %package libs
 Summary:	LLVM shared libraries
@@ -170,6 +168,8 @@ pathfix.py -i %{__python3} -pn \
 	tools/opt-viewer/*.py
 
 %build
+
+source /opt/rh//devtoolset-7/enable
 mkdir -p _build
 cd _build
 
@@ -228,7 +228,7 @@ cd _build
 	\
 	-DLLVM_INCLUDE_DOCS:BOOL=ON \
 	-DLLVM_BUILD_DOCS:BOOL=ON \
-	-DLLVM_ENABLE_SPHINX:BOOL=ON \
+	-DLLVM_ENABLE_SPHINX:BOOL=OFF \
 	-DLLVM_ENABLE_DOXYGEN:BOOL=OFF \
 	\
 %if %{without compat_build}
@@ -241,9 +241,7 @@ cd _build
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
 	\
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
-	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
-	-DLLVM_INSTALL_SPHINX_HTML_DIR=%{_pkgdocdir}/html \
-	-DSPHINX_EXECUTABLE=%{_bindir}/sphinx-build-3
+	-DCMAKE_INSTALL_PREFIX=%{install_prefix}
 
 # Build libLLVM.so first.  This ensures that when libLLVM.so is linking, there
 # are no other compile jobs running.  This will help reduce OOM errors on the
@@ -252,6 +250,8 @@ cd _build
 %ninja_build
 
 %install
+
+source /opt/rh//devtoolset-7/enable
 %ninja_install -C _build
 
 
@@ -260,8 +260,9 @@ mkdir -p %{buildroot}/%{_bindir}
 mv %{buildroot}/%{_bindir}/llvm-config %{buildroot}/%{_bindir}/llvm-config-%{__isa_bits}
 
 # Fix some man pages
+mkdir -p %{buildroot}%{_mandir}/man1
 ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config-%{__isa_bits}.1
-mv %{buildroot}%{_mandir}/man1/tblgen.1 %{buildroot}%{_mandir}/man1/llvm-tblgen.1
+# mv %{buildroot}%{_mandir}/man1/tblgen.1 %{buildroot}%{_mandir}/man1/llvm-tblgen.1
 
 # Install binaries needed for lit tests
 %global test_binaries llvm-isel-fuzzer llvm-opt-fuzzer
@@ -380,13 +381,8 @@ rm -Rf %{build_install_prefix}/share/opt-viewer
 
 
 %check
-# TODO: Fix test failures on arm
-LD_LIBRARY_PATH=$PWD/_build/%{_lib} ninja check-all -C _build || \
-%ifarch %{arm}
-  :
-%else
-  false
-%endif
+
+source /opt/rh//devtoolset-7/enable
 
 %ldconfig_scriptlets libs
 
@@ -464,9 +460,6 @@ fi
 %{pkg_libdir}/cmake/llvm
 %endif
 
-%files doc
-%doc %{_pkgdocdir}/html
-
 %files static
 %if %{without compat_build}
 %{_libdir}/*.a
@@ -483,9 +476,9 @@ fi
 %{llvm_libdir}/unittests/
 %{_datadir}/llvm/src/unittests
 %{_datadir}/llvm/src/test.tar.gz
-%{_datadir}/llvm/src/%{_arch}.site.cfg.py
-%{_datadir}/llvm/src/%{_arch}.Unit.site.cfg.py
-%{_datadir}/llvm/lit.fedora.cfg.py
+%{_datadir}/llvm/src/%{_arch}.site.cfg.py*
+%{_datadir}/llvm/src/%{_arch}.Unit.site.cfg.py*
+%{_datadir}/llvm/lit.fedora.cfg.py*
 %{_bindir}/not
 %{_bindir}/count
 %{_bindir}/yaml-bench
