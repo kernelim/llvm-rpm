@@ -1,5 +1,10 @@
 #%%global rc_ver 5
 
+%bcond_with bootstrap
+%bcond_with stage1
+%bcond_with stage2
+%global stage1ver 11.1.0
+
 %global crt_srcdir compiler-rt-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 # see https://sourceware.org/bugzilla/show_bug.cgi?id=25271
@@ -34,6 +39,17 @@ BuildRequires:	gnupg2
 
 Requires: clang-resource-filesystem%{?isa} = %{version}
 
+%if %{with bootstrap}
+BuildRequires:  devtoolset-7-gcc
+BuildRequires:  devtoolset-7-make
+BuildRequires:  devtoolset-7-toolchain
+BuildRequires:  devtoolset-7-gdb
+%endif
+
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+%endif
+
 %description
 The compiler-rt project is a part of the LLVM project. It provides
 implementation of the low-level target-specific hooks required by
@@ -47,6 +63,15 @@ instrumentation, and Blocks C language extension.
 pathfix.py -i %{__python3} -pn lib/hwasan/scripts/hwasan_symbolize
 
 %build
+
+%if %{with bootstrap}
+source /opt/rh//devtoolset-7/enable
+%endif
+
+%if %{with stage1}
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
+
 mkdir -p _build
 cd _build
 %cmake .. \
@@ -63,6 +88,11 @@ cd _build
 make %{?_smp_mflags}
 
 %install
+
+%if %{with stage1}
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
+
 cd _build
 make install DESTDIR=%{buildroot}
 
