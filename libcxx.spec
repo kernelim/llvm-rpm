@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 %global rc_ver 2
-%global baserelease 2
+%global baserelease 3
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -104,6 +104,9 @@ pathfix.py -i %{__python3} -pn \
 
 
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 11.1.0-0.3.rc2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Fri Jan 22 2021 Serge Guelton - 11.1.0-0.2.rc2
 - llvm 11.1.0-rc2 release
 
