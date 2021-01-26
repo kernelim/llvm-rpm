@@ -112,7 +112,6 @@ BuildRequires:	llvm%{maj_ver}.%{min_ver}-devel = %{version}
 BuildRequires:	llvm%{maj_ver}.%{min_ver}-static = %{version}
 %else
 BuildRequires:	llvm-devel = %{version}
-BuildRequires:	llvm-test = %{version}
 # llvm-static is required, because clang-tablegen needs libLLVMTableGen, which
 # is not included in libLLVM.so.
 BuildRequires:	llvm-static = %{version}
@@ -141,6 +140,10 @@ BuildRequires:	python3-devel
 # Needed for %%multilib_fix_c_header
 BuildRequires:	multilib-rpm-config
 BuildRequires: chrpath
+BuildRequires:  devtoolset-7-gcc
+BuildRequires:  devtoolset-7-make
+BuildRequires:  devtoolset-7-toolchain
+BuildRequires:  devtoolset-7-gdb
 
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -169,11 +172,8 @@ as libraries and designed to be loosely-coupled and extensible.
 
 %package libs
 Summary: Runtime library for clang
-Recommends: compiler-rt%{?_isa} = %{version}
 # libomp-devel is required, so clang can find the omp.h header when compiling
 # with -fopenmp.
-Recommends: libomp-devel%{_isa} = %{version}
-Recommends: libomp%{_isa} = %{version}
 
 %description libs
 Runtime library for clang.
@@ -265,6 +265,8 @@ pathfix.py -i %{__python3} -pn \
 
 %build
 
+source /opt/rh//devtoolset-7/enable
+
 %if 0%{?__isa_bits} == 64
 sed -i 's/\@FEDORA_LLVM_LIB_SUFFIX\@/64/g' test/lit.cfg.py
 %else
@@ -321,7 +323,7 @@ cd _build
 	-DLLVM_ENABLE_EH=ON \
 	-DLLVM_ENABLE_RTTI=ON \
 	-DLLVM_BUILD_DOCS=ON \
-	-DLLVM_ENABLE_SPHINX=ON \
+	-DLLVM_ENABLE_SPHINX=OFF \
 	-DCLANG_LINK_CLANG_DYLIB=ON \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	\
@@ -389,24 +391,10 @@ chmod u-x %{buildroot}%{_mandir}/man1/scan-build.1*
 %endif
 
 %check
-%if !0%{?compat_build}
-# requires lit.py from LLVM utilities
-# FIXME: Fix failing ARM tests, s390x i686 and ppc64le tests
-# FIXME: Ignore test failures until rhbz#1715016 is fixed.
-LD_LIBRARY_PATH=%{buildroot}%{_libdir} ninja check-all -C _build || \
-%ifarch s390x i686 ppc64le %{arm}
-:
-%else
-:
-%endif
-
-%endif
-
 
 %if !0%{?compat_build}
 %files
 %{clang_binaries}
-%{_mandir}/man1/clang.1.gz
 %{_mandir}/man1/clang++.1.gz
 %{_mandir}/man1/clang-%{maj_ver}.1.gz
 %{_mandir}/man1/clang++-%{maj_ver}.1.gz
@@ -450,7 +438,6 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} ninja check-all -C _build || \
 %{_bindir}/c-index-test
 %{_bindir}/find-all-symbols
 %{_bindir}/modularize
-%{_mandir}/man1/diagtool.1.gz
 %{_emacs_sitestartdir}/clang-format.el
 %{_emacs_sitestartdir}/clang-rename.el
 %{_emacs_sitestartdir}/clang-include-fixer.el
