@@ -1,6 +1,6 @@
 %global toolchain clang
 %global rc_ver 2
-%global baserelease 3
+%global baserelease 4
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -68,7 +68,7 @@ sed -i 's|#define _LIBCXXABI_ARM_EHABI||g' include/__cxxabi_config.h
 %cmake  -GNinja \
 	-DCMAKE_C_COMPILER=/usr/bin/clang \
 	-DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-	-DLLVM_CONFIG=%{_bindir}/llvm-config \
+	-DLLVM_CONFIG_PATH=%{_bindir}/llvm-config \
 	-DCMAKE_CXX_FLAGS="-std=c++11" \
 	-DLIBCXXABI_LIBCXX_INCLUDES=%{_includedir}/c++/v1/ \
 %if 0%{?__isa_bits} == 64
@@ -100,6 +100,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Wed Feb 03 2021 Timm Bäder <tbaeder@redhat.com> - 11.1.0-0.4.rc2
+- Fix passing the llvm config
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 11.1.0-0.3.rc2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
