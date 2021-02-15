@@ -11,7 +11,7 @@
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
 %global rc_ver 1
-%global baserelease 1
+%global baserelease 2
 %global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -223,6 +223,7 @@ pathfix.py -i %{__python3} -pn \
 	-DLLVM_ENABLE_ZLIB:BOOL=ON \
 	-DLLVM_ENABLE_FFI:BOOL=ON \
 	-DLLVM_ENABLE_RTTI:BOOL=ON \
+	-DLLVM_USE_PERF:BOOL=ON \
 %if %{with gold}
 	-DLLVM_BINUTILS_INCDIR=%{_includedir} \
 %endif
@@ -544,6 +545,9 @@ fi
 %endif
 
 %changelog
+* Tue Feb 16 2021 Dave Airlie <airlied@redhat.com> - 12.0.0-0.2.rc1
+- Enable LLVM_USE_PERF to allow perf integration
+
 * Tue Feb 2 2021 Serge Guelton - 12.0.0-0.1.rc1
 - 12.0.0-rc1 release
 
