@@ -177,10 +177,10 @@ This reverts commit 03f43b3aca363e16c45d8733400fd0083b1af4d8.
  delete mode 100644 lld/test/MachO/x86-64-reloc-signed.s
  delete mode 100644 lld/test/MachO/x86-64-reloc-unsigned.s
 
-diff --git a/lld/CMakeLists.txt b/lld/CMakeLists.txt
+diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 5090c935e75..a0f2132c0f5 100644
---- a/lld/CMakeLists.txt
-+++ b/lld/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -223,7 +223,6 @@ endif()
  add_subdirectory(docs)
  add_subdirectory(COFF)
@@ -189,10 +189,10 @@ index 5090c935e75..a0f2132c0f5 100644
  add_subdirectory(MinGW)
  add_subdirectory(wasm)
  
-diff --git a/lld/MachO/Arch/X86_64.cpp b/lld/MachO/Arch/X86_64.cpp
+diff --git a/MachO/Arch/X86_64.cpp b/MachO/Arch/X86_64.cpp
 deleted file mode 100644
 index 36f686ca2f1..00000000000
---- a/lld/MachO/Arch/X86_64.cpp
+--- a/MachO/Arch/X86_64.cpp
 +++ /dev/null
 @@ -1,286 +0,0 @@
 -//===- X86_64.cpp ---------------------------------------------------------===//
@@ -481,10 +481,10 @@ index 36f686ca2f1..00000000000
 -  static X86_64 t;
 -  return &t;
 -}
-diff --git a/lld/MachO/CMakeLists.txt b/lld/MachO/CMakeLists.txt
+diff --git a/MachO/CMakeLists.txt b/MachO/CMakeLists.txt
 deleted file mode 100644
 index 6fe356f5158..00000000000
---- a/lld/MachO/CMakeLists.txt
+--- a/MachO/CMakeLists.txt
 +++ /dev/null
 @@ -1,36 +0,0 @@
 -set(LLVM_TARGET_DEFINITIONS Options.td)
@@ -523,10 +523,10 @@ index 6fe356f5158..00000000000
 -  MachOOptionsTableGen
 -  ${tablegen_deps}
 -  )
-diff --git a/lld/MachO/Config.h b/lld/MachO/Config.h
+diff --git a/MachO/Config.h b/MachO/Config.h
 deleted file mode 100644
 index 79812a43356..00000000000
---- a/lld/MachO/Config.h
+--- a/MachO/Config.h
 +++ /dev/null
 @@ -1,57 +0,0 @@
 -//===- Config.h -------------------------------------------------*- C++ -*-===//
@@ -586,10 +586,10 @@ index 79812a43356..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/Driver.cpp b/lld/MachO/Driver.cpp
+diff --git a/MachO/Driver.cpp b/MachO/Driver.cpp
 deleted file mode 100644
 index 2a3b0042162..00000000000
---- a/lld/MachO/Driver.cpp
+--- a/MachO/Driver.cpp
 +++ /dev/null
 @@ -1,451 +0,0 @@
 -//===- Driver.cpp ---------------------------------------------------------===//
@@ -1043,10 +1043,10 @@ index 2a3b0042162..00000000000
 -  freeArena();
 -  return !errorCount();
 -}
-diff --git a/lld/MachO/Driver.h b/lld/MachO/Driver.h
+diff --git a/MachO/Driver.h b/MachO/Driver.h
 deleted file mode 100644
 index 2233740d1db..00000000000
---- a/lld/MachO/Driver.h
+--- a/MachO/Driver.h
 +++ /dev/null
 @@ -1,36 +0,0 @@
 -//===- Driver.h -------------------------------------------------*- C++ -*-===//
@@ -1085,10 +1085,10 @@ index 2233740d1db..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/ExportTrie.cpp b/lld/MachO/ExportTrie.cpp
+diff --git a/MachO/ExportTrie.cpp b/MachO/ExportTrie.cpp
 deleted file mode 100644
 index 7cc81bcfd5f..00000000000
---- a/lld/MachO/ExportTrie.cpp
+--- a/MachO/ExportTrie.cpp
 +++ /dev/null
 @@ -1,283 +0,0 @@
 -//===- ExportTrie.cpp -----------------------------------------------------===//
@@ -1374,10 +1374,10 @@ index 7cc81bcfd5f..00000000000
 -
 -  TrieParser(buf, size, callback).parse();
 -}
-diff --git a/lld/MachO/ExportTrie.h b/lld/MachO/ExportTrie.h
+diff --git a/MachO/ExportTrie.h b/MachO/ExportTrie.h
 deleted file mode 100644
 index 2bd8c33db9a..00000000000
---- a/lld/MachO/ExportTrie.h
+--- a/MachO/ExportTrie.h
 +++ /dev/null
 @@ -1,47 +0,0 @@
 -//===- ExportTrie.h ---------------------------------------------*- C++ -*-===//
@@ -1427,10 +1427,10 @@ index 2bd8c33db9a..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/InputFiles.cpp b/lld/MachO/InputFiles.cpp
+diff --git a/MachO/InputFiles.cpp b/MachO/InputFiles.cpp
 deleted file mode 100644
 index 46fe82f9882..00000000000
---- a/lld/MachO/InputFiles.cpp
+--- a/MachO/InputFiles.cpp
 +++ /dev/null
 @@ -1,433 +0,0 @@
 -//===- InputFiles.cpp -----------------------------------------------------===//
@@ -1866,10 +1866,10 @@ index 46fe82f9882..00000000000
 -std::string lld::toString(const InputFile *file) {
 -  return file ? std::string(file->getName()) : "<internal>";
 -}
-diff --git a/lld/MachO/InputFiles.h b/lld/MachO/InputFiles.h
+diff --git a/MachO/InputFiles.h b/MachO/InputFiles.h
 deleted file mode 100644
 index bc5ad86ccaa..00000000000
---- a/lld/MachO/InputFiles.h
+--- a/MachO/InputFiles.h
 +++ /dev/null
 @@ -1,121 +0,0 @@
 -//===- InputFiles.h ---------------------------------------------*- C++ -*-===//
@@ -1993,10 +1993,10 @@ index bc5ad86ccaa..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/InputSection.cpp b/lld/MachO/InputSection.cpp
+diff --git a/MachO/InputSection.cpp b/MachO/InputSection.cpp
 deleted file mode 100644
 index 72d48928305..00000000000
---- a/lld/MachO/InputSection.cpp
+--- a/MachO/InputSection.cpp
 +++ /dev/null
 @@ -1,48 +0,0 @@
 -//===- InputSection.cpp ---------------------------------------------------===//
@@ -2047,10 +2047,10 @@ index 72d48928305..00000000000
 -    target->relocateOne(buf + r.offset, r, val);
 -  }
 -}
-diff --git a/lld/MachO/InputSection.h b/lld/MachO/InputSection.h
+diff --git a/MachO/InputSection.h b/MachO/InputSection.h
 deleted file mode 100644
 index 96ae0cbe6ea..00000000000
---- a/lld/MachO/InputSection.h
+--- a/MachO/InputSection.h
 +++ /dev/null
 @@ -1,74 +0,0 @@
 -//===- InputSection.h -------------------------------------------*- C++ -*-===//
@@ -2127,10 +2127,10 @@ index 96ae0cbe6ea..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/MachOStructs.h b/lld/MachO/MachOStructs.h
+diff --git a/MachO/MachOStructs.h b/MachO/MachOStructs.h
 deleted file mode 100644
 index 69b50ec2317..00000000000
---- a/lld/MachO/MachOStructs.h
+--- a/MachO/MachOStructs.h
 +++ /dev/null
 @@ -1,36 +0,0 @@
 -//===- MachOStructs.h -------------------------------------------*- C++ -*-===//
@@ -2169,10 +2169,10 @@ index 69b50ec2317..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/MergedOutputSection.cpp b/lld/MachO/MergedOutputSection.cpp
+diff --git a/MachO/MergedOutputSection.cpp b/MachO/MergedOutputSection.cpp
 deleted file mode 100644
 index 2d0be253834..00000000000
---- a/lld/MachO/MergedOutputSection.cpp
+--- a/MachO/MergedOutputSection.cpp
 +++ /dev/null
 @@ -1,74 +0,0 @@
 -//===- OutputSection.cpp --------------------------------------------------===//
@@ -2249,10 +2249,10 @@ index 2d0be253834..00000000000
 -  flags |= inputFlags;
 -  flags &= pureMask;
 -}
-diff --git a/lld/MachO/MergedOutputSection.h b/lld/MachO/MergedOutputSection.h
+diff --git a/MachO/MergedOutputSection.h b/MachO/MergedOutputSection.h
 deleted file mode 100644
 index 279a7e0f75c..00000000000
---- a/lld/MachO/MergedOutputSection.h
+--- a/MachO/MergedOutputSection.h
 +++ /dev/null
 @@ -1,56 +0,0 @@
 -//===- OutputSection.h ------------------------------------------*- C++ -*-===//
@@ -2311,10 +2311,10 @@ index 279a7e0f75c..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/Options.td b/lld/MachO/Options.td
+diff --git a/MachO/Options.td b/MachO/Options.td
 deleted file mode 100644
 index 1e42542b9ac..00000000000
---- a/lld/MachO/Options.td
+--- a/MachO/Options.td
 +++ /dev/null
 @@ -1,1297 +0,0 @@
 -include "llvm/Option/OptParser.td"
@@ -3614,10 +3614,10 @@ index 1e42542b9ac..00000000000
 -     HelpText<"This option is ignored in ld64">,
 -     Flags<[HelpHidden]>,
 -     Group<grp_ignored>;
-diff --git a/lld/MachO/OutputSection.cpp b/lld/MachO/OutputSection.cpp
+diff --git a/MachO/OutputSection.cpp b/MachO/OutputSection.cpp
 deleted file mode 100644
 index c006828267c..00000000000
---- a/lld/MachO/OutputSection.cpp
+--- a/MachO/OutputSection.cpp
 +++ /dev/null
 @@ -1,18 +0,0 @@
 -//===- OutputSection.cpp --------------------------------------------------===//
@@ -3638,10 +3638,10 @@ index c006828267c..00000000000
 -uint64_t OutputSection::getSegmentOffset() const {
 -  return addr - parent->firstSection()->addr;
 -}
-diff --git a/lld/MachO/OutputSection.h b/lld/MachO/OutputSection.h
+diff --git a/MachO/OutputSection.h b/MachO/OutputSection.h
 deleted file mode 100644
 index 07b53a04639..00000000000
---- a/lld/MachO/OutputSection.h
+--- a/MachO/OutputSection.h
 +++ /dev/null
 @@ -1,74 +0,0 @@
 -//===- OutputSection.h ------------------------------------------*- C++ -*-===//
@@ -3718,10 +3718,10 @@ index 07b53a04639..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/OutputSegment.cpp b/lld/MachO/OutputSegment.cpp
+diff --git a/MachO/OutputSegment.cpp b/MachO/OutputSegment.cpp
 deleted file mode 100644
 index 5e57c49f5c0..00000000000
---- a/lld/MachO/OutputSegment.cpp
+--- a/MachO/OutputSegment.cpp
 +++ /dev/null
 @@ -1,67 +0,0 @@
 -//===- OutputSegment.cpp --------------------------------------------------===//
@@ -3791,10 +3791,10 @@ index 5e57c49f5c0..00000000000
 -  outputSegments.push_back(segRef);
 -  return segRef;
 -}
-diff --git a/lld/MachO/OutputSegment.h b/lld/MachO/OutputSegment.h
+diff --git a/MachO/OutputSegment.h b/MachO/OutputSegment.h
 deleted file mode 100644
 index d977c281272..00000000000
---- a/lld/MachO/OutputSegment.h
+--- a/MachO/OutputSegment.h
 +++ /dev/null
 @@ -1,62 +0,0 @@
 -//===- OutputSegment.h ------------------------------------------*- C++ -*-===//
@@ -3859,10 +3859,10 @@ index d977c281272..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/SymbolTable.cpp b/lld/MachO/SymbolTable.cpp
+diff --git a/MachO/SymbolTable.cpp b/MachO/SymbolTable.cpp
 deleted file mode 100644
 index 80e870d7989..00000000000
---- a/lld/MachO/SymbolTable.cpp
+--- a/MachO/SymbolTable.cpp
 +++ /dev/null
 @@ -1,87 +0,0 @@
 -//===- SymbolTable.cpp ----------------------------------------------------===//
@@ -3952,10 +3952,10 @@ index 80e870d7989..00000000000
 -}
 -
 -SymbolTable *macho::symtab;
-diff --git a/lld/MachO/SymbolTable.h b/lld/MachO/SymbolTable.h
+diff --git a/MachO/SymbolTable.h b/MachO/SymbolTable.h
 deleted file mode 100644
 index 2379008db56..00000000000
---- a/lld/MachO/SymbolTable.h
+--- a/MachO/SymbolTable.h
 +++ /dev/null
 @@ -1,50 +0,0 @@
 -//===- SymbolTable.h --------------------------------------------*- C++ -*-===//
@@ -4008,10 +4008,10 @@ index 2379008db56..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/Symbols.cpp b/lld/MachO/Symbols.cpp
+diff --git a/MachO/Symbols.cpp b/MachO/Symbols.cpp
 deleted file mode 100644
 index fbafa8a92a4..00000000000
---- a/lld/MachO/Symbols.cpp
+--- a/MachO/Symbols.cpp
 +++ /dev/null
 @@ -1,23 +0,0 @@
 -//===- Symbols.cpp --------------------------------------------------------===//
@@ -4037,10 +4037,10 @@ index fbafa8a92a4..00000000000
 -    return *s;
 -  return std::string(sym.getName());
 -}
-diff --git a/lld/MachO/Symbols.h b/lld/MachO/Symbols.h
+diff --git a/MachO/Symbols.h b/MachO/Symbols.h
 deleted file mode 100644
 index 63748ee4832..00000000000
---- a/lld/MachO/Symbols.h
+--- a/MachO/Symbols.h
 +++ /dev/null
 @@ -1,138 +0,0 @@
 -//===- Symbols.h ------------------------------------------------*- C++ -*-===//
@@ -4181,10 +4181,10 @@ index 63748ee4832..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/SyntheticSections.cpp b/lld/MachO/SyntheticSections.cpp
+diff --git a/MachO/SyntheticSections.cpp b/MachO/SyntheticSections.cpp
 deleted file mode 100644
 index cc0d5a93c40..00000000000
---- a/lld/MachO/SyntheticSections.cpp
+--- a/MachO/SyntheticSections.cpp
 +++ /dev/null
 @@ -1,409 +0,0 @@
 -//===- SyntheticSections.cpp ---------------------------------------------===//
@@ -4596,10 +4596,10 @@ index cc0d5a93c40..00000000000
 -    off += str.size() + 1; // account for null terminator
 -  }
 -}
-diff --git a/lld/MachO/SyntheticSections.h b/lld/MachO/SyntheticSections.h
+diff --git a/MachO/SyntheticSections.h b/MachO/SyntheticSections.h
 deleted file mode 100644
 index a8fbf6c8a26..00000000000
---- a/lld/MachO/SyntheticSections.h
+--- a/MachO/SyntheticSections.h
 +++ /dev/null
 @@ -1,290 +0,0 @@
 -//===- SyntheticSections.h -------------------------------------*- C++ -*-===//
@@ -4892,10 +4892,10 @@ index a8fbf6c8a26..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/Target.cpp b/lld/MachO/Target.cpp
+diff --git a/MachO/Target.cpp b/MachO/Target.cpp
 deleted file mode 100644
 index 0f70776a507..00000000000
---- a/lld/MachO/Target.cpp
+--- a/MachO/Target.cpp
 +++ /dev/null
 @@ -1,14 +0,0 @@
 -//===- Target.cpp ---------------------------------------------------------===//
@@ -4912,10 +4912,10 @@ index 0f70776a507..00000000000
 -using namespace lld::macho;
 -
 -TargetInfo *macho::target = nullptr;
-diff --git a/lld/MachO/Target.h b/lld/MachO/Target.h
+diff --git a/MachO/Target.h b/MachO/Target.h
 deleted file mode 100644
 index 8ea1bde1230..00000000000
---- a/lld/MachO/Target.h
+--- a/MachO/Target.h
 +++ /dev/null
 @@ -1,75 +0,0 @@
 -//===- Target.h -------------------------------------------------*- C++ -*-===//
@@ -4993,10 +4993,10 @@ index 8ea1bde1230..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/MachO/Writer.cpp b/lld/MachO/Writer.cpp
+diff --git a/MachO/Writer.cpp b/MachO/Writer.cpp
 deleted file mode 100644
 index 03000a7f437..00000000000
---- a/lld/MachO/Writer.cpp
+--- a/MachO/Writer.cpp
 +++ /dev/null
 @@ -1,542 +0,0 @@
 -//===- Writer.cpp ---------------------------------------------------------===//
@@ -5541,10 +5541,10 @@ index 03000a7f437..00000000000
 -  in.stubHelper = make<StubHelperSection>();
 -  in.imageLoaderCache = make<ImageLoaderCacheSection>();
 -}
-diff --git a/lld/MachO/Writer.h b/lld/MachO/Writer.h
+diff --git a/MachO/Writer.h b/MachO/Writer.h
 deleted file mode 100644
 index 7f846233107..00000000000
---- a/lld/MachO/Writer.h
+--- a/MachO/Writer.h
 +++ /dev/null
 @@ -1,31 +0,0 @@
 -//===- Writer.h -------------------------------------------------*- C++ -*-===//
@@ -5578,10 +5578,10 @@ index 7f846233107..00000000000
 -} // namespace lld
 -
 -#endif
-diff --git a/lld/include/lld/Common/Driver.h b/lld/include/lld/Common/Driver.h
+diff --git a/include/lld/Common/Driver.h b/include/lld/Common/Driver.h
 index 6db3d234eb5..0a358d8aff6 100644
---- a/lld/include/lld/Common/Driver.h
-+++ b/lld/include/lld/Common/Driver.h
+--- a/include/lld/Common/Driver.h
++++ b/include/lld/Common/Driver.h
 @@ -33,11 +33,6 @@ bool link(llvm::ArrayRef<const char *> args, bool canExitEarly,
            llvm::raw_ostream &stdoutOS, llvm::raw_ostream &stderrOS);
  }
@@ -5594,10 +5594,10 @@ index 6db3d234eb5..0a358d8aff6 100644
  namespace wasm {
  bool link(llvm::ArrayRef<const char *> args, bool canExitEarly,
            llvm::raw_ostream &stdoutOS, llvm::raw_ostream &stderrOS);
-diff --git a/lld/test/MachO/Inputs/MacOSX.sdk/usr/lib/libSystem.tbd b/lld/test/MachO/Inputs/MacOSX.sdk/usr/lib/libSystem.tbd
+diff --git a/test/MachO/Inputs/MacOSX.sdk/usr/lib/libSystem.tbd b/test/MachO/Inputs/MacOSX.sdk/usr/lib/libSystem.tbd
 deleted file mode 100644
 index fddd192630d..00000000000
---- a/lld/test/MachO/Inputs/MacOSX.sdk/usr/lib/libSystem.tbd
+--- a/test/MachO/Inputs/MacOSX.sdk/usr/lib/libSystem.tbd
 +++ /dev/null
 @@ -1,42 +0,0 @@
 ---- !tapi-tbd-v3
@@ -5642,10 +5642,10 @@ index fddd192630d..00000000000
 -  - archs:        [ 'x86_64' ]
 -    symbols:      [ ___nan ]
 -...
-diff --git a/lld/test/MachO/Inputs/iPhoneSimulator.sdk/usr/lib/libSystem.tbd b/lld/test/MachO/Inputs/iPhoneSimulator.sdk/usr/lib/libSystem.tbd
+diff --git a/test/MachO/Inputs/iPhoneSimulator.sdk/usr/lib/libSystem.tbd b/test/MachO/Inputs/iPhoneSimulator.sdk/usr/lib/libSystem.tbd
 deleted file mode 100644
 index 3e62c2ee711..00000000000
---- a/lld/test/MachO/Inputs/iPhoneSimulator.sdk/usr/lib/libSystem.tbd
+--- a/test/MachO/Inputs/iPhoneSimulator.sdk/usr/lib/libSystem.tbd
 +++ /dev/null
 @@ -1,23 +0,0 @@
 ---- !tapi-tbd-v3
@@ -5671,10 +5671,10 @@ index 3e62c2ee711..00000000000
 -  - archs:      [ i386, x86_64 ]
 -    symbols:    [ _cache_create, _cache_destroy, _cache_get ]
 -...
-diff --git a/lld/test/MachO/Inputs/libfunction.s b/lld/test/MachO/Inputs/libfunction.s
+diff --git a/test/MachO/Inputs/libfunction.s b/test/MachO/Inputs/libfunction.s
 deleted file mode 100644
 index fe0b3879a41..00000000000
---- a/lld/test/MachO/Inputs/libfunction.s
+--- a/test/MachO/Inputs/libfunction.s
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -.section __TEXT,__text
@@ -5683,10 +5683,10 @@ index fe0b3879a41..00000000000
 -_some_function:
 -  mov $1, %rax
 -  ret
-diff --git a/lld/test/MachO/Inputs/libgoodbye.s b/lld/test/MachO/Inputs/libgoodbye.s
+diff --git a/test/MachO/Inputs/libgoodbye.s b/test/MachO/Inputs/libgoodbye.s
 deleted file mode 100644
 index 40c829cfc6e..00000000000
---- a/lld/test/MachO/Inputs/libgoodbye.s
+--- a/test/MachO/Inputs/libgoodbye.s
 +++ /dev/null
 @@ -1,14 +0,0 @@
 -.section __TEXT,__cstring
@@ -5703,10 +5703,10 @@ index 40c829cfc6e..00000000000
 -  mov $15, %rdx # length of str
 -  syscall
 -  ret
-diff --git a/lld/test/MachO/Inputs/libhello.s b/lld/test/MachO/Inputs/libhello.s
+diff --git a/test/MachO/Inputs/libhello.s b/test/MachO/Inputs/libhello.s
 deleted file mode 100644
 index 0b9930bafcb..00000000000
---- a/lld/test/MachO/Inputs/libhello.s
+--- a/test/MachO/Inputs/libhello.s
 +++ /dev/null
 @@ -1,17 +0,0 @@
 -.section __TEXT,__cstring
@@ -5726,10 +5726,10 @@ index 0b9930bafcb..00000000000
 -  mov $13, %rdx # length of str
 -  syscall
 -  ret
-diff --git a/lld/test/MachO/arch.s b/lld/test/MachO/arch.s
+diff --git a/test/MachO/arch.s b/test/MachO/arch.s
 deleted file mode 100644
 index a0a1962f640..00000000000
---- a/lld/test/MachO/arch.s
+--- a/test/MachO/arch.s
 +++ /dev/null
 @@ -1,11 +0,0 @@
 -# REQUIRES: x86
@@ -5743,10 +5743,10 @@ index a0a1962f640..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/archive.s b/lld/test/MachO/archive.s
+diff --git a/test/MachO/archive.s b/test/MachO/archive.s
 deleted file mode 100644
 index 370980768fa..00000000000
---- a/lld/test/MachO/archive.s
+--- a/test/MachO/archive.s
 +++ /dev/null
 @@ -1,35 +0,0 @@
 -# REQUIRES: x86
@@ -5784,10 +5784,10 @@ index 370980768fa..00000000000
 -  callq _bar
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/bss.s b/lld/test/MachO/bss.s
+diff --git a/test/MachO/bss.s b/test/MachO/bss.s
 deleted file mode 100644
 index b56f02d2bcb..00000000000
---- a/lld/test/MachO/bss.s
+--- a/test/MachO/bss.s
 +++ /dev/null
 @@ -1,59 +0,0 @@
 -# REQUIRES: x86
@@ -5849,10 +5849,10 @@ index b56f02d2bcb..00000000000
 -
 -.data
 -.quad 0x1234
-diff --git a/lld/test/MachO/dylib.s b/lld/test/MachO/dylib.s
+diff --git a/test/MachO/dylib.s b/test/MachO/dylib.s
 deleted file mode 100644
 index 507a7de8742..00000000000
---- a/lld/test/MachO/dylib.s
+--- a/test/MachO/dylib.s
 +++ /dev/null
 @@ -1,35 +0,0 @@
 -# REQUIRES: x86
@@ -5890,10 +5890,10 @@ index 507a7de8742..00000000000
 -
 -_hello_world:
 -.asciz "Hello world!\n"
-diff --git a/lld/test/MachO/dylink-lazy.s b/lld/test/MachO/dylink-lazy.s
+diff --git a/test/MachO/dylink-lazy.s b/test/MachO/dylink-lazy.s
 deleted file mode 100644
 index 16051b45bd9..00000000000
---- a/lld/test/MachO/dylink-lazy.s
+--- a/test/MachO/dylink-lazy.s
 +++ /dev/null
 @@ -1,62 +0,0 @@
 -# REQUIRES: x86, shell
@@ -5958,10 +5958,10 @@ index 16051b45bd9..00000000000
 -  callq _print_goodbye
 -  add $8, %rsp
 -  ret
-diff --git a/lld/test/MachO/dylink.s b/lld/test/MachO/dylink.s
+diff --git a/test/MachO/dylink.s b/test/MachO/dylink.s
 deleted file mode 100644
 index 0549aab9829..00000000000
---- a/lld/test/MachO/dylink.s
+--- a/test/MachO/dylink.s
 +++ /dev/null
 @@ -1,69 +0,0 @@
 -# REQUIRES: x86
@@ -6033,10 +6033,10 @@ index 0549aab9829..00000000000
 -.quad _hello_world
 -.quad _hello_its_me + 0x8
 -.quad _goodbye_world - 0xf
-diff --git a/lld/test/MachO/entry-symbol.s b/lld/test/MachO/entry-symbol.s
+diff --git a/test/MachO/entry-symbol.s b/test/MachO/entry-symbol.s
 deleted file mode 100644
 index 159c7c5af04..00000000000
---- a/lld/test/MachO/entry-symbol.s
+--- a/test/MachO/entry-symbol.s
 +++ /dev/null
 @@ -1,28 +0,0 @@
 -# REQUIRES: x86
@@ -6067,10 +6067,10 @@ index 159c7c5af04..00000000000
 -_not_main:
 -  movq $0, %rax
 -  retq
-diff --git a/lld/test/MachO/export-trie.s b/lld/test/MachO/export-trie.s
+diff --git a/test/MachO/export-trie.s b/test/MachO/export-trie.s
 deleted file mode 100644
 index fc1f6d110db..00000000000
---- a/lld/test/MachO/export-trie.s
+--- a/test/MachO/export-trie.s
 +++ /dev/null
 @@ -1,44 +0,0 @@
 -# REQUIRES: x86
@@ -6117,10 +6117,10 @@ index fc1f6d110db..00000000000
 -
 -_hello_its_you:
 -.asciz "Hello, it's you\n"
-diff --git a/lld/test/MachO/fat-arch.s b/lld/test/MachO/fat-arch.s
+diff --git a/test/MachO/fat-arch.s b/test/MachO/fat-arch.s
 deleted file mode 100644
 index cb5a74b0917..00000000000
---- a/lld/test/MachO/fat-arch.s
+--- a/test/MachO/fat-arch.s
 +++ /dev/null
 @@ -1,16 +0,0 @@
 -# REQUIRES: x86
@@ -6139,10 +6139,10 @@ index cb5a74b0917..00000000000
 -_main:
 -  mov $0, %eax
 -  ret
-diff --git a/lld/test/MachO/invalid/alignment-too-large.yaml b/lld/test/MachO/invalid/alignment-too-large.yaml
+diff --git a/test/MachO/invalid/alignment-too-large.yaml b/test/MachO/invalid/alignment-too-large.yaml
 deleted file mode 100644
 index 79950524bcf..00000000000
---- a/lld/test/MachO/invalid/alignment-too-large.yaml
+--- a/test/MachO/invalid/alignment-too-large.yaml
 +++ /dev/null
 @@ -1,58 +0,0 @@
 -# RUN: yaml2obj %s -o %t.o
@@ -6203,10 +6203,10 @@ index 79950524bcf..00000000000
 -    - _main
 -    - ''
 -...
-diff --git a/lld/test/MachO/invalid/archive-no-index.s b/lld/test/MachO/invalid/archive-no-index.s
+diff --git a/test/MachO/invalid/archive-no-index.s b/test/MachO/invalid/archive-no-index.s
 deleted file mode 100644
 index 0f2f023e83c..00000000000
---- a/lld/test/MachO/invalid/archive-no-index.s
+--- a/test/MachO/invalid/archive-no-index.s
 +++ /dev/null
 @@ -1,17 +0,0 @@
 -# REQUIRES: x86
@@ -6226,10 +6226,10 @@ index 0f2f023e83c..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/invalid/bad-archive.s b/lld/test/MachO/invalid/bad-archive.s
+diff --git a/test/MachO/invalid/bad-archive.s b/test/MachO/invalid/bad-archive.s
 deleted file mode 100644
 index 9429dc3ec31..00000000000
---- a/lld/test/MachO/invalid/bad-archive.s
+--- a/test/MachO/invalid/bad-archive.s
 +++ /dev/null
 @@ -1,11 +0,0 @@
 -# REQUIRES: x86
@@ -6243,10 +6243,10 @@ index 9429dc3ec31..00000000000
 -.global _main
 -_main:
 -  ret
-diff --git a/lld/test/MachO/invalid/duplicate-symbol.s b/lld/test/MachO/invalid/duplicate-symbol.s
+diff --git a/test/MachO/invalid/duplicate-symbol.s b/test/MachO/invalid/duplicate-symbol.s
 deleted file mode 100644
 index d08f34fc0de..00000000000
---- a/lld/test/MachO/invalid/duplicate-symbol.s
+--- a/test/MachO/invalid/duplicate-symbol.s
 +++ /dev/null
 @@ -1,12 +0,0 @@
 -# REQUIRES: x86
@@ -6261,10 +6261,10 @@ index d08f34fc0de..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/invalid/invalid-executable.s b/lld/test/MachO/invalid/invalid-executable.s
+diff --git a/test/MachO/invalid/invalid-executable.s b/test/MachO/invalid/invalid-executable.s
 deleted file mode 100644
 index d8d7accf49c..00000000000
---- a/lld/test/MachO/invalid/invalid-executable.s
+--- a/test/MachO/invalid/invalid-executable.s
 +++ /dev/null
 @@ -1,11 +0,0 @@
 -# REQUIRES: x86
@@ -6278,10 +6278,10 @@ index d8d7accf49c..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/invalid/invalid-fat-narch.s b/lld/test/MachO/invalid/invalid-fat-narch.s
+diff --git a/test/MachO/invalid/invalid-fat-narch.s b/test/MachO/invalid/invalid-fat-narch.s
 deleted file mode 100644
 index 2b74893bff4..00000000000
---- a/lld/test/MachO/invalid/invalid-fat-narch.s
+--- a/test/MachO/invalid/invalid-fat-narch.s
 +++ /dev/null
 @@ -1,12 +0,0 @@
 -# REQUIRES: x86
@@ -6296,10 +6296,10 @@ index 2b74893bff4..00000000000
 -  nfat_arch:       2
 -FatArchs:
 -Slices:
-diff --git a/lld/test/MachO/invalid/invalid-fat-offset.s b/lld/test/MachO/invalid/invalid-fat-offset.s
+diff --git a/test/MachO/invalid/invalid-fat-offset.s b/test/MachO/invalid/invalid-fat-offset.s
 deleted file mode 100644
 index fed97907352..00000000000
---- a/lld/test/MachO/invalid/invalid-fat-offset.s
+--- a/test/MachO/invalid/invalid-fat-offset.s
 +++ /dev/null
 @@ -1,22 +0,0 @@
 -# REQUIRES: x86
@@ -6324,10 +6324,10 @@ index fed97907352..00000000000
 -    size:            0
 -    align:           12
 -Slices:
-diff --git a/lld/test/MachO/invalid/invalid-relocation-length.yaml b/lld/test/MachO/invalid/invalid-relocation-length.yaml
+diff --git a/test/MachO/invalid/invalid-relocation-length.yaml b/test/MachO/invalid/invalid-relocation-length.yaml
 deleted file mode 100644
 index e256c4fb7a8..00000000000
---- a/lld/test/MachO/invalid/invalid-relocation-length.yaml
+--- a/test/MachO/invalid/invalid-relocation-length.yaml
 +++ /dev/null
 @@ -1,99 +0,0 @@
 -# REQUIRES: x86
@@ -6429,10 +6429,10 @@ index e256c4fb7a8..00000000000
 -    - ''
 -    - _foo
 -    - _main
-diff --git a/lld/test/MachO/invalid/invalid-relocation-pcrel.yaml b/lld/test/MachO/invalid/invalid-relocation-pcrel.yaml
+diff --git a/test/MachO/invalid/invalid-relocation-pcrel.yaml b/test/MachO/invalid/invalid-relocation-pcrel.yaml
 deleted file mode 100644
 index ed7c24ead74..00000000000
---- a/lld/test/MachO/invalid/invalid-relocation-pcrel.yaml
+--- a/test/MachO/invalid/invalid-relocation-pcrel.yaml
 +++ /dev/null
 @@ -1,99 +0,0 @@
 -# REQUIRES: x86
@@ -6534,10 +6534,10 @@ index ed7c24ead74..00000000000
 -    - ''
 -    - _foo
 -    - _main
-diff --git a/lld/test/MachO/invalid/missing-dylib.s b/lld/test/MachO/invalid/missing-dylib.s
+diff --git a/test/MachO/invalid/missing-dylib.s b/test/MachO/invalid/missing-dylib.s
 deleted file mode 100644
 index ad7e51130c4..00000000000
---- a/lld/test/MachO/invalid/missing-dylib.s
+--- a/test/MachO/invalid/missing-dylib.s
 +++ /dev/null
 @@ -1,5 +0,0 @@
 -# REQUIRES: x86
@@ -6545,10 +6545,10 @@ index ad7e51130c4..00000000000
 -# RUN: not lld -flavor darwinnew -Z -o %t -lmissing %t.o 2>&1 | FileCheck %s
 -
 -# CHECK: error: library not found for -lmissing
-diff --git a/lld/test/MachO/invalid/no-id-dylink.yaml b/lld/test/MachO/invalid/no-id-dylink.yaml
+diff --git a/test/MachO/invalid/no-id-dylink.yaml b/test/MachO/invalid/no-id-dylink.yaml
 deleted file mode 100644
 index d5b0b33dcfe..00000000000
---- a/lld/test/MachO/invalid/no-id-dylink.yaml
+--- a/test/MachO/invalid/no-id-dylink.yaml
 +++ /dev/null
 @@ -1,166 +0,0 @@
 -# REQUIRES: x86
@@ -6717,20 +6717,20 @@ index d5b0b33dcfe..00000000000
 -    - ' '
 -    - _hello_world
 -    - ''
-diff --git a/lld/test/MachO/invalid/no-such-file.s b/lld/test/MachO/invalid/no-such-file.s
+diff --git a/test/MachO/invalid/no-such-file.s b/test/MachO/invalid/no-such-file.s
 deleted file mode 100644
 index 0122c6105fb..00000000000
---- a/lld/test/MachO/invalid/no-such-file.s
+--- a/test/MachO/invalid/no-such-file.s
 +++ /dev/null
 @@ -1,4 +0,0 @@
 -# REQUIRES: x86
 -# RUN: not lld -flavor darwinnew -o /dev/null %t-no-such-file.o 2>&1 | FileCheck %s
 -
 -# CHECK: error: cannot open {{.*}}no-such-file.o
-diff --git a/lld/test/MachO/invalid/order-file-bad-arch.test b/lld/test/MachO/invalid/order-file-bad-arch.test
+diff --git a/test/MachO/invalid/order-file-bad-arch.test b/test/MachO/invalid/order-file-bad-arch.test
 deleted file mode 100644
 index 84fe6963d24..00000000000
---- a/lld/test/MachO/invalid/order-file-bad-arch.test
+--- a/test/MachO/invalid/order-file-bad-arch.test
 +++ /dev/null
 @@ -1,9 +0,0 @@
 -# REQUIRES: x86
@@ -6742,10 +6742,10 @@ index 84fe6963d24..00000000000
 -_barsymbol
 -sparc:hello.o:_foosymbol
 -i386:hello.o:_foosymbol
-diff --git a/lld/test/MachO/invalid/order-file-bad-objfile.test b/lld/test/MachO/invalid/order-file-bad-objfile.test
+diff --git a/test/MachO/invalid/order-file-bad-objfile.test b/test/MachO/invalid/order-file-bad-objfile.test
 deleted file mode 100644
 index 19e9404da42..00000000000
---- a/lld/test/MachO/invalid/order-file-bad-objfile.test
+--- a/test/MachO/invalid/order-file-bad-objfile.test
 +++ /dev/null
 @@ -1,10 +0,0 @@
 -# REQUIRES: x86
@@ -6758,10 +6758,10 @@ index 19e9404da42..00000000000
 -_barsymbol
 -x86_64:helloo:_foosymbol
 -z80:_foosymbol
-diff --git a/lld/test/MachO/invalid/reserved-section-name.s b/lld/test/MachO/invalid/reserved-section-name.s
+diff --git a/test/MachO/invalid/reserved-section-name.s b/test/MachO/invalid/reserved-section-name.s
 deleted file mode 100644
 index 8d767bcf292..00000000000
---- a/lld/test/MachO/invalid/reserved-section-name.s
+--- a/test/MachO/invalid/reserved-section-name.s
 +++ /dev/null
 @@ -1,14 +0,0 @@
 -# REQUIRES: x86
@@ -6778,10 +6778,10 @@ index 8d767bcf292..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/invalid/stub-link.s b/lld/test/MachO/invalid/stub-link.s
+diff --git a/test/MachO/invalid/stub-link.s b/test/MachO/invalid/stub-link.s
 deleted file mode 100644
 index f1c15903702..00000000000
---- a/lld/test/MachO/invalid/stub-link.s
+--- a/test/MachO/invalid/stub-link.s
 +++ /dev/null
 @@ -1,15 +0,0 @@
 -# REQUIRES: x86
@@ -6799,10 +6799,10 @@ index f1c15903702..00000000000
 -_main:
 -  movq __cache_handle_memory_pressure_event@GOTPCREL(%rip), %rax
 -  ret
-diff --git a/lld/test/MachO/invalid/undefined-symbol.s b/lld/test/MachO/invalid/undefined-symbol.s
+diff --git a/test/MachO/invalid/undefined-symbol.s b/test/MachO/invalid/undefined-symbol.s
 deleted file mode 100644
 index 88eabfd1ce0..00000000000
---- a/lld/test/MachO/invalid/undefined-symbol.s
+--- a/test/MachO/invalid/undefined-symbol.s
 +++ /dev/null
 @@ -1,11 +0,0 @@
 -# REQUIRES: x86
@@ -6816,10 +6816,10 @@ index 88eabfd1ce0..00000000000
 -  callq _foo
 -  movq $0, %rax
 -  retq
-diff --git a/lld/test/MachO/link-search-order.s b/lld/test/MachO/link-search-order.s
+diff --git a/test/MachO/link-search-order.s b/test/MachO/link-search-order.s
 deleted file mode 100644
 index 9819e171c7d..00000000000
---- a/lld/test/MachO/link-search-order.s
+--- a/test/MachO/link-search-order.s
 +++ /dev/null
 @@ -1,43 +0,0 @@
 -# REQUIRES: x86
@@ -6865,10 +6865,10 @@ index 9819e171c7d..00000000000
 -  syscall
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/load-commands.s b/lld/test/MachO/load-commands.s
+diff --git a/test/MachO/load-commands.s b/test/MachO/load-commands.s
 deleted file mode 100644
 index c9f5d9b5c21..00000000000
---- a/lld/test/MachO/load-commands.s
+--- a/test/MachO/load-commands.s
 +++ /dev/null
 @@ -1,22 +0,0 @@
 -# REQUIRES: x86
@@ -6893,10 +6893,10 @@ index c9f5d9b5c21..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/local-got.s b/lld/test/MachO/local-got.s
+diff --git a/test/MachO/local-got.s b/test/MachO/local-got.s
 deleted file mode 100644
 index 6099a6bf18c..00000000000
---- a/lld/test/MachO/local-got.s
+--- a/test/MachO/local-got.s
 +++ /dev/null
 @@ -1,58 +0,0 @@
 -# REQUIRES: x86
@@ -6957,10 +6957,10 @@ index 6099a6bf18c..00000000000
 -
 -_goodbye_world:
 -  .asciz "Goodbye world!\n"
-diff --git a/lld/test/MachO/no-exports-dylib.s b/lld/test/MachO/no-exports-dylib.s
+diff --git a/test/MachO/no-exports-dylib.s b/test/MachO/no-exports-dylib.s
 deleted file mode 100644
 index 896c31ef3c2..00000000000
---- a/lld/test/MachO/no-exports-dylib.s
+--- a/test/MachO/no-exports-dylib.s
 +++ /dev/null
 @@ -1,6 +0,0 @@
 -# REQUIRES: x86
@@ -6969,10 +6969,10 @@ index 896c31ef3c2..00000000000
 -
 -# RUN: obj2yaml %t.dylib | FileCheck %s
 -# CHECK: export_size: 0
-diff --git a/lld/test/MachO/order-file.s b/lld/test/MachO/order-file.s
+diff --git a/test/MachO/order-file.s b/test/MachO/order-file.s
 deleted file mode 100644
 index 4ced92a4eca..00000000000
---- a/lld/test/MachO/order-file.s
+--- a/test/MachO/order-file.s
 +++ /dev/null
 @@ -1,131 +0,0 @@
 -# REQUIRES: x86
@@ -7106,10 +7106,10 @@ index 4ced92a4eca..00000000000
 -_main:
 -  callq _foo
 -  ret
-diff --git a/lld/test/MachO/platform-version.test b/lld/test/MachO/platform-version.test
+diff --git a/test/MachO/platform-version.test b/test/MachO/platform-version.test
 deleted file mode 100644
 index baa4ced08fb..00000000000
---- a/lld/test/MachO/platform-version.test
+--- a/test/MachO/platform-version.test
 +++ /dev/null
 @@ -1,17 +0,0 @@
 -# RUN: not lld -flavor darwinnew -platform_version 2>&1 \
@@ -7129,10 +7129,10 @@ index baa4ced08fb..00000000000
 -FAIL: usage: -platform_version platform min_version sdk_version
 -GOOD: undefined symbol: _main
 -FAIL_FILE: cannot open foobar
-diff --git a/lld/test/MachO/relocations.s b/lld/test/MachO/relocations.s
+diff --git a/test/MachO/relocations.s b/test/MachO/relocations.s
 deleted file mode 100644
 index edaa3089356..00000000000
---- a/lld/test/MachO/relocations.s
+--- a/test/MachO/relocations.s
 +++ /dev/null
 @@ -1,66 +0,0 @@
 -# REQUIRES: x86
@@ -7201,10 +7201,10 @@ index edaa3089356..00000000000
 -  .quad L_.str
 -L_.ptr_2_to_str:
 -  .quad L_.str
-diff --git a/lld/test/MachO/resolution.s b/lld/test/MachO/resolution.s
+diff --git a/test/MachO/resolution.s b/test/MachO/resolution.s
 deleted file mode 100644
 index a13bb529cf7..00000000000
---- a/lld/test/MachO/resolution.s
+--- a/test/MachO/resolution.s
 +++ /dev/null
 @@ -1,44 +0,0 @@
 -# REQUIRES: x86
@@ -7251,10 +7251,10 @@ index a13bb529cf7..00000000000
 -  movq _bar@GOTPCREL(%rip), %rsi
 -  movq _baz@GOTPCREL(%rip), %rsi
 -  ret
-diff --git a/lld/test/MachO/search-paths-darwin.test b/lld/test/MachO/search-paths-darwin.test
+diff --git a/test/MachO/search-paths-darwin.test b/test/MachO/search-paths-darwin.test
 deleted file mode 100644
 index 85b7e30671b..00000000000
---- a/lld/test/MachO/search-paths-darwin.test
+--- a/test/MachO/search-paths-darwin.test
 +++ /dev/null
 @@ -1,20 +0,0 @@
 -REQUIRES: x86
@@ -7277,10 +7277,10 @@ index 85b7e30671b..00000000000
 -CHECK_Z-NEXT: [[LDIR]]
 -CHECK_Z-NEXT: Framework search paths:
 -CHECK_Z-NEXT: [[FDIR]]
-diff --git a/lld/test/MachO/search-paths.test b/lld/test/MachO/search-paths.test
+diff --git a/test/MachO/search-paths.test b/test/MachO/search-paths.test
 deleted file mode 100644
 index 124a2a080b6..00000000000
---- a/lld/test/MachO/search-paths.test
+--- a/test/MachO/search-paths.test
 +++ /dev/null
 @@ -1,15 +0,0 @@
 -UNSUPPORTED: darwin
@@ -7298,10 +7298,10 @@ index 124a2a080b6..00000000000
 -CHECK_Z-NEXT: [[LDIR]]
 -CHECK_Z-NEXT: Framework search paths:
 -CHECK_Z-NEXT: [[FDIR]]
-diff --git a/lld/test/MachO/section-headers.s b/lld/test/MachO/section-headers.s
+diff --git a/test/MachO/section-headers.s b/test/MachO/section-headers.s
 deleted file mode 100644
 index 9fafc5a912b..00000000000
---- a/lld/test/MachO/section-headers.s
+--- a/test/MachO/section-headers.s
 +++ /dev/null
 @@ -1,46 +0,0 @@
 -# REQUIRES: x86
@@ -7350,10 +7350,10 @@ index 9fafc5a912b..00000000000
 -
 -.section __TEXT,maxlen_16ch_name
 -.align 3
-diff --git a/lld/test/MachO/section-merge.s b/lld/test/MachO/section-merge.s
+diff --git a/test/MachO/section-merge.s b/test/MachO/section-merge.s
 deleted file mode 100644
 index 69c55a047b4..00000000000
---- a/lld/test/MachO/section-merge.s
+--- a/test/MachO/section-merge.s
 +++ /dev/null
 @@ -1,26 +0,0 @@
 -# REQUIRES: x86
@@ -7382,10 +7382,10 @@ index 69c55a047b4..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/segments.s b/lld/test/MachO/segments.s
+diff --git a/test/MachO/segments.s b/test/MachO/segments.s
 deleted file mode 100644
 index acb0f1e9010..00000000000
---- a/lld/test/MachO/segments.s
+--- a/test/MachO/segments.s
 +++ /dev/null
 @@ -1,53 +0,0 @@
 -# REQUIRES: x86
@@ -7441,10 +7441,10 @@ index acb0f1e9010..00000000000
 -  ret
 -
 -.section maxlen_16ch_name,foo
-diff --git a/lld/test/MachO/silent-ignore.test b/lld/test/MachO/silent-ignore.test
+diff --git a/test/MachO/silent-ignore.test b/test/MachO/silent-ignore.test
 deleted file mode 100644
 index ae68dd8fe81..00000000000
---- a/lld/test/MachO/silent-ignore.test
+--- a/test/MachO/silent-ignore.test
 +++ /dev/null
 @@ -1,9 +0,0 @@
 -RUN: lld -flavor darwinnew -v \
@@ -7456,10 +7456,10 @@ index ae68dd8fe81..00000000000
 -RUN:   -syslibroot /path/to/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 -RUN: not lld -flavor darwinnew -v --not-an-ignored-argument 2>&1 | FileCheck %s
 -CHECK: error: unknown argument: --not-an-ignored-argument
-diff --git a/lld/test/MachO/static-link.s b/lld/test/MachO/static-link.s
+diff --git a/test/MachO/static-link.s b/test/MachO/static-link.s
 deleted file mode 100644
 index f8260807df6..00000000000
---- a/lld/test/MachO/static-link.s
+--- a/test/MachO/static-link.s
 +++ /dev/null
 @@ -1,30 +0,0 @@
 -# REQUIRES: x86
@@ -7492,10 +7492,10 @@ index f8260807df6..00000000000
 -  syscall
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/stub-link.s b/lld/test/MachO/stub-link.s
+diff --git a/test/MachO/stub-link.s b/test/MachO/stub-link.s
 deleted file mode 100644
 index 1bf65c46a78..00000000000
---- a/lld/test/MachO/stub-link.s
+--- a/test/MachO/stub-link.s
 +++ /dev/null
 @@ -1,21 +0,0 @@
 -# REQUIRES: x86
@@ -7519,10 +7519,10 @@ index 1bf65c46a78..00000000000
 -_main:
 -  movq ___nan@GOTPCREL(%rip), %rax
 -  ret
-diff --git a/lld/test/MachO/sub-library.s b/lld/test/MachO/sub-library.s
+diff --git a/test/MachO/sub-library.s b/test/MachO/sub-library.s
 deleted file mode 100644
 index e858eaf0bff..00000000000
---- a/lld/test/MachO/sub-library.s
+--- a/test/MachO/sub-library.s
 +++ /dev/null
 @@ -1,74 +0,0 @@
 -# REQUIRES: x86
@@ -7599,10 +7599,10 @@ index e858eaf0bff..00000000000
 -  syscall
 -  mov $0, %rax
 -  ret
-diff --git a/lld/test/MachO/subsections-section-relocs.s b/lld/test/MachO/subsections-section-relocs.s
+diff --git a/test/MachO/subsections-section-relocs.s b/test/MachO/subsections-section-relocs.s
 deleted file mode 100644
 index e8a8d7a3ec4..00000000000
---- a/lld/test/MachO/subsections-section-relocs.s
+--- a/test/MachO/subsections-section-relocs.s
 +++ /dev/null
 @@ -1,47 +0,0 @@
 -# REQUIRES: x86
@@ -7652,10 +7652,10 @@ index e8a8d7a3ec4..00000000000
 -  .asciz "Private symbol"
 -
 -.subsections_via_symbols
-diff --git a/lld/test/MachO/subsections-symbol-relocs.s b/lld/test/MachO/subsections-symbol-relocs.s
+diff --git a/test/MachO/subsections-symbol-relocs.s b/test/MachO/subsections-symbol-relocs.s
 deleted file mode 100644
 index 475c909377d..00000000000
---- a/lld/test/MachO/subsections-symbol-relocs.s
+--- a/test/MachO/subsections-symbol-relocs.s
 +++ /dev/null
 @@ -1,55 +0,0 @@
 -# REQUIRES: x86
@@ -7713,10 +7713,10 @@ index 475c909377d..00000000000
 -  retq
 -
 -.subsections_via_symbols
-diff --git a/lld/test/MachO/symbol-order.s b/lld/test/MachO/symbol-order.s
+diff --git a/test/MachO/symbol-order.s b/test/MachO/symbol-order.s
 deleted file mode 100644
 index 328ff9e2475..00000000000
---- a/lld/test/MachO/symbol-order.s
+--- a/test/MachO/symbol-order.s
 +++ /dev/null
 @@ -1,46 +0,0 @@
 -# REQUIRES: x86
@@ -7765,10 +7765,10 @@ index 328ff9e2475..00000000000
 -_main:
 -  callq g
 -  ret
-diff --git a/lld/test/MachO/symtab.s b/lld/test/MachO/symtab.s
+diff --git a/test/MachO/symtab.s b/test/MachO/symtab.s
 deleted file mode 100644
 index 44a016912bd..00000000000
---- a/lld/test/MachO/symtab.s
+--- a/test/MachO/symtab.s
 +++ /dev/null
 @@ -1,54 +0,0 @@
 -# REQUIRES: x86
@@ -7825,10 +7825,10 @@ index 44a016912bd..00000000000
 -bar:
 -  mov $2, %rax
 -  ret
-diff --git a/lld/test/MachO/x86-64-reloc-signed.s b/lld/test/MachO/x86-64-reloc-signed.s
+diff --git a/test/MachO/x86-64-reloc-signed.s b/test/MachO/x86-64-reloc-signed.s
 deleted file mode 100644
 index 568f65c7c1e..00000000000
---- a/lld/test/MachO/x86-64-reloc-signed.s
+--- a/test/MachO/x86-64-reloc-signed.s
 +++ /dev/null
 @@ -1,64 +0,0 @@
 -# REQUIRES: x86
@@ -7895,10 +7895,10 @@ index 568f65c7c1e..00000000000
 -.section __DATA,__foo
 -L._s:
 -  .space 5
-diff --git a/lld/test/MachO/x86-64-reloc-unsigned.s b/lld/test/MachO/x86-64-reloc-unsigned.s
+diff --git a/test/MachO/x86-64-reloc-unsigned.s b/test/MachO/x86-64-reloc-unsigned.s
 deleted file mode 100644
 index 52a3d536139..00000000000
---- a/lld/test/MachO/x86-64-reloc-unsigned.s
+--- a/test/MachO/x86-64-reloc-unsigned.s
 +++ /dev/null
 @@ -1,31 +0,0 @@
 -# REQUIRES: x86
@@ -7932,10 +7932,10 @@ index 52a3d536139..00000000000
 -_main:
 -  mov $0, %rax
 -  ret
-diff --git a/lld/tools/lld/CMakeLists.txt b/lld/tools/lld/CMakeLists.txt
+diff --git a/tools/lld/CMakeLists.txt b/tools/lld/CMakeLists.txt
 index e6f72fcd348..ca589942712 100644
---- a/lld/tools/lld/CMakeLists.txt
-+++ b/lld/tools/lld/CMakeLists.txt
+--- a/tools/lld/CMakeLists.txt
++++ b/tools/lld/CMakeLists.txt
 @@ -15,7 +15,6 @@ target_link_libraries(lld
    lldCOFF
    lldDriver
@@ -7944,10 +7944,10 @@ index e6f72fcd348..ca589942712 100644
    lldMinGW
    lldWasm
    )
-diff --git a/lld/tools/lld/lld.cpp b/lld/tools/lld/lld.cpp
+diff --git a/tools/lld/lld.cpp b/tools/lld/lld.cpp
 index 8a8f8d04bbd..1063e80b8a8 100644
---- a/lld/tools/lld/lld.cpp
-+++ b/lld/tools/lld/lld.cpp
+--- a/tools/lld/lld.cpp
++++ b/tools/lld/lld.cpp
 @@ -45,11 +45,10 @@ using namespace llvm::sys;
  
  enum Flavor {
