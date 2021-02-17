@@ -36,7 +36,7 @@
 %endif
 
 %if 0%{?rhel}
-%global targets_to_build "X86;AMDGPU;PowerPC;NVPTX;SystemZ;AArch64;ARM;Mips;BPF"
+%global targets_to_build "X86;AMDGPU;PowerPC;NVPTX;SystemZ;AArch64;ARM;Mips;BPF;WebAssembly"
 %global experimental_targets_to_build ""
 %else
 %global targets_to_build "all"
