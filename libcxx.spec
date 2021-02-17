@@ -1,13 +1,13 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-%global rc_ver 2
-%global baserelease 3
+%global rc_ver 1
+%global baserelease 1
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	11.1.0
+Version:	12.0.0
 Release:	%{?rc_ver:0.}%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
@@ -89,12 +89,17 @@ pathfix.py -i %{__python3} -pn \
 
 %ldconfig_scriptlets
 
+# Install header files that libcxxabi needs
+mkdir -p %{buildroot}%{_includedir}/libcxx-internal/
+install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
+
 %files
 %license LICENSE.TXT
 %doc CREDITS.TXT TODO.TXT
 %{_libdir}/libc++.so.*
 
 %files devel
+%{_includedir}/libcxx-internal/
 %{_includedir}/c++/
 %{_libdir}/libc++.so
 
@@ -104,6 +109,9 @@ pathfix.py -i %{__python3} -pn \
 
 
 %changelog
+* Wed Feb 17 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-0.1.rc1
+- 12.0.0-rc1 Release
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 11.1.0-0.3.rc2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
