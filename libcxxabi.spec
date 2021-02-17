@@ -1,11 +1,11 @@
 %global toolchain clang
-%global rc_ver 2
-%global baserelease 4
+%global rc_ver 1
+%global baserelease 1
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
-Version:	11.1.0
+Version:	12.0.0
 Release:	%{?rc_ver:0.}%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
@@ -15,6 +15,7 @@ Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 Source2:	tstellar-gpg-key.asc
 
 Patch0:		0001-libcxxabi-Remove-monorepo-requirement.patch
+Patch1:		0001-Include-refstring.h-from-system-includedir.patch
 
 BuildRequires:	clang llvm-devel cmake llvm-static ninja-build
 BuildRequires:	libcxx-devel >= %{version}
@@ -100,6 +101,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Wed Feb 17 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-0.1.rc1
+- 12.0.0-rc1 Release
+
 * Wed Feb 03 2021 Timm Bäder <tbaeder@redhat.com> - 11.1.0-0.4.rc2
 - Fix passing the llvm config
 

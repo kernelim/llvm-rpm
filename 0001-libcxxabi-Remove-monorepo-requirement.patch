@@ -1,14 +1,14 @@
-From ba3084240c5dc08557734be0ed81bfa52be81bce Mon Sep 17 00:00:00 2001
+From d19bf09163a54984160eda55a43b93703f8d46b5 Mon Sep 17 00:00:00 2001
 From: Tom Stellard <tstellar@redhat.com>
 Date: Tue, 11 Aug 2020 08:27:41 -0700
 Subject: [PATCH] libcxxabi: Remove monorepo requirement
 
 ---
- libcxxabi/CMakeLists.txt | 4 ----
- 1 file changed, 4 deletions(-)
+ libcxxabi/CMakeLists.txt | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
-index 6cb139b311c..f124c09fcac 100644
+index 426c855288fc..8ad0475dc65e 100644
 --- a/libcxxabi/CMakeLists.txt
 +++ b/libcxxabi/CMakeLists.txt
 @@ -1,9 +1,5 @@
@@ -21,6 +21,15 @@ index 6cb139b311c..f124c09fcac 100644
  #===============================================================================
  # Setup Project
  #===============================================================================
+@@ -42,8 +38,6 @@ if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR OR LIBCXXABI_STANDALONE_B
+   set(LIBCXXABI_STANDALONE_BUILD 1)
+   set(LLVM_LIT_OUTPUT_DIR "${LIBCXXABI_BINARY_DIR}/bin")
+ 
+-  # Find the LLVM sources and simulate LLVM CMake options.
+-  include(HandleOutOfTreeLLVM)
+ endif()
+ 
+ if (LIBCXXABI_STANDALONE_BUILD)
 -- 
-2.18.1
+2.27.0
 
