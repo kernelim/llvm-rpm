@@ -18,8 +18,8 @@
 %global patch_ver 0
 
 %if %{with compat_build}
-%global pkg_name llvm%{maj_ver}.%{min_ver}
-%global exec_suffix -%{maj_ver}.%{min_ver}
+%global pkg_name llvm%{maj_ver}
+%global exec_suffix -%{maj_ver}
 %global install_prefix %{_libdir}/%{name}
 %global install_bindir %{install_prefix}/bin
 %global install_includedir %{install_prefix}/include
@@ -110,8 +110,10 @@ Requires:	libedit-devel
 # separate files, so that llvm-devel would not need to Require these packages,
 # but this caused bugs (rhbz#1773678) and forced us to carry two non-upstream
 # patches.
-Requires:	llvm-static%{?_isa} = %{version}-%{release}
-Requires:	llvm-test%{?_isa} = %{version}-%{release}
+Requires:	%{name}-static%{?_isa} = %{version}-%{release}
+%if %{without compat_build}
+Requires:	%{name}-test%{?_isa} = %{version}-%{release}
+%endif
 
 
 Requires(post):	%{_sbindir}/alternatives
