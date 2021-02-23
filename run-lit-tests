@@ -46,7 +46,7 @@ case $ARCH in
         ;;
 esac
 
-cd $(mktemp -d)
+cd $(mktemp -d -p /var/tmp)
 ln -s /usr/include include
 ln -s /usr/share/llvm/src/docs docs
 tar -xzf /usr/share/llvm/src/test.tar.gz
