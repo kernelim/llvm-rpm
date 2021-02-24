@@ -10,8 +10,8 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-%global rc_ver 1
-%global baserelease 2
+%global rc_ver 2
+%global baserelease 3
 %global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -545,6 +545,9 @@ fi
 %endif
 
 %changelog
+* Wed Feb 24 2021 sguelton@redhat.com - 12.0.0-0.3.rc2
+- 12.0.0-rc2 release
+
 * Tue Feb 16 2021 Dave Airlie <airlied@redhat.com> - 12.0.0-0.2.rc1
 - Enable LLVM_USE_PERF to allow perf integration
 
