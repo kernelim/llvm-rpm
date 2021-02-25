@@ -16,7 +16,7 @@ Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz.sig
 Source2:	tstellar-gpg-key.asc
 
-Patch0:		0001-libcxx-Remove-monorepo-requirement.patch
+Patch0:		0001-PATCH-libcxx-Remove-monorepo-requirement.patch
 
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
 # We need python3-devel for pathfix.py.
