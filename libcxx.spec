@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 %global rc_ver 2
-%global baserelease 2
+%global baserelease 3
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -22,8 +22,11 @@ BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
 # We need python3-devel for pathfix.py.
 BuildRequires:  python3-devel
 
-%if %{bootstrap} < 1
+# The static libc++ links the static abi library in as well
+BuildRequires:	libcxxabi-static
 BuildRequires:	libcxxabi-devel
+
+%if %{bootstrap} < 1
 BuildRequires:	python3
 %endif
 
@@ -66,26 +69,52 @@ pathfix.py -i %{__python3} -pn \
 
 %build
 
-%cmake  -GNinja \
-	-DLIBCXX_STANDALONE_BUILD=ON \
+common_cmake_flags="\
+%if 0%{?__isa_bits} == 64
+	-DLIBCXX_LIBDIR_SUFFIX:STRING=64 \
+%endif
 %if %{bootstrap} < 1
 	-DLIBCXX_CXX_ABI=libcxxabi \
 	-DLIBCXX_CXX_ABI_INCLUDE_PATHS=%{_includedir} \
 	-DPYTHONINTERP_FOUND=ON \
 	-DPYTHON_EXECUTABLE=%{_bindir}/python3 \
+%endif
+	-DLIBCXX_STANDALONE_BUILD=ON \
+	-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+
+# Build the static libc++.a.
+# We include the libc++abi symbols.
+%cmake  -GNinja \
+	$common_cmake_flags \
+	-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF \
+	-DLIBCXX_ENABLE_STATIC=ON \
+	-DLIBCXX_ENABLE_SHARED=OFF \
+	-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=ON \
+	-DLIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY=ON \
+	-DLIBCXX_CXX_ABI_LIBRARY_PATH=%{_libdir}
+
+%cmake_build
+
+# Copy result libc++.a
+mkdir results-static
+find . -name libc++.a -exec cp {} ./results-static \;
+
+%cmake  -GNinja \
+	$common_cmake_flags \
+	-DLIBCXX_STANDALONE_BUILD=ON \
+%if %{bootstrap} < 1
 	-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
 %endif
-%if 0%{?__isa_bits} == 64
-	-DLIBCXX_LIBDIR_SUFFIX:STRING=64 \
-%endif
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo
-
+	-DLIBCXX_ENABLE_STATIC=OFF \
+	-DLIBCXX_ENABLE_SHARED=ON \
+	-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=OFF
 
 %cmake_build
 
 %install
 
 %cmake_install
+install results-static/libc++.a %{buildroot}/%{_libdir}
 
 %ldconfig_scriptlets
 
@@ -109,6 +138,10 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Thu Feb 25 2021 Timm Bäder <tbaeder@redhat.com> - 12.0.0-0.3.rc2
+- Build shared and static libc++ separately
+- Include libc++abi symbols in static libc++.a
+
 * Wed Feb 24 2021 sguelton@redhat.com - 12.0.0-0.2.rc2
 - 12.0.0-rc2 release
 
