@@ -1,6 +1,20 @@
-diff -Naur lld-12.0.0rc1.src.orig/include/mach-o/compact_unwind_encoding.h lld-12.0.0rc1.src/include/mach-o/compact_unwind_encoding.h
---- lld-12.0.0rc1.src.orig/include/mach-o/compact_unwind_encoding.h	1970-01-01 01:00:00.000000000 +0100
-+++ lld-12.0.0rc1.src/include/mach-o/compact_unwind_encoding.h	2021-02-16 19:55:22.000000000 +0100
+From 43dfe54ce017c8d37eaec480a2f13a492bbc4203 Mon Sep 17 00:00:00 2001
+From: serge-sans-paille <sguelton@redhat.com>
+Date: Thu, 25 Feb 2021 14:24:14 +0100
+Subject: [PATCH 2/2] [PATCH][lld] Import compact_unwind_encoding.h from
+ libunwind
+
+This avoids an implicit cross package dependency
+---
+ lld/include/mach-o/compact_unwind_encoding.h | 477 +++++++++++++++++++++++++++
+ 1 file changed, 477 insertions(+)
+ create mode 100644 lld/include/mach-o/compact_unwind_encoding.h
+
+diff --git a/lld/include/mach-o/compact_unwind_encoding.h b/lld/include/mach-o/compact_unwind_encoding.h
+new file mode 100644
+index 0000000..5301b10
+--- /dev/null
++++ b/lld/include/mach-o/compact_unwind_encoding.h
 @@ -0,0 +1,477 @@
 +//===------------------ mach-o/compact_unwind_encoding.h ------------------===//
 +//
@@ -479,3 +493,6 @@ diff -Naur lld-12.0.0rc1.src.orig/include/mach-o/compact_unwind_encoding.h lld-1
 +
 +#endif
 +
+-- 
+1.8.3.1
+

@@ -24,10 +24,10 @@ Source4:	lit.lld-test.cfg.py
 
 ExcludeArch:	s390x
 
-Patch0:		0001-CMake-Check-for-gtest-headers-even-if-lit.py-is-not-.patch
+Patch0:		0001-PATCH-lld-CMake-Check-for-gtest-headers-even-if-lit..patch
 
 # Bundle libunwind header need during build for MachO support
-Patch1:		include-libunwind-header.patch
+Patch1:		0002-PATCH-lld-Import-compact_unwind_encoding.h-from-libu.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -83,7 +83,7 @@ LLVM regression tests.
 
 %prep
 %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
-%autosetup -n %{lld_srcdir} -p1
+%autosetup -n %{lld_srcdir} -p2
 
 
 %build

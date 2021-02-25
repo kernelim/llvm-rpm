@@ -1,19 +1,20 @@
-From e5bdf4580677da063abe8d3880fbab9eaa7a7efe Mon Sep 17 00:00:00 2001
+From 760568cd24acd6ae9083b0dfea2c7c0ea6f0adc2 Mon Sep 17 00:00:00 2001
 From: Tom Stellard <tstellar@redhat.com>
 Date: Thu, 30 Aug 2018 08:53:56 -0700
-Subject: [PATCH] CMake: Check for gtest headers even if lit.py is not present
+Subject: [PATCH 1/2] [PATCH][lld] CMake: Check for gtest headers even if
+ lit.py is not present
 
 This makes it possible to build the unittests even withotu a full
 checkout of the llvm source tree.
 ---
- CMakeLists.txt | 15 +++++++++------
+ lld/CMakeLists.txt | 15 +++++++++------
  1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e2fbdbf..c9b2927 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -75,6 +75,15 @@ Please install Python or specify the PYTHON_EXECUTABLE CMake variable.")
+diff --git a/lld/CMakeLists.txt b/lld/CMakeLists.txt
+index d4e561b..a7406d1c 100644
+--- a/lld/CMakeLists.txt
++++ b/lld/CMakeLists.txt
+@@ -65,6 +65,15 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
        set(LLVM_UTILS_PROVIDED ON)
      endif()
  
@@ -29,7 +30,7 @@ index e2fbdbf..c9b2927 100644
      if(EXISTS ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
        # Note: path not really used, except for checking if lit was found
        set(LLVM_LIT ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
-@@ -84,12 +93,6 @@ Please install Python or specify the PYTHON_EXECUTABLE CMake variable.")
+@@ -74,12 +83,6 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
          set(LLVM_UTILS_PROVIDED ON)
          set(LLD_TEST_DEPS FileCheck not)
        endif()
