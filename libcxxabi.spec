@@ -14,8 +14,8 @@ Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxxabi_srcdir}.tar.xz.sig
 Source2:	tstellar-gpg-key.asc
 
-Patch0:		0001-libcxxabi-Remove-monorepo-requirement.patch
-Patch1:		0001-Include-refstring.h-from-system-includedir.patch
+Patch0:		0001-PATCH-libcxxabi-Include-refstring.h-from-system-incl.patch
+Patch1:		0002-PATCH-libcxxabi-Remove-monorepo-requirement.patch
 
 BuildRequires:	clang llvm-devel cmake llvm-static ninja-build
 BuildRequires:	libcxx-devel >= %{version}

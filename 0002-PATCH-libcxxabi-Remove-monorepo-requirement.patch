@@ -1,14 +1,14 @@
-From d19bf09163a54984160eda55a43b93703f8d46b5 Mon Sep 17 00:00:00 2001
+From b2aeba2b86445ceca13c90561dbb26075a6eab67 Mon Sep 17 00:00:00 2001
 From: Tom Stellard <tstellar@redhat.com>
 Date: Tue, 11 Aug 2020 08:27:41 -0700
-Subject: [PATCH] libcxxabi: Remove monorepo requirement
+Subject: [PATCH 2/2] [PATCH][libcxxabi] Remove monorepo requirement
 
 ---
  libcxxabi/CMakeLists.txt | 6 ------
  1 file changed, 6 deletions(-)
 
 diff --git a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
-index 426c855288fc..8ad0475dc65e 100644
+index 426c855..8ad0475 100644
 --- a/libcxxabi/CMakeLists.txt
 +++ b/libcxxabi/CMakeLists.txt
 @@ -1,9 +1,5 @@
@@ -31,5 +31,5 @@ index 426c855288fc..8ad0475dc65e 100644
  
  if (LIBCXXABI_STANDALONE_BUILD)
 -- 
-2.27.0
+1.8.3.1
 
