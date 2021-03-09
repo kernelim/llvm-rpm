@@ -2,7 +2,7 @@
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
 %global rc_ver 2
-%global baserelease 3
+%global baserelease 4
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -138,6 +138,9 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Tue Mar 09 2021 sguelton@redhat.com - 12.0.0-0.4.rc2
+- rebuilt
+
 * Thu Feb 25 2021 Timm Bäder <tbaeder@redhat.com> - 12.0.0-0.3.rc2
 - Build shared and static libc++ separately
 - Include libc++abi symbols in static libc++.a
