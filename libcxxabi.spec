@@ -1,6 +1,6 @@
 %global toolchain clang
 %global rc_ver 2
-%global baserelease 2
+%global baserelease 3
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -101,6 +101,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Tue Mar 09 2021 sguelton@redhat.com - 12.0.0-0.3.rc2
+- rebuilt
+
 * Wed Feb 24 2021 sguelton@redhat.com - 12.0.0-0.2.rc2
 - 12.0.0-rc2 release
 
