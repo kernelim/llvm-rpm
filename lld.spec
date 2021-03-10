@@ -1,5 +1,5 @@
 %global rc_ver 2
-%global baserelease 2
+%global baserelease 3
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -203,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Wed Mar 10 2021 sguelton@redhat.com - 12.0.0-0.3.rc2
+- rebuilt
+
 * Wed Feb 24 2021 sguelton@redhat.com - 12.0.0-0.2.rc2
 - llvm 12.0.0-rc2 release
 
