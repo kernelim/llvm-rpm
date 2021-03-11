@@ -1,5 +1,5 @@
-%global rc_ver 2
-%global baserelease 3
+%global rc_ver 3
+%global baserelease 4
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -203,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Thu Mar 11 2021 sguelton@redhat.com - 12.0.0-0.4.rc3
+- LLVM 12.0.0 rc3
+
 * Wed Mar 10 2021 sguelton@redhat.com - 12.0.0-0.3.rc2
 - rebuilt
 
