@@ -37,6 +37,10 @@ BuildRequires:	llvm-devel = %{version}
 BuildRequires:	llvm-test = %{version}
 BuildRequires:	ncurses-devel
 BuildRequires:	zlib-devel
+BuildRequires:  devtoolset-7-gcc
+BuildRequires:  devtoolset-7-make
+BuildRequires:  devtoolset-7-toolchain
+BuildRequires:  devtoolset-7-gdb
 
 # For make check:
 BuildRequires:	python3-rpm-macros
@@ -68,27 +72,21 @@ Summary:	LLD shared libraries
 %description libs
 Shared libraries for LLD.
 
-%package test
-Summary: LLD regression tests
-Requires:	%{name}%{?_isa} = %{version}-%{release}
-Requires:	python3-lit
-Requires:	llvm-test(major) = %{maj_ver}
-Requires:	lld-libs = %{version}-%{release}
-
-%description test
-LLVM regression tests.
-
 %prep
+source /opt/rh//devtoolset-7/enable
+
 %{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE3}' --data='%{SOURCE0}'
 %autosetup -n %{lld_srcdir} -p1
 
 %build
+source /opt/rh//devtoolset-7/enable
 
 # Disable lto since it causes the COFF/libpath.test lit test to crash.
 %global _lto_cflags %{nil}
 
-%cmake \
-	-GNinja \
+mkdir -p _build
+cd _build
+%cmake .. \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_DYLIB_COMPONENTS="all" \
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
@@ -104,54 +102,19 @@ LLVM regression tests.
 	-DLLVM_LIBDIR_SUFFIX=
 %endif
 
-%cmake_build
-
-# Build the unittests so we can install them.
-%cmake_build --target lld-test-depends
+make %{?_smp_mflags}
 
 %install
+
+
+source /opt/rh//devtoolset-7/enable
+cd _build
 
 %global lit_cfg test/%{_arch}.site.cfg.py
 %global lit_unit_cfg test/Unit/%{_arch}.site.cfg.py
 %global lit_lld_test_cfg_install_path %{_datadir}/lld/lit.lld-test.cfg.py
 
-# Generate lit config files.  Strip off the last line that initiates the
-# test run, so we can customize the configuration.
-head -n -1 %{_target_platform}/test/lit.site.cfg.py >> %{lit_cfg}
-head -n -1 %{_target_platform}/test/Unit/lit.site.cfg.py >> %{lit_unit_cfg}
-
-# Patch lit config files to load custom config:
-for f in %{lit_cfg} %{lit_unit_cfg}; do
-  echo "lit_config.load_config(config, '%{lit_lld_test_cfg_install_path}')" >> $f
-done
-
-# Install test files
-install -d %{buildroot}%{_datadir}/lld/src
-cp %{SOURCE2} %{buildroot}%{_datadir}/lld/
-
-# The various tar options are there to make sur the archive is the same on 32 and 64 bit arch, i.e.
-# the archive creation is reproducible. Move arch-specific content out of the tarball
-mv %{lit_cfg} %{buildroot}%{_datadir}/lld/src/%{_arch}.site.cfg.py
-mv %{lit_unit_cfg} %{buildroot}%{_datadir}/lld/src/%{_arch}.Unit.site.cfg.py
-tar --sort=name --mtime='UTC 2020-01-01' -c test/ | gzip -n > %{buildroot}%{_datadir}/lld/src/test.tar.gz
-
-install -d %{buildroot}%{_libexecdir}/tests/lld
-cp %{SOURCE1} %{buildroot}%{_libexecdir}/tests/lld
-
-# Install unit test binaries
-install -d %{buildroot}%{_libdir}/lld/
-cp -R %{_target_platform}/unittests %{buildroot}%{_libdir}/lld/
-rm -rf `find %{buildroot}%{_libdir}/lld/ -iname '*make*'`
-
-# Install gtest libraries
-cp %{_target_platform}/%{_lib}/libgtest*so* %{buildroot}%{_libdir}/lld/
-
-# Install libraries and binaries
-%cmake_install
-
-# Required when using update-alternatives:
-# https://docs.fedoraproject.org/en-US/packaging-guidelines/Alternatives/
-touch %{buildroot}%{_bindir}/ld
+make install DESTDIR=%{buildroot}
 
 %post
 %{_sbindir}/update-alternatives --install %{_bindir}/ld ld %{_bindir}/ld.lld 1
@@ -162,11 +125,6 @@ if [ $1 -eq 0 ] ; then
 fi
 
 %check
-
-# armv7lhl tests disabled because of arm issue, see https://koji.fedoraproject.org/koji/taskinfo?taskID=33660162
-%ifnarch %{arm}
-%cmake_build --target check-lld
-%endif
 
 %ldconfig_scriptlets libs
 
@@ -184,14 +142,6 @@ fi
 
 %files libs
 %{_libdir}/liblld*.so.*
-
-%files test
-%{_libexecdir}/tests/lld/
-%{_libdir}/lld/
-%{_datadir}/lld/src/test.tar.gz
-%{_datadir}/lld/src/%{_arch}.site.cfg.py
-%{_datadir}/lld/src/%{_arch}.Unit.site.cfg.py
-%{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
 * Mon Aug 10 2020 sguelton@redhat.com - 10.0.0-7
