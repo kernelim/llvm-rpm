@@ -11,7 +11,7 @@
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
 %global rc_ver 3
-%global baserelease 8
+%global baserelease 7
 %global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -442,13 +442,11 @@ fi
 
 %files
 %license LICENSE.TXT
+%exclude %{_mandir}/man1/llvm-config*
+%{_mandir}/man1/*
 %{_bindir}/*
 
 %if %{without compat_build}
-
-%exclude %{_mandir}/man1/llvm-config*
-%{_mandir}/man1/*
-
 %exclude %{_bindir}/llvm-config
 %exclude %{_bindir}/llvm-config-%{__isa_bits}
 %exclude %{_bindir}/not
@@ -549,9 +547,6 @@ fi
 %endif
 
 %changelog
-* Wed Mar 17 2021 sguelton@redhat.com - 12.0.0-0.8.rc3
-- Only ship llvm-config manpages for compat package
-
 * Thu Mar 11 2021 sguelton@redhat.com - 12.0.0-0.7.rc3
 - LLVM 12.0.0 rc3
 
