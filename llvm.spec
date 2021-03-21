@@ -7,6 +7,10 @@
 %endif
 
 %bcond_with compat_build
+%bcond_with bootstrap
+%bcond_with stage1
+%bcond_with full_lto
+%bcond_with no_lto
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
@@ -16,6 +20,7 @@
 %global maj_ver 10
 %global min_ver 0
 %global patch_ver 0
+%global stage1ver 11.1.0
 
 
 %if %{with compat_build}
@@ -39,6 +44,10 @@
 %global build_install_prefix %{buildroot}%{install_prefix}
 
 %define  debug_package %{nil}
+
+%if %{with stage1}
+%global optflags %(echo %{optflags} | sed 's/-g / /')
+%endif
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}
@@ -87,10 +96,33 @@ BuildRequires:	valgrind-devel
 BuildRequires:	libedit-devel
 # We need python3-devel for pathfix.py.
 BuildRequires:	python3-devel
+
+%if %{with bootstrap}
 BuildRequires:  devtoolset-7-gcc
 BuildRequires:  devtoolset-7-make
 BuildRequires:  devtoolset-7-toolchain
 BuildRequires:  devtoolset-7-gdb
+%endif
+
+%if %{with stage2}
+BuildRequires:  libcxx
+BuildRequires:  libcxx-static
+BuildRequires:  libcxx-devel
+BuildRequires:  clang
+BuildRequires:  libcxxabi
+BuildRequires:  libcxxabi-static
+BuildRequires:  libcxxabi-devel
+BuildRequires:  compiler-rt
+BuildRequires:  lld
+%endif
+
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}
+BuildRequires:  llvm-stage1-%{stage1ver}-clang
+BuildRequires:  llvm-stage1-%{stage1ver}-compiler-rt
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+BuildRequires:  llvm-stage1-%{stage1ver}-lld
+%endif
 
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -169,7 +201,15 @@ pathfix.py -i %{__python3} -pn \
 
 %build
 
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
+
+%if %{with stage1}
+export PATH=/opt/llvm-stage1-%{stage1ver}/bin:$PATH
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
+
 mkdir -p _build
 cd _build
 
@@ -182,7 +222,11 @@ cd _build
 %cmake .. -G Ninja \
 	-DBUILD_SHARED_LIBS:BOOL=OFF \
 	-DLLVM_PARALLEL_LINK_JOBS=1 \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+%if %{with stage1}
+        -DCMAKE_BUILD_TYPE=Release \
+%else
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+%endif
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
 %ifarch s390 %{arm} %ix86
 	-DCMAKE_C_FLAGS_RELWITHDEBINFO="%{optflags} -DNDEBUG" \
@@ -234,6 +278,19 @@ cd _build
 %if %{without compat_build}
 	-DLLVM_VERSION_SUFFIX='' \
 %endif
+%if %{with stage1}
+%if %{without no_lto}
+%if %{with full_lto}
+        -DLLVM_ENABLE_LTO=Full \
+%else
+        -DLLVM_ENABLE_LTO=Thin \
+%endif
+	-DLLVM_USE_LINKER=lld \
+%endif
+	-DLLVM_ENABLE_LIBCXX=ON \
+	-DCMAKE_C_COMPILER=clang \
+	-DCMAKE_CXX_COMPILER=clang++ \
+%endif
 	-DLLVM_BUILD_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_DYLIB_EXPORT_ALL:BOOL=ON \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
@@ -243,6 +300,7 @@ cd _build
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix}
 
+#	-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-static-libcxx" \
 # Build libLLVM.so first.  This ensures that when libLLVM.so is linking, there
 # are no other compile jobs running.  This will help reduce OOM errors on the
 # builders without having to artificially limit the number of concurrent jobs.
@@ -251,7 +309,13 @@ cd _build
 
 %install
 
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
+%if %{with stage1}
+export PATH=/opt/llvm-stage1-%{stage1ver}/bin:$PATH
+%endif
+
 %ninja_install -C _build
 
 
@@ -382,7 +446,9 @@ rm -Rf %{build_install_prefix}/share/opt-viewer
 
 %check
 
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
 
 %ldconfig_scriptlets libs
 
