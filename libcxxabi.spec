@@ -1,7 +1,9 @@
 %global toolchain clang
 #%%global rc_ver 5
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
-
+%bcond_with stage1
+%global stage1ver 11.1.0
+%global debug_package %{nil}
 
 Name:		libcxxabi
 Version:	12.0.0%{?rc_ver:~rc%{rc_ver}}
@@ -18,6 +20,12 @@ Patch1:		0002-PATCH-libcxxabi-Remove-monorepo-requirement.patch
 
 BuildRequires:	clang llvm-devel cmake llvm-static ninja-build
 BuildRequires:	libcxx-devel >= %{version}
+BuildRequires:	compiler-rt
+
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+%endif
+
 %if 0%{?rhel}
 # libcxx-devel has this, so we need to as well.
 ExcludeArch:	ppc64 ppc64le
@@ -49,6 +57,11 @@ Summary:	Static libraries for libcxxabi
 sed -i 's|${LLVM_BINARY_DIR}/share/llvm/cmake|%{_libdir}/cmake/llvm|g' CMakeLists.txt
 
 %build
+
+%if %{with stage1}
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
+
 %ifarch armv7hl
 # Disable LTO on ARM. bfd crashes during some of the CMake compiler checks with:
 # /usr/bin/ld: BFD version 2.35-10.fc33 internal error, aborting at elfcode.h:224 in bfd_elf32_swap_symbol_out
@@ -65,22 +78,27 @@ sed -i 's|#define _LIBCXXABI_ARM_EHABI||g' include/__cxxabi_config.h
 %endif
 %endif
 
-%cmake  -GNinja \
+mkdir -p _build
+cd _build
+
+%cmake .. -G Ninja \
 	-DCMAKE_C_COMPILER=/usr/bin/clang \
 	-DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
 	-DLLVM_CONFIG_PATH=%{_bindir}/llvm-config \
 	-DCMAKE_CXX_FLAGS="-std=c++11" \
+	-DLIBCXXABI_USE_COMPILER_RT=YES \
 	-DLIBCXXABI_LIBCXX_INCLUDES=%{_includedir}/c++/v1/ \
 %if 0%{?__isa_bits} == 64
 	-DLIBCXXABI_LIBDIR_SUFFIX:STRING=64 \
 %endif
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-
-%cmake_build
+%ninja_build
+cd ..
 
 %install
-%cmake_install
+
+%ninja_install -C _build
 
 mkdir -p %{buildroot}%{_includedir}
 cp -a include/* %{buildroot}%{_includedir}
