@@ -1,6 +1,11 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
-%global bootstrap 0
+%bcond_with bootstrap
+%bcond_with stage1
+%bcond_with stage2
+%global stage1ver 11.1.0
+%global debug_package %{nil}
+
 #%%global rc_ver 6
 %global baserelease 1
 
@@ -22,8 +27,17 @@ Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{versio
 Source2:	https://prereleases.llvm.org/%{version}/hans-gpg-key.asc
 
 BuildRequires:	gcc-c++ llvm-devel cmake llvm-static
-%if %{bootstrap} < 1
+
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+%endif
+
+%if %{without bootstrap}
+BuildRequires:  libcxx
+BuildRequires:  libcxx-static
+BuildRequires:  clang
 BuildRequires:	libcxxabi-devel
+BuildRequires:	compiler-rt
 BuildRequires:	python3
 %endif
 # PPC64 (on EL7) doesn't like this code.
@@ -39,7 +53,7 @@ libc++ is a new implementation of the C++ standard library, targeting C++11.
 %package devel
 Summary:	Headers and libraries for libcxx devel
 Requires:	%{name}%{?_isa} = %{version}-%{release}
-%if %{bootstrap} < 1
+%if %{without bootstrap}
 Requires:	libcxxabi-devel
 %endif
 
@@ -59,9 +73,16 @@ Summary:	Static libraries for libcxx
 mkdir _build
 cd _build
 
+%if %{with stage1}
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
+
 %cmake .. \
 	-DLLVM_CONFIG=%{_bindir}/llvm-config \
-%if %{bootstrap} < 1
+%if %{without bootstrap}
+        -DCMAKE_C_COMPILER=/usr/bin/clang \
+        -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+	-DLIBCXX_USE_COMPILER_RT=YES \
 	-DLIBCXX_CXX_ABI=libcxxabi \
 	-DLIBCXX_CXX_ABI_INCLUDE_PATHS=%{_includedir} \
 	-DPYTHONINTERP_FOUND=ON \
