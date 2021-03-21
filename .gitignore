@@ -67,3 +67,4 @@
 /libcxx-12.0.0rc5.src.tar.xz.sig
 /libcxx-12.0.0.src.tar.xz.sig
 /libcxx-12.0.0.src.tar.xz
+*.src.tar.xz*

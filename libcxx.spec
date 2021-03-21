@@ -3,6 +3,12 @@
 %global bootstrap 0
 #%%global rc_ver 5
 
+%bcond_with bootstrap
+%bcond_with stage1
+%bcond_with stage2
+%global stage1ver 11.1.0
+%global debug_package %{nil}
+
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
@@ -21,14 +27,24 @@ BuildRequires:	gcc-c++ llvm-devel cmake llvm-static ninja-build
 # We need python3-devel for pathfix.py.
 BuildRequires:  python3-devel
 
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+%endif
+
+%if %{without bootstrap}
 # The static libc++ links the static abi library in as well
 BuildRequires:	libcxxabi-static
 BuildRequires:	libcxxabi-devel
-
-%if %{bootstrap} < 1
-BuildRequires:	python3
+BuildRequires:  clang
+BuildRequires:  compiler-rt
+%else
+BuildRequires:  devtoolset-7-gcc
+BuildRequires:  devtoolset-7-make
+BuildRequires:  devtoolset-7-toolchain
+BuildRequires:  devtoolset-7-gdb
 %endif
 
+BuildRequires:	python3
 
 # For origin certification
 BuildRequires:	gnupg2
@@ -46,7 +62,7 @@ libc++ is a new implementation of the C++ standard library, targeting C++11.
 %package devel
 Summary:	Headers and libraries for libcxx devel
 Requires:	%{name}%{?_isa} = %{version}-%{release}
-%if %{bootstrap} < 1
+%if %{without bootstrap}
 Requires:	libcxxabi-devel
 %endif
 
@@ -68,11 +84,22 @@ pathfix.py -i %{__python3} -pn \
 
 %build
 
+%if %{with stage1}
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
+
+%if %{with bootstrap}
+source /opt/rh//devtoolset-7/enable
+%endif
+
 common_cmake_flags="\
 %if 0%{?__isa_bits} == 64
 	-DLIBCXX_LIBDIR_SUFFIX:STRING=64 \
 %endif
-%if %{bootstrap} < 1
+%if %{without bootstrap}
+        -DCMAKE_C_COMPILER=/usr/bin/clang \
+        -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+        -DLIBCXX_USE_COMPILER_RT=YES \
 	-DLIBCXX_CXX_ABI=libcxxabi \
 	-DLIBCXX_CXX_ABI_INCLUDE_PATHS=%{_includedir} \
 	-DPYTHONINTERP_FOUND=ON \
@@ -81,9 +108,13 @@ common_cmake_flags="\
 	-DLIBCXX_STANDALONE_BUILD=ON \
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo"
 
+mkdir -p _build
+cd _build
+
+%if 0
 # Build the static libc++.a.
 # We include the libc++abi symbols.
-%cmake  -GNinja \
+%cmake .. -G Ninja \
 	$common_cmake_flags \
 	-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF \
 	-DLIBCXX_ENABLE_STATIC=ON \
@@ -92,34 +123,42 @@ common_cmake_flags="\
 	-DLIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY=ON \
 	-DLIBCXX_CXX_ABI_LIBRARY_PATH=%{_libdir}
 
-%cmake_build
+%ninja_build
+cd ..
 
 # Copy result libc++.a
 mkdir results-static
 find . -name libc++.a -exec cp {} ./results-static \;
 
-%cmake  -GNinja \
+cd _build
+%endif
+
+%cmake .. -G Ninja \
 	$common_cmake_flags \
 	-DLIBCXX_STANDALONE_BUILD=ON \
-%if %{bootstrap} < 1
+%if %{without bootstrap}
 	-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=ON \
 %endif
 	-DLIBCXX_ENABLE_STATIC=OFF \
 	-DLIBCXX_ENABLE_SHARED=ON \
 	-DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=OFF
 
-%cmake_build
+%ninja_build
+cd ..
 
 %install
 
-%cmake_install
-install results-static/libc++.a %{buildroot}/%{_libdir}
-
-%ldconfig_scriptlets
+%ninja_install -C _build
 
 # Install header files that libcxxabi needs
 mkdir -p %{buildroot}%{_includedir}/libcxx-internal/
 install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
+
+%if 0
+install results-static/libc++.a %{buildroot}/%{_libdir}
+%endif
+
+%ldconfig_scriptlets
 
 %files
 %license LICENSE.TXT
