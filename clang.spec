@@ -1,10 +1,19 @@
 %global compat_build 0
+%bcond_with bootstrap
+%bcond_with stage1
+%bcond_with full_lto
 
 %global maj_ver 10
 %global min_ver 0
 %global patch_ver 0
 #%%global rc_ver 6
 %global baserelease 2
+%global stage1ver 11.1.0
+
+%if %{with stage1}
+%define  debug_package %{nil}
+%global optflags %(echo %{optflags} | sed 's/-g / /')
+%endif
 
 %global clang_tools_binaries \
 	%{_bindir}/clang-apply-replacements \
@@ -140,10 +149,31 @@ BuildRequires:	python3-devel
 # Needed for %%multilib_fix_c_header
 BuildRequires:	multilib-rpm-config
 BuildRequires: chrpath
+
+%if %{with bootstrap}
 BuildRequires:  devtoolset-7-gcc
 BuildRequires:  devtoolset-7-make
 BuildRequires:  devtoolset-7-toolchain
 BuildRequires:  devtoolset-7-gdb
+%endif
+
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}
+BuildRequires:  llvm-stage1-%{stage1ver}-clang
+BuildRequires:  llvm-stage1-%{stage1ver}-compiler-rt
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+BuildRequires:  llvm-stage1-%{stage1ver}-lld
+%endif
+
+%if %{with stage3}
+BuildRequires:  libcxx
+BuildRequires:  libcxx-devel
+BuildRequires:  clang
+BuildRequires:  libcxxabi
+BuildRequires:  libcxxabi-devel
+BuildRequires:  compiler-rt
+BuildRequires:  lld
+%endif
 
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
@@ -265,7 +295,14 @@ pathfix.py -i %{__python3} -pn \
 
 %build
 
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
+
+%if %{with stage1}
+export PATH=/opt/llvm-stage1-%{stage1ver}/bin:$PATH
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
 
 %if 0%{?__isa_bits} == 64
 sed -i 's/\@FEDORA_LLVM_LIB_SUFFIX\@/64/g' test/lit.cfg.py
@@ -288,7 +325,11 @@ cd _build
 %cmake .. -G Ninja \
 	-DLLVM_PARALLEL_LINK_JOBS=1 \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
+%if %{with stage1}
+	-DCMAKE_BUILD_TYPE=Release \
+%else
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+%endif
 	-DPYTHON_EXECUTABLE=%{__python3} \
 	-DCMAKE_INSTALL_RPATH:BOOL=";" \
 %ifarch s390 s390x %{arm} %ix86 ppc64le
@@ -300,8 +341,12 @@ cd _build
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
 	-DCLANG_INCLUDE_TESTS:BOOL=OFF \
 %else
+%if %with python3
 	-DCLANG_INCLUDE_TESTS:BOOL=ON \
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
+%else
+	-DCLANG_INCLUDE_TESTS:BOOL=OFF \
+%endif
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
 %if 0%{?__isa_bits} == 64
 	-DLLVM_LIBDIR_SUFFIX=64 \
@@ -319,7 +364,9 @@ cd _build
 	-DCLANG_ENABLE_STATIC_ANALYZER:BOOL=ON \
 	-DCLANG_INCLUDE_DOCS:BOOL=ON \
 	-DCLANG_PLUGIN_SUPPORT:BOOL=ON \
+%if %{without stage1}
 	-DENABLE_LINKER_BUILD_ID:BOOL=ON \
+%endif
 	-DLLVM_ENABLE_EH=ON \
 	-DLLVM_ENABLE_RTTI=ON \
 	-DLLVM_BUILD_DOCS=ON \
@@ -329,6 +376,17 @@ cd _build
 	\
 	-DCLANG_BUILD_EXAMPLES:BOOL=OFF \
 	-DBUILD_SHARED_LIBS=OFF \
+%if %{with stage1}
+%if %{with full_lto}
+        -DLLVM_ENABLE_LTO=Full \
+%else
+        -DLLVM_ENABLE_LTO=Thin \
+%endif
+        -DLLVM_ENABLE_LIBCXX=ON \
+        -DLLVM_USE_LINKER=lld \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
+%endif
 	-DCLANG_REPOSITORY_STRING="%{?fedora:Fedora}%{?rhel:Red Hat} %{version}-%{release}"
 
 %ninja_build
