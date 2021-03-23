@@ -5,6 +5,12 @@
 %global min_ver 0
 %global patch_ver 0
 
+%bcond_with bootstrap
+%bcond_with stage1
+%bcond_with stage2
+%global stage1ver 11.1.0
+%global debug_package %{nil}
+
 # Don't include unittests in automatic generation of provides or requires.
 %global __provides_exclude_from ^%{_libdir}/lld/.*$
 %global __requires_exclude ^libgtest.*$
@@ -37,10 +43,32 @@ BuildRequires:	llvm-devel = %{version}
 BuildRequires:	llvm-test = %{version}
 BuildRequires:	ncurses-devel
 BuildRequires:	zlib-devel
+
+%if %{with bootstrap}
 BuildRequires:  devtoolset-7-gcc
 BuildRequires:  devtoolset-7-make
 BuildRequires:  devtoolset-7-toolchain
 BuildRequires:  devtoolset-7-gdb
+%endif
+
+%if %{with stage1}
+BuildRequires:  llvm-stage1-%{stage1ver}
+BuildRequires:  llvm-stage1-%{stage1ver}-clang
+BuildRequires:  llvm-stage1-%{stage1ver}-compiler-rt
+BuildRequires:  llvm-stage1-%{stage1ver}-libcxx
+BuildRequires:  llvm-stage1-%{stage1ver}-lld
+%endif
+
+%if %{with stage2}
+BuildRequires:  lld
+BuildRequires:  clang
+BuildRequires:  libcxx
+BuildRequires:  libcxx-devel
+BuildRequires:  libcxx-static
+BuildRequires:  libcxxabi
+BuildRequires:  libcxxabi-devel
+BuildRequires:  libcxxabi-static
+%endif
 
 # For make check:
 BuildRequires:	python3-rpm-macros
@@ -73,13 +101,24 @@ Summary:	LLD shared libraries
 Shared libraries for LLD.
 
 %prep
+
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
 
 %{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE3}' --data='%{SOURCE0}'
 %autosetup -n %{lld_srcdir} -p1
 
 %build
+
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
+
+%if %{with stage1}
+export PATH=/opt/llvm-stage1-%{stage1ver}/bin:$PATH
+export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
+%endif
 
 # Disable lto since it causes the COFF/libpath.test lit test to crash.
 %global _lto_cflags %{nil}
@@ -96,18 +135,33 @@ cd _build
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
 	-DLLVM_LIT_ARGS="-sv \
 	--path %{_libdir}/llvm" \
+%if %{without bootstrap}
+	-DLLVM_ENABLE_LIBCXX=ON \
+%if %{with stage2}
+	-DLLVM_ENABLE_LLD=ON \
+%else
+	-DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi -fuse-ld=lld" \
+%endif
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
+%endif
 %if 0%{?__isa_bits} == 64
 	-DLLVM_LIBDIR_SUFFIX=64
 %else
 	-DLLVM_LIBDIR_SUFFIX=
 %endif
 
+#	-DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" \
+#        -DCMAKE_EXE_LINKER_FLAGS="-lc++abi" \
+
 make %{?_smp_mflags}
 
 %install
 
-
+%if %{with bootstrap}
 source /opt/rh//devtoolset-7/enable
+%endif
+
 cd _build
 
 %global lit_cfg test/%{_arch}.site.cfg.py
