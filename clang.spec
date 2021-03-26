@@ -2,6 +2,7 @@
 %bcond_with bootstrap
 %bcond_with stage1
 %bcond_with full_lto
+%bcond_with static_link
 
 %global maj_ver 10
 %global min_ver 0
@@ -371,7 +372,11 @@ cd _build
 	-DLLVM_ENABLE_RTTI=ON \
 	-DLLVM_BUILD_DOCS=ON \
 	-DLLVM_ENABLE_SPHINX=OFF \
+%if %{with static_link}
+	-DCLANG_LINK_CLANG_DYLIB=OFF \
+%else
 	-DCLANG_LINK_CLANG_DYLIB=ON \
+%endif
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	\
 	-DCLANG_BUILD_EXAMPLES:BOOL=OFF \
