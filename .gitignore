@@ -33,3 +33,4 @@
 /libcxx-10.0.0rc6.src.tar.xz.sig
 /libcxx-10.0.0.src.tar.xz
 /libcxx-10.0.0.src.tar.xz.sig
+*.src.tar.xz*
