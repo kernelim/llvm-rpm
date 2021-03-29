@@ -22,7 +22,7 @@ Summary:	The LLVM (Low Level Virtual Machine) packages
 
 License:	NCSA
 URL:		http://llvm.org
-Source0:	https://github.com/llvm/llvm-project/archive/%{gitcommit}.tar.xz
+Source0:	https://github.com/llvm/llvm-project/archive/%{gitcommit}.tar.gz
 
 BuildRequires:	cmake
 BuildRequires:	zlib-devel
@@ -87,7 +87,7 @@ tar -xf %SOURCE0
 mkdir build
 cd build
 
-cmake ../llvm-%{gitcommit}/llvm \
+cmake ../llvm-project-%{gitcommit}/llvm \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_SHARED_LIBS=ON \
   -DLLVM_BUILD_LLVM_DYLIB=ON \
