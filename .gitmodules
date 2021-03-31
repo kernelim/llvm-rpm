@@ -1,0 +1,27 @@
+[submodule "cmake"]
+	path = pkgs/cmake
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "llvm-monolith"]
+	path = pkgs/llvm-monolith
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "clang"]
+	path = pkgs/clang
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "compiler-rt"]
+	path = pkgs/compiler-rt
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "libcxx"]
+	path = pkgs/libcxx
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "libcxxabi"]
+	path = pkgs/libcxxabi
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "lld"]
+	path = pkgs/lld
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "python-lit"]
+	path = pkgs/python-lit
+	url = https://github.com/kernelim/llvm-rpm
+[submodule "llvm"]
+	path = pkgs/llvm
+	url = https://github.com/kernelim/llvm-rpm
