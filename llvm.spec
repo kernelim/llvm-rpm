@@ -424,7 +424,7 @@ rm test/tools/llvm-readobj/ELF/dependent-libraries.test
 rm test/tools/dsymutil/X86/swift-interface.test
 
 # FIXME: use %%cmake_build instead of %%__ninja
-LD_LIBRARY_PATH=%{buildroot}/%{_libdir}  %{__ninja} check-all -C %{_vpath_builddir}
+LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_builddir}
 
 %ldconfig_scriptlets libs
 
