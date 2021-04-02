@@ -1,8 +1,8 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-%global rc_ver 3
-%global baserelease 5
+%global rc_ver 4
+%global baserelease 6
 
 %global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -138,6 +138,9 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Fri Apr 02 2021 sguelton@redhat.com - 12.0.0-0.6.rc4
+- New upstream release candidate
+
 * Thu Mar 11 2021 sguelton@redhat.com - 12.0.0-0.5.rc3
 - LLVM 12.0.0 rc3
 
