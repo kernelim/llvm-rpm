@@ -1,0 +1,29 @@
+From 60760d66030695105bcf4364f22b7f6053a25253 Mon Sep 17 00:00:00 2001
+From: serge-sans-paille <sguelton@redhat.com>
+Date: Thu, 8 Apr 2021 09:33:37 +0200
+Subject: [PATCH] [PATCH][llvm] Make source-interleave-prefix test case
+ compatible with llvm-test
+
+llvm-test runs test from a directory that's not the upstream one, and that leads
+to some false positive. Workaround this by forcing the current working
+directory.
+---
+ llvm/test/tools/llvm-objdump/X86/source-interleave-prefix.test | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/llvm/test/tools/llvm-objdump/X86/source-interleave-prefix.test b/llvm/test/tools/llvm-objdump/X86/source-interleave-prefix.test
+index 23ce55a..d260ee2 100644
+--- a/llvm/test/tools/llvm-objdump/X86/source-interleave-prefix.test
++++ b/llvm/test/tools/llvm-objdump/X86/source-interleave-prefix.test
+@@ -5,7 +5,7 @@
+ 
+ ; RUN: sed -e "s,SRC_COMPDIR,./Inputs,g" %p/Inputs/source-interleave.ll > %t-relative-path.ll
+ ; RUN: llc -o %t-relative-path.o -filetype=obj -mtriple=x86_64-pc-linux %t-relative-path.ll
+-; RUN: llvm-objdump --prefix myprefix --source %t-relative-path.o 2>&1 | \
++; RUN: mkdir -p %t0 && cd %t0 && llvm-objdump --prefix myprefix --source %t-relative-path.o 2>&1 | \
+ ; RUN:   FileCheck %s --check-prefix=CHECK-BROKEN-PREFIX -DFILE=%t-relative-path.o -DPREFIX=.
+ ; CHECK-BROKEN-PREFIX: warning: '[[FILE]]': failed to find source [[PREFIX]]/Inputs/source-interleave-x86_64.c
+ 
+-- 
+1.8.3.1
+

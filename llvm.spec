@@ -11,7 +11,7 @@
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
 %global rc_ver 4
-%global baserelease 9
+%global baserelease 10
 %global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -60,6 +60,8 @@ Source2:	tstellar-gpg-key.asc
 Source3:	run-lit-tests
 Source4:	lit.fedora.cfg.py
 %endif
+
+Patch0:     0001-PATCH-llvm-Make-source-interleave-prefix-test-case-c.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -547,6 +549,9 @@ fi
 %endif
 
 %changelog
+* Tue Apr 06 2021 sguelton@redhat.com - 12.0.0-0.10.rc4
+- Patch test case for compatibility with llvm-test latout
+
 * Fri Apr 02 2021 sguelton@redhat.com - 12.0.0-0.9.rc4
 - New upstream release candidate
 
