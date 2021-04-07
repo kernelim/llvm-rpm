@@ -1,5 +1,5 @@
 %global rc_ver 4
-%global baserelease 6
+%global baserelease 7
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -140,7 +140,7 @@ mv %{lit_unit_cfg} %{buildroot}%{_datadir}/lld/src/%{_arch}.Unit.site.cfg.py
 tar --sort=name --mtime='UTC 2020-01-01' -c test/ | gzip -n > %{buildroot}%{_datadir}/lld/src/test.tar.gz
 
 install -d %{buildroot}%{_libexecdir}/tests/lld
-cp %{SOURCE3} %{buildroot}%{_libexecdir}/tests/lld
+install -m 0755 %{SOURCE3} %{buildroot}%{_libexecdir}/tests/lld
 
 # Install unit test binaries
 install -d %{buildroot}%{_libdir}/lld/
@@ -203,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Wed Apr 07 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-0.7.rc4
+- Set executable permissions on run-lit-tests
+
 * Fri Apr 02 2021 sguelton@redhat.com - 12.0.0-0.6.rc4
 - New upstream release candidate
 
