@@ -1,6 +1,6 @@
 %global toolchain clang
-%global rc_ver 4
-%global baserelease 5
+%global rc_ver 5
+%global baserelease 6
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
@@ -101,6 +101,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Thu Apr 08 2021 sguelton@redhat.com - 12.0.0-0.6.rc5
+- New upstream release candidate
+
 * Fri Apr 02 2021 sguelton@redhat.com - 12.0.0-0.5.rc4
 - New upstream release candidate
 
