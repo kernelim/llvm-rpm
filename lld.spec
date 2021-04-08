@@ -1,5 +1,5 @@
-%global rc_ver 4
-%global baserelease 7
+%global rc_ver 5
+%global baserelease 8
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -203,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Thu Apr 08 2021 sguelton@redhat.com - 12.0.0-0.8.rc5
+- New upstream release candidate
+
 * Wed Apr 07 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-0.7.rc4
 - Set executable permissions on run-lit-tests
 
