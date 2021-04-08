@@ -10,8 +10,8 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-%global rc_ver 4
-%global baserelease 10
+%global rc_ver 5
+%global baserelease 11
 %global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -549,6 +549,9 @@ fi
 %endif
 
 %changelog
+* Thu Apr 08 2021 sguelton@redhat.com - 12.0.0-0.11.rc5
+- New upstream release candidate
+
 * Tue Apr 06 2021 sguelton@redhat.com - 12.0.0-0.10.rc4
 - Patch test case for compatibility with llvm-test latout
 
