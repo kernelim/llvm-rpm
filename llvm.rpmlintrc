@@ -1,0 +1,2 @@
+# This library has no dependencies.
+addFilter("llvm-libs.x86_64: E: shared-lib-without-dependency-information /usr/lib64/libRemarks.so.[0-9]+")
