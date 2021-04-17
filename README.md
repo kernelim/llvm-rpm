@@ -38,7 +38,7 @@ process.
 ## Clone
 
 ```
-git clone --depth 1 -j 10 --recursive https://github.com/kernelim/llvm-rpm
+git clone --depth 1 --recursive https://github.com/kernelim/llvm-rpm
 ```
 
 ## Build:
@@ -70,3 +70,19 @@ Notes:
 - Not all outputs are needed for successful usage of the built compiler.
 - Specifically, bootstrapping compiler `results_llvm-11.1.0` can be removed.
 - There is a run-time dependency over `libcxx` and `libcxxabi` by the built compiler.
+- For repeated executions, some parameters can be provided to `under-container` to save setup time, e.g. `./run under-container -r -s`
+
+
+## Building outside docker
+
+It is also possible to build without depending on docker, directly on a CentOS
+7.x system, provided that it has EPEL prerequisites such as `fedpkg` and
+`mock`. 
+
+The `root-setup` stage installs a mock configuration under `/etc/mock`, and
+prepares an RPM a repo under `/opt/repo`, where the outputs will reside.
+
+```
+./run root-setup
+./run build-all
+```

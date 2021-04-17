@@ -2,13 +2,63 @@
 
 set -eu
 
-build-base-image() {
+prep-mock-config() {
     local tmpfs_build=$1
 
-    echo "Updating base Docker image"
+    rm -rf mock-config
+    mkdir -p mock-config
 
-    rm -rf docker-deps
-    mkdir -p docker-deps
+    cp -a mock-config-base/epel-7-with-local-deps.cfg mock-config/epel-7-with-local-deps.cfg
+
+    sed -i mock-config/epel-7-with-local-deps.cfg -e 's/x86_64/'$(uname -p)'/g'
+
+    if [[ $tmpfs_build == "1" ]] ; then
+	echo Enabling tmpfs build
+
+	echo """
+config_opts['plugin_conf']['tmpfs_enable'] = True
+config_opts['plugin_conf']['tmpfs_opts'] = {}
+config_opts['plugin_conf']['tmpfs_opts']['required_ram_mb'] = 128000
+config_opts['plugin_conf']['tmpfs_opts']['max_fs_size'] = '40g'
+config_opts['plugin_conf']['tmpfs_opts']['mode'] = '0755'
+config_opts['plugin_conf']['tmpfs_opts']['keep_mounted'] = True
+	""" >> mock-config/epel-7-with-local-deps.cfg
+    fi
+}
+
+root-setup() {
+    local tmpfs_build=0
+
+    while [[ $# != 0 ]] ; do
+        if [[ "$1" == "--tmpfs-build" ]] || [[ "$1" == "-t" ]] ; then
+	    local tmpfs_build=1
+            shift
+            continue
+        fi
+        if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] ; then
+	    echo "--tmpfs-build             -t"
+	    exit 0
+        fi
+        break
+    done
+
+    prep-mock-config $tmpfs_build
+
+    sudo cp -a mock-config/epel-7-with-local-deps.cfg /etc/mock/
+    rm -rf mock-config/
+
+    if [[ ! -x /opt/repo/epel-7-with-local-deps ]] ; then
+	sudo mkdir /opt/repo/epel-7-with-local-deps
+	sudo chown $(id -u).$(id -g) /opt/repo/epel-7-with-local-deps
+    fi
+
+    createrepo /opt/repo/epel-7-with-local-deps
+
+    mock --init --root epel-7-with-local-deps
+}
+
+build-base-image() {
+    echo "Updating base Docker image"
 
     #
     # Image hashes taken from:
@@ -27,23 +77,6 @@ build-base-image() {
 	    ;;
     esac
 
-    cp -a docker-deps-base/epel-7-with-local-deps.cfg docker-deps/epel-7-with-local-deps.cfg
-
-    sed -i docker-deps/epel-7-with-local-deps.cfg -e 's/x86_64/'$(uname -p)'/g'
-
-    if [[ $tmpfs_build == "1" ]] ; then
-	echo Enabling tmpfs build
-
-	echo """
-config_opts['plugin_conf']['tmpfs_enable'] = True
-config_opts['plugin_conf']['tmpfs_opts'] = {}
-config_opts['plugin_conf']['tmpfs_opts']['required_ram_mb'] = 128000
-config_opts['plugin_conf']['tmpfs_opts']['max_fs_size'] = '40g'
-config_opts['plugin_conf']['tmpfs_opts']['mode'] = '0755'
-config_opts['plugin_conf']['tmpfs_opts']['keep_mounted'] = True
-	""" >> docker-deps/epel-7-with-local-deps.cfg
-    fi
-
     echo """
 # CentOS 7
 
@@ -54,34 +87,19 @@ RUN mkdir /workspace
 
 RUN yum install -y epel-release sudo
 RUN yum install -y fedpkg createrepo wget
-
-ADD epel-7-with-local-deps.cfg /etc/mock/epel-7-with-local-deps.cfg
-RUN mkdir -p /opt/repo/epel-7-with-local-deps
-RUN createrepo /opt/repo/epel-7-with-local-deps
 """ > Dockerfile
 
-    docker build -f Dockerfile -t llvm-rpm:base docker-deps/
+    mkdir -p empty/
+    docker build -f Dockerfile -t llvm-rpm:base empty/
+    rmdir empty
     rm -f Dockerfile
-
-    docker rm -f llvm-rpm-modified 2>/dev/null || true
-
-    docker run --name llvm-rpm-modified -it --privileged llvm-rpm:base \
-	mock --init --root epel-7-with-local-deps
-    docker commit llvm-rpm-modified llvm-rpm:init
-    docker rm -f llvm-rpm-modified 2>/dev/null
-
-    rm -rf docker-deps/
 }
 
 spin-up-instance() {
     docker rm -f llvm-rpm-run 2>/dev/null || true
     mkdir -p ${PWD}/repo
     docker run --rm -dit --name llvm-rpm-run --privileged -w /workspace -v /tmp:/tmp \
-	-v ${PWD}/repo:/opt/repo/epel-7-with-local-deps -v ${PWD}:/workspace llvm-rpm:init bash
-}
-
-run-build() {
-    docker exec -it llvm-rpm-run ./run.sh
+	-v ${PWD}/repo:/opt/repo/epel-7-with-local-deps -v ${PWD}:/workspace llvm-rpm:base bash
 }
 
 pkgbuild() {
@@ -114,7 +132,7 @@ pkgbuild() {
 under-container() {
     local skip_build_image=0
     local skip_spin_up_instance=0
-    local tmpfs_build=0
+    local setupparams=""
 
     while [[ $# != 0 ]] ; do
         if [[ "$1" == "--skip-build-base-image" ]] || [[ "$1" == "-s" ]] ; then
@@ -128,7 +146,7 @@ under-container() {
             continue
         fi
         if [[ "$1" == "--tmpfs-build" ]] || [[ "$1" == "-t" ]] ; then
-	    local tmpfs_build=1
+	    setupparams="${setupparams} -t"
             shift
             continue
         fi
@@ -142,18 +160,15 @@ under-container() {
     done
 
     if [[ "${skip_build_image}" == "0" ]] ; then
-	build-base-image ${tmpfs_build}
+	build-base-image
     fi
 
     if [[ "${skip_spin_up_instance}" == "0" ]] ; then
 	spin-up-instance
+	docker exec -it llvm-rpm-run ./run root-setup ${setupparams}
     fi
 
-    docker exec -it llvm-rpm-run ./run run-inside-instance "$@"
-}
-
-run-inside-instance() {
-    "$@"
+    docker exec -it llvm-rpm-run ./run "$@"
 }
 
 stage0() {
