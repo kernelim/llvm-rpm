@@ -1,12 +1,11 @@
 %global toolchain clang
-%global rc_ver 5
-%global baserelease 6
+#%%global rc_ver 5
 %global libcxxabi_srcdir libcxxabi-%{version}%{?rc_ver:rc%{rc_ver}}.src
 
 
 Name:		libcxxabi
-Version:	12.0.0
-Release:	%{?rc_ver:0.}%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Version:	12.0.0%{?rc_ver:~rc%{rc_ver}}
+Release:	1%{?dist}
 Summary:	Low level support for a standard C++ library
 License:	MIT or NCSA
 URL:		http://libcxxabi.llvm.org/
@@ -101,6 +100,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Fri Apr 16 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
+- 12.0.0 Release
+
 * Thu Apr 08 2021 sguelton@redhat.com - 12.0.0-0.6.rc5
 - New upstream release candidate
 
