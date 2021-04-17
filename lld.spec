@@ -1,5 +1,4 @@
-%global rc_ver 5
-%global baserelease 8
+#%%global rc_ver 5
 %global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
@@ -10,8 +9,8 @@
 %global __requires_exclude ^libgtest.*$
 
 Name:		lld
-Version:	%{maj_ver}.%{min_ver}.%{patch_ver}
-Release:	%{?rc_ver:0.}%{baserelease}%{?rc_ver:.rc%{rc_ver}}%{?dist}
+Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
+Release:	1%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -203,6 +202,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Fri Apr 16 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
+- 12.0.0 Release
+
 * Thu Apr 08 2021 sguelton@redhat.com - 12.0.0-0.8.rc5
 - New upstream release candidate
 
