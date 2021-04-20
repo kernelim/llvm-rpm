@@ -46,7 +46,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -284,13 +284,13 @@ pathfix.py -i %{__python3} -pn \
 
 %if %{without compat_build}
 mkdir -p %{buildroot}/%{_bindir}
-mv %{buildroot}/%{_bindir}/llvm-config %{buildroot}/%{_bindir}/llvm-config-%{__isa_bits}
+mv %{buildroot}/%{_bindir}/llvm-config %{buildroot}/%{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 
 # ghost presence
-touch %{buildroot}%{_bindir}/llvm-config
+touch %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
 
 # Fix some man pages
-ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config-%{__isa_bits}.1
+ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config%{exec_suffix}-%{__isa_bits}.1
 mv %{buildroot}%{_mandir}/man1/*tblgen.1 %{buildroot}%{_mandir}/man1/llvm-tblgen.1
 
 # Install binaries needed for lit tests
@@ -430,17 +430,13 @@ LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_bui
 
 %ldconfig_scriptlets libs
 
-%if %{without compat_build}
-
 %post devel
-%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config llvm-config %{_bindir}/llvm-config-%{__isa_bits} %{__isa_bits}
+%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config%{exec_suffix} llvm-config%{exec_suffix} %{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
 
 %postun devel
 if [ $1 -eq 0 ]; then
-  %{_sbindir}/update-alternatives --remove llvm-config %{_bindir}/llvm-config-%{__isa_bits}
+  %{_sbindir}/update-alternatives --remove llvm-config%{exec_suffix} %{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 fi
-
-%endif
 
 %files
 %license LICENSE.TXT
@@ -448,9 +444,9 @@ fi
 %{_mandir}/man1/*
 %{_bindir}/*
 
+%exclude %{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+
 %if %{without compat_build}
-%exclude %{_bindir}/llvm-config
-%exclude %{_bindir}/llvm-config-%{__isa_bits}
 %exclude %{_bindir}/not
 %exclude %{_bindir}/count
 %exclude %{_bindir}/yaml-bench
@@ -459,7 +455,7 @@ fi
 %exclude %{_bindir}/llvm-opt-fuzzer
 %{_datadir}/opt-viewer
 %else
-%exclude %{pkg_bindir}/llvm-config
+%exclude %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %{pkg_bindir}
 %endif
 
@@ -486,18 +482,18 @@ fi
 
 %files devel
 %license LICENSE.TXT
-%if %{without compat_build}
-%ghost %{_bindir}/llvm-config
-%{_bindir}/llvm-config-%{__isa_bits}
+
+%ghost %{_bindir}/llvm-config%{exec_suffix}
+%{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %{_mandir}/man1/llvm-config*
+
+%if %{without compat_build}
 %{_includedir}/llvm
 %{_includedir}/llvm-c
 %{_libdir}/libLLVM.so
 %{_libdir}/cmake/llvm
 %else
-%{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
-%{pkg_bindir}/llvm-config
-%{_mandir}/man1/llvm-config%{exec_suffix}.1.gz
+%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %{install_includedir}/llvm
 %{install_includedir}/llvm-c
 %{pkg_includedir}/llvm
@@ -549,6 +545,9 @@ fi
 %endif
 
 %changelog
+* Tue Apr 20 2021 sguelton@redhat.com - 12.0.0-2
+- Backport compat package fix
+
 * Thu Apr 15 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
 - 12.0.0 Release
 
