@@ -188,8 +188,8 @@ stage1() {
 
 stage2() {
     pkgbuild llvm --with stage1
-    pkgbuild clang --without python3 --with stage1 --with static_link
     pkgbuild python-lit --without check
+    pkgbuild clang --with python3 --with stage1 --with static_link
     pkgbuild compiler-rt --with bootstrap --with stage1
     pkgbuild libcxx --with bootstrap --with stage1
     pkgbuild libcxxabi --with stage1
