@@ -24,7 +24,6 @@ Patch0:		0001-PATCH-compiler-rt-Workaround-libstdc-limitation-wrt..patch
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
 BuildRequires:	cmake
-BuildRequires:	ninja-build
 BuildRequires:	python3
 # We need python3-devel for pathfix.py.
 BuildRequires:	python3-devel
@@ -48,7 +47,9 @@ instrumentation, and Blocks C language extension.
 pathfix.py -i %{__python3} -pn lib/hwasan/scripts/hwasan_symbolize
 
 %build
-%cmake  -GNinja \
+mkdir -p _build
+cd _build
+%cmake .. \
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 	-DLLVM_CONFIG_PATH:FILEPATH=%{_bindir}/llvm-config-%{__isa_bits} \
 	\
@@ -59,11 +60,11 @@ pathfix.py -i %{__python3} -pn lib/hwasan/scripts/hwasan_symbolize
 %endif
 	-DCOMPILER_RT_INCLUDE_TESTS:BOOL=OFF # could be on?
 
-%cmake_build
+make %{?_smp_mflags}
 
 %install
-
-%cmake_install
+cd _build
+make install DESTDIR=%{buildroot}
 
 # move blacklist/abilist files to where clang expect them
 mkdir -p %{buildroot}%{_libdir}/clang/%{version}/share
@@ -96,8 +97,7 @@ done
 popd
 
 %check
-
-#%%cmake_build --target check-compiler-rt
+#make check-all -C _build
 
 %files
 %license LICENSE.TXT
