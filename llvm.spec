@@ -31,6 +31,7 @@
 %global pkg_name llvm
 %global install_prefix /usr
 %global install_libdir %{_libdir}
+%global pkg_bindir %{_bindir}
 %global pkg_libdir %{install_libdir}
 %endif
 
@@ -46,7 +47,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -281,13 +282,13 @@ pathfix.py -i %{__python3} -pn \
 %install
 %cmake_install
 
-
-%if %{without compat_build}
 mkdir -p %{buildroot}/%{_bindir}
-mv %{buildroot}/%{_bindir}/llvm-config %{buildroot}/%{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+mv %{buildroot}/%{pkg_bindir}/llvm-config %{buildroot}/%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 
 # ghost presence
 touch %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
+
+%if %{without compat_build}
 
 # Fix some man pages
 ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config%{exec_suffix}-%{__isa_bits}.1
@@ -394,7 +395,6 @@ ln -s ../../../%{install_includedir}/llvm %{buildroot}/%{pkg_includedir}/llvm
 ln -s ../../../%{install_includedir}/llvm-c %{buildroot}/%{pkg_includedir}/llvm-c
 
 # Fix multi-lib
-mv %{buildroot}%{_bindir}/llvm-config{%{exec_suffix},%{exec_suffix}-%{__isa_bits}}
 %multilib_fix_c_header --file %{install_includedir}/llvm/Config/llvm-config.h
 
 # Create ld.so.conf.d entry
@@ -431,11 +431,11 @@ LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_bui
 %ldconfig_scriptlets libs
 
 %post devel
-%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config%{exec_suffix} llvm-config%{exec_suffix} %{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
+%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config%{exec_suffix} llvm-config%{exec_suffix} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
 
 %postun devel
 if [ $1 -eq 0 ]; then
-  %{_sbindir}/update-alternatives --remove llvm-config%{exec_suffix} %{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+  %{_sbindir}/update-alternatives --remove llvm-config%{exec_suffix} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 fi
 
 %files
@@ -444,7 +444,7 @@ fi
 %{_mandir}/man1/*
 %{_bindir}/*
 
-%exclude %{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+%exclude %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 
 %if %{without compat_build}
 %exclude %{_bindir}/not
@@ -455,7 +455,6 @@ fi
 %exclude %{_bindir}/llvm-opt-fuzzer
 %{_datadir}/opt-viewer
 %else
-%exclude %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %{pkg_bindir}
 %endif
 
@@ -484,7 +483,7 @@ fi
 %license LICENSE.TXT
 
 %ghost %{_bindir}/llvm-config%{exec_suffix}
-%{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %{_mandir}/man1/llvm-config*
 
 %if %{without compat_build}
@@ -493,7 +492,6 @@ fi
 %{_libdir}/libLLVM.so
 %{_libdir}/cmake/llvm
 %else
-%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %{install_includedir}/llvm
 %{install_includedir}/llvm-c
 %{pkg_includedir}/llvm
@@ -545,6 +543,9 @@ fi
 %endif
 
 %changelog
+* Tue Apr 27 2021 sguelton@redhat.com - 12.0.0-3
+- Fix llvm-config install
+
 * Tue Apr 20 2021 sguelton@redhat.com - 12.0.0-2
 - Backport compat package fix
 
