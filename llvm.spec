@@ -33,6 +33,7 @@
 %global install_libdir %{_libdir}
 %global pkg_bindir %{_bindir}
 %global pkg_libdir %{install_libdir}
+%global exec_suffix %{nil}
 %endif
 
 %if 0%{?rhel}
@@ -47,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -542,6 +543,9 @@ fi
 %endif
 
 %changelog
+* Tue Apr 27 2021 sguelton@redhat.com - 12.0.0-4
+- Provide default empty value for exec_suffix when not in compat mode
+
 * Tue Apr 27 2021 sguelton@redhat.com - 12.0.0-3
 - Fix llvm-config install
 
