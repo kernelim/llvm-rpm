@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	5%{?dist}
+Release:	6%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -71,6 +71,7 @@ BuildRequires:	ninja-build
 BuildRequires:	zlib-devel
 BuildRequires:	libffi-devel
 BuildRequires:	ncurses-devel
+BuildRequires:	python3-psutil
 BuildRequires:	python3-sphinx
 BuildRequires:	python3-recommonmark
 BuildRequires:	multilib-rpm-config
