@@ -29,3 +29,7 @@
       # hours.
       #- build-compat
       - binutils-plugin-ar
+      # make sure llvm-config symlink is properly setup
+      - llvm-config:
+          dir: ./
+          run: llvm-config --version
