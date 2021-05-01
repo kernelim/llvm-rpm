@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	4%{?dist}
+Release:	5%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -444,6 +444,7 @@ fi
 %{_mandir}/man1/*
 %{_bindir}/*
 
+%exclude %{_bindir}/llvm-config%{exec_suffix}
 %exclude %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 
 %if %{without compat_build}
@@ -543,6 +544,9 @@ fi
 %endif
 
 %changelog
+* Sat May 01 2021 sguelton@redhat.com - 12.0.0-5
+- Fix llvm-config install
+
 * Tue Apr 27 2021 sguelton@redhat.com - 12.0.0-4
 - Provide default empty value for exec_suffix when not in compat mode
 
