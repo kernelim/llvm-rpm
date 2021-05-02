@@ -201,7 +201,7 @@ pathfix.py -i %{__python3} -pn \
 # Because of these failures, lto is disabled for now.
 %global _lto_cflags %{nil}
 
-%ifarch s390 %{arm} %ix86
+%ifarch s390 s390x %{arm} %ix86
 # Decrease debuginfo verbosity to reduce memory consumption during final library linking
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
