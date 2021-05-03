@@ -545,6 +545,9 @@ fi
 %endif
 
 %changelog
+* Mon May 03 2021 kkleine@redhat.com - 12.0.0-6
+- More verbose builds thanks to python3-psutil
+
 * Sat May 01 2021 sguelton@redhat.com - 12.0.0-5
 - Fix llvm-config install
 
