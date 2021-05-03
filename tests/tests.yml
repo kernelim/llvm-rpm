@@ -4,13 +4,25 @@
     tags:
       - classic
     required_packages:
-      - llvm-test
       - rust
       - cargo
-      - clang
       - binutils
+      # the requirements below are for the integration suite
+      - cmake
+      - llvm-devel
+      - clang
+      - clang-analyzer
+      - clang-tools-extra
+      - compiler-rt
+      - ninja-build
+      - libcxx-devel
+      - libomp-devel
+      - python-lit
+      - lld
+      - lldb
+      - git
+      - make
     tests:
-      - regression-tests
       - rust-sanity:
           dir: ./
           run: cargo new hello && cd hello && cargo run
@@ -33,3 +45,4 @@
       - llvm-config:
           dir: ./
           run: llvm-config --version
+      - integration-test-suite
