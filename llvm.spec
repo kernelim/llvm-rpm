@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	6%{?dist}
+Release:	7%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -284,10 +284,6 @@ pathfix.py -i %{__python3} -pn \
 %cmake_install
 
 mkdir -p %{buildroot}/%{_bindir}
-mv %{buildroot}/%{pkg_bindir}/llvm-config %{buildroot}/%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
-
-# ghost presence
-touch %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
 
 %if %{without compat_build}
 
@@ -384,7 +380,6 @@ ln -s %{_libdir}/LLVMgold.so %{buildroot}%{_libdir}/bfd-plugins/
 %else
 
 # Add version suffix to binaries
-mkdir -p %{buildroot}/%{_bindir}
 for f in %{buildroot}/%{install_bindir}/*; do
   filename=`basename $f`
   ln -s ../../../%{install_bindir}/$filename %{buildroot}/%{_bindir}/$filename%{exec_suffix}
@@ -415,6 +410,26 @@ done
 rm -Rf %{build_install_prefix}/share/opt-viewer
 
 %endif
+
+# llvm-config special casing. llvm-config is managed by update-alternatives.
+# the original file must remain available for compatibility with the CMake
+# infrastructure. Without compat, cmake points to the symlink, with compat it
+# points to the original file.
+
+%if %{without compat_build}
+
+mv %{buildroot}/%{pkg_bindir}/llvm-config %{buildroot}/%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+
+%else
+
+rm %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
+(cd %{buildroot}/%{pkg_bindir} ; ln -s llvm-config llvm-config%{exec_suffix}-%{__isa_bits} )
+
+%endif
+
+# ghost presence
+touch %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
+
 
 
 %check
@@ -545,6 +560,9 @@ fi
 %endif
 
 %changelog
+* Mon May 17 2021 sguelton@redhat.com - 12.0.0-7
+- Fix handling of llvm-config
+
 * Mon May 03 2021 kkleine@redhat.com - 12.0.0-6
 - More verbose builds thanks to python3-psutil
 
