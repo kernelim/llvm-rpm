@@ -10,11 +10,11 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-#%%global rc_ver 5
-%global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%global rc_ver 1
 %global maj_ver 12
 %global min_ver 0
-%global patch_ver 0
+%global patch_ver 1
+%global llvm_srcdir llvm-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 
 %if %{with compat_build}
 %global pkg_name llvm%{maj_ver}
@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	7%{?dist}
+Release:	1%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -560,6 +560,9 @@ fi
 %endif
 
 %changelog
+* Wed May 26 2021 Tom Stellard <tstellar@redhat.com> - llvm-12.0.1~rc1-1
+- 12.0.1-rc1 Release
+
 * Mon May 17 2021 sguelton@redhat.com - 12.0.0-7
 - Fix handling of llvm-config
 
