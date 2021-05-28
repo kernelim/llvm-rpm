@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -159,14 +159,6 @@ Static libraries for the LLVM compiler infrastructure.
 Summary:	LLVM regression tests
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
-Requires:	python3-lit
-# The regression tests need gold.
-Requires:	binutils
-# This is for llvm-config
-Requires:	%{name}-devel%{?_isa} = %{version}-%{release}
-# Bugpoint tests require gcc
-Requires:	gcc
-Requires:	findutils
 
 Provides:	llvm-test(major) = %{maj_ver}
 
@@ -327,50 +319,6 @@ cp -R utils/unittest %{install_srcdir}/utils/
 # Clang needs these for running lit tests.
 cp utils/update_cc_test_checks.py %{install_srcdir}/utils/
 cp -R utils/UpdateTestChecks %{install_srcdir}/utils/
-
-# One of the lit tests references this file
-install -d %{install_srcdir}/docs/CommandGuide/
-install -m 0644 docs/CommandGuide/dsymutil.rst %{install_srcdir}/docs/CommandGuide/
-
-# Generate lit config files.  Strip off the last lines that initiates the
-# test run, so we can customize the configuration.
-head -n -2 %{_vpath_builddir}/test/lit.site.cfg.py >> %{lit_cfg}
-head -n -2 %{_vpath_builddir}/test/Unit/lit.site.cfg.py >> %{lit_unit_cfg}
-
-# Install custom fedora config file
-cp %{SOURCE4} %{buildroot}%{lit_fedora_cfg}
-
-# Patch lit config files to load custom fedora config:
-for f in %{lit_cfg} %{lit_unit_cfg}; do
-  echo "lit_config.load_config(config, '%{lit_fedora_cfg}')" >> $f
-done
-
-install -d %{buildroot}%{_libexecdir}/tests/llvm
-install -m 0755 %{SOURCE3} %{buildroot}%{_libexecdir}/tests/llvm
-
-# Install lit tests.  We need to put these in a tarball otherwise rpm will complain
-# about some of the test inputs having the wrong object file format.
-install -d %{buildroot}%{_datadir}/llvm/
-
-# The various tar options are there to make sur the archive is the same on 32 and 64 bit arch, i.e.
-# the archive creation is reproducible. Move arch-specific content out of the tarball
-mv %{lit_cfg} %{install_srcdir}/%{_arch}.site.cfg.py
-mv %{lit_unit_cfg} %{install_srcdir}/%{_arch}.Unit.site.cfg.py
-tar --sort=name --mtime='UTC 2020-01-01' -c test/ | gzip -n > %{install_srcdir}/test.tar.gz
-
-# Install the unit test binaries
-mkdir -p %{build_llvm_libdir}
-cp -R %{_vpath_builddir}/unittests %{build_llvm_libdir}/
-rm -rf `find %{build_llvm_libdir} -iname 'cmake*'`
-
-# Install libraries used for testing
-install -m 0755 %{build_libdir}/BugpointPasses.so %{buildroot}%{_libdir}
-install -m 0755 %{build_libdir}/LLVMHello.so %{buildroot}%{_libdir}
-
-# Install test inputs for PDB tests
-echo "%{_datadir}/llvm/src/unittests/DebugInfo/PDB" > %{build_llvm_libdir}/unittests/DebugInfo/PDB/llvm.srcdir.txt
-mkdir -p %{buildroot}%{_datadir}/llvm/src/unittests/DebugInfo/PDB/
-cp -R unittests/DebugInfo/PDB/Inputs %{buildroot}%{_datadir}/llvm/src/unittests/DebugInfo/PDB/
 
 %if %{with gold}
 # Add symlink to lto plugin in the binutils plugin directory.
@@ -536,22 +484,12 @@ fi
 
 %files test
 %license LICENSE.TXT
-%{_libexecdir}/tests/llvm/
-%{llvm_libdir}/unittests/
-%{_datadir}/llvm/src/unittests
-%{_datadir}/llvm/src/test.tar.gz
-%{_datadir}/llvm/src/%{_arch}.site.cfg.py
-%{_datadir}/llvm/src/%{_arch}.Unit.site.cfg.py
-%{_datadir}/llvm/lit.fedora.cfg.py
-%{_datadir}/llvm/src/docs/CommandGuide/dsymutil.rst
 %{_bindir}/not
 %{_bindir}/count
 %{_bindir}/yaml-bench
 %{_bindir}/lli-child-target
 %{_bindir}/llvm-isel-fuzzer
 %{_bindir}/llvm-opt-fuzzer
-%{_libdir}/BugpointPasses.so
-%{_libdir}/LLVMHello.so
 
 %files googletest
 %license LICENSE.TXT
@@ -561,6 +499,9 @@ fi
 %endif
 
 %changelog
+* Fri May 28 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-2
+- Stop installing lit tests
+
 * Wed May 26 2021 Tom Stellard <tstellar@redhat.com> - llvm-12.0.1~rc1-1
 - 12.0.1-rc1 Release
 
