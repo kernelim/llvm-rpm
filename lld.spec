@@ -1,8 +1,8 @@
-#%%global rc_ver 5
-%global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%global rc_ver 1
+%global lld_srcdir lld-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 12
 %global min_ver 0
-%global patch_ver 0
+%global patch_ver 1
 
 # Don't include unittests in automatic generation of provides or requires.
 %global __provides_exclude_from ^%{_libdir}/lld/.*$
@@ -202,6 +202,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Tue Jun 01 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-1
+- 12.0.1-rc1 Release
+
 * Fri Apr 16 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
 - 12.0.0 Release
 
