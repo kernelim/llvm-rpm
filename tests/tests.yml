@@ -22,6 +22,8 @@
       - lldb
       - git
       - make
+      - libstdc++-static
+      - clang-devel
     tests:
       - rust-sanity:
           dir: ./
