@@ -23,6 +23,8 @@
       - lldb
       - git
       - make
+      - libstdc++-static
+      - clang-devel
     tests:
       - basic:
           dir: ./
