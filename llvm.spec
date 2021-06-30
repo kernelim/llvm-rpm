@@ -10,7 +10,7 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-%global rc_ver 1
+%global rc_ver 3
 %global maj_ver 12
 %global min_ver 0
 %global patch_ver 1
@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -499,6 +499,9 @@ fi
 %endif
 
 %changelog
+* Wed Jun 30 2021 Tom Stellard <tstellar@redhat.com> - llvm-12.0.1~rc3-1
+- 12.0.1-rc3 Release
+
 * Fri May 28 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-2
 - Stop installing lit tests
 
