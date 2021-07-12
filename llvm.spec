@@ -10,7 +10,7 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-%global rc_ver 3
+#global rc_ver 3
 %global maj_ver 12
 %global min_ver 0
 %global patch_ver 1
@@ -499,6 +499,9 @@ fi
 %endif
 
 %changelog
+* Mon Jul 12 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-1
+- 12.0.1 Release
+
 * Wed Jun 30 2021 Tom Stellard <tstellar@redhat.com> - llvm-12.0.1~rc3-1
 - 12.0.1-rc3 Release
 
