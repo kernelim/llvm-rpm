@@ -1,0 +1,58 @@
+From 93da37dc58e9d1d4a685bcb6a30a9d3ff78733f9 Mon Sep 17 00:00:00 2001
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Wed, 28 Jul 2021 21:56:23 -0700
+Subject: [PATCH] [test] Fix tools/gold/X86/comdat-nodeduplicate.ll on non-X86
+ hosts
+
+When running this test on an aarch64 machine, it fails:
+
+```
+/usr/bin/ld.gold: error: .../test/tools/gold/X86/Output/comdat-nodeduplicate.ll.tmp/ab.lto.o: incompatible target
+```
+
+Specify the elf_x86_64 emulation as all of the other gold plugin tests
+do.
+
+Reviewed By: MaskRay
+
+Differential Revision: https://reviews.llvm.org/D107020
+
+(cherry picked from commit 5060224d9eed8b8359ed5090bb7c577b8575e9e7)
+---
+ llvm/test/tools/gold/X86/comdat-nodeduplicate.ll | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/llvm/test/tools/gold/X86/comdat-nodeduplicate.ll b/llvm/test/tools/gold/X86/comdat-nodeduplicate.ll
+index 11d04d2aab1f..c27d91a1d437 100644
+--- a/llvm/test/tools/gold/X86/comdat-nodeduplicate.ll
++++ b/llvm/test/tools/gold/X86/comdat-nodeduplicate.ll
+@@ -8,7 +8,7 @@
+ ; RUN: llvm-as %t/b.ll -o %t/b.bc
+ ; RUN: llvm-as %t/c.ll -o %t/c.bc
+ 
+-; RUN: %gold -plugin %llvmshlibdir/LLVMgold%shlibext --plugin-opt=save-temps \
++; RUN: %gold -m elf_x86_64 -plugin %llvmshlibdir/LLVMgold%shlibext --plugin-opt=save-temps \
+ ; RUN:   -u foo %t/a.bc --start-lib %t/b.bc --end-lib -o %t/ab
+ 
+ ; RUN: FileCheck %s --check-prefix=RESOL_AB < %t/ab.resolution.txt
+@@ -20,7 +20,7 @@
+ ; DATA: 0x[[#%x,]] 01000000 00000000  ........
+ 
+ ;; __profc_foo from c.bc is non-prevailing and thus discarded.
+-; RUN: %gold -plugin %llvmshlibdir/LLVMgold%shlibext --plugin-opt=save-temps \
++; RUN: %gold -m elf_x86_64 -plugin %llvmshlibdir/LLVMgold%shlibext --plugin-opt=save-temps \
+ ; RUN:   -u foo -u c %t/a.bc --start-lib %t/b.bc %t/c.bc --end-lib -o %t/abc
+ ; RUN: FileCheck %s --check-prefix=RESOL_ABC < %t/abc.resolution.txt
+ ; RUN: llvm-readelf -x .data %t/abc | FileCheck %s --check-prefix=DATA
+@@ -35,7 +35,7 @@
+ ; RUN: opt --module-summary %t/b.ll -o %t/b.bc
+ ; RUN: opt --module-summary %t/c.ll -o %t/c.bc
+ 
+-; RUN: %gold -plugin %llvmshlibdir/LLVMgold%shlibext \
++; RUN: %gold -m elf_x86_64 -plugin %llvmshlibdir/LLVMgold%shlibext \
+ ; RUN:   -u foo %t/a.bc --start-lib %t/b.bc %t/c.bc --end-lib -o %t/abc
+ ; RUN: llvm-readelf -x .data %t/abc | FileCheck %s --check-prefix=DATA
+ 
+-- 
+2.27.0
+

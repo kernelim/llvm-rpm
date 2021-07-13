@@ -10,10 +10,11 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-#global rc_ver 3
-%global maj_ver 12
+%global rc_ver 1
+%global maj_ver 13
 %global min_ver 0
-%global patch_ver 1
+%global patch_ver 0
+%global abi_revision 0
 %global llvm_srcdir llvm-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 
 %if %{with compat_build}
@@ -46,9 +47,13 @@
 
 %global build_install_prefix %{buildroot}%{install_prefix}
 
+# Lower memory usage of dwz on s390x
+%global _dwz_low_mem_die_limit_s390x 1
+%global _dwz_max_die_limit_s390x 1000000
+
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	3%{?dist}
+Release:	1%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -62,7 +67,9 @@ Source3:	run-lit-tests
 Source4:	lit.fedora.cfg.py
 %endif
 
-Patch0:     0001-PATCH-llvm-Make-source-interleave-prefix-test-case-c.patch
+Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
+# This has been backported to release/13.x and should be in 13.0.0-rc2
+Patch1:		0001-test-Fix-tools-gold-X86-comdat-nodeduplicate.ll-on-n.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -261,6 +268,7 @@ pathfix.py -i %{__python3} -pn \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON \
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
+	-DLLVM_ABI_REVISION=%{abi_revision} \
 	\
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
@@ -282,7 +290,6 @@ mkdir -p %{buildroot}/%{_bindir}
 
 # Fix some man pages
 ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config%{exec_suffix}-%{__isa_bits}.1
-mv %{buildroot}%{_mandir}/man1/*tblgen.1 %{buildroot}%{_mandir}/man1/llvm-tblgen.1
 
 # Install binaries needed for lit tests
 %global test_binaries llvm-isel-fuzzer llvm-opt-fuzzer
@@ -389,6 +396,10 @@ touch %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
 
 
 %check
+# Disable check section on arm due to some kind of memory related failure.
+# Possibly related to https://bugzilla.redhat.com/show_bug.cgi?id=1920183
+%ifnarch %{arm}
+
 # TODO: Fix the failures below
 %ifarch %{arm}
 rm test/tools/llvm-readobj/ELF/dependent-libraries.test
@@ -399,6 +410,8 @@ rm test/tools/dsymutil/X86/swift-interface.test
 
 # FIXME: use %%cmake_build instead of %%__ninja
 LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_builddir}
+
+%endif
 
 %ldconfig_scriptlets libs
 
@@ -448,6 +461,7 @@ fi
 %{_libdir}/bfd-plugins/LLVMgold.so
 %endif
 %{_libdir}/libLLVM-%{maj_ver}.%{min_ver}*.so
+%{_libdir}/libLLVM-%{maj_ver}.so.%{abi_revision}
 %{_libdir}/libLTO.so*
 %else
 %config(noreplace) %{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
@@ -516,6 +530,9 @@ fi
 %endif
 
 %changelog
+* Wed Aug 04 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
+- 13.0.0-rc1 Release
+
 * Thu Jul 22 2021 sguelton@redhat.com - 12.0.1-3
 - Maintain versionned link to llvm-config
 
