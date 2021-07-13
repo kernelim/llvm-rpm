@@ -47,4 +47,8 @@
       - llvm-config:
           dir: ./
           run: llvm-config --version
+      # make sure versionned llvm-config symlink is properly setup
+      - versionned-llvm-config:
+          dir: ./
+          run: llvm-config-12 --version
       - integration-test-suite

@@ -48,7 +48,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -368,6 +368,13 @@ rm -Rf %{build_install_prefix}/share/opt-viewer
 %if %{without compat_build}
 
 mv %{buildroot}/%{pkg_bindir}/llvm-config %{buildroot}/%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+# We still maintain a versionned symlink for consistency across llvm versions.
+# This is specific to the non-compat build and matches the exec prefix for
+# compat builds. An isa-agnostic versionned symlink is also maintained in the (un)install
+# steps.
+(cd %{buildroot}/%{pkg_bindir} ; ln -s llvm-config%{exec_suffix}-%{__isa_bits} llvm-config-%{maj_ver}-%{__isa_bits} )
+# ghost presence
+touch %{buildroot}%{_bindir}/llvm-config-%{maj_ver}
 
 %else
 
@@ -397,10 +404,16 @@ LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_bui
 
 %post devel
 %{_sbindir}/update-alternatives --install %{_bindir}/llvm-config%{exec_suffix} llvm-config%{exec_suffix} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
+%if %{without compat_build}
+%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config-%{maj_ver} llvm-config-%{maj_ver} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
+%endif
 
 %postun devel
 if [ $1 -eq 0 ]; then
   %{_sbindir}/update-alternatives --remove llvm-config%{exec_suffix} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+%if %{without compat_build}
+  %{_sbindir}/update-alternatives --remove llvm-config-%{maj_ver} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+%endif
 fi
 
 %files
@@ -413,6 +426,8 @@ fi
 %exclude %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 
 %if %{without compat_build}
+%exclude %{_bindir}/llvm-config-%{maj_ver}
+%exclude %{pkg_bindir}/llvm-config-%{maj_ver}-%{__isa_bits}
 %exclude %{_bindir}/not
 %exclude %{_bindir}/count
 %exclude %{_bindir}/yaml-bench
@@ -457,6 +472,8 @@ fi
 %{_includedir}/llvm-c
 %{_libdir}/libLLVM.so
 %{_libdir}/cmake/llvm
+%{pkg_bindir}/llvm-config-%{maj_ver}-%{__isa_bits}
+%ghost %{_bindir}/llvm-config-%{maj_ver}
 %else
 %{install_includedir}/llvm
 %{install_includedir}/llvm-c
@@ -499,6 +516,9 @@ fi
 %endif
 
 %changelog
+* Thu Jul 22 2021 sguelton@redhat.com - 12.0.1-3
+- Maintain versionned link to llvm-config
+
 * Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
