@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/bin/sh -eux
 
 usage() {
     echo "usage `basename $0` [OPTIONS]"
     echo "  --threads NUM       The number of threads to use for running tests."
 }
 
+threads=0
 thread_args=""
 repo_url=https://github.com/opencollab/llvm-toolchain-integration-test-suite
 
@@ -24,11 +25,9 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-if [ -n "$threads" ]; then
+if [ "$threads" -ge 1 ]; then
   thread_args="-j$threads"
 fi
-
-set -xe
 
 cd $(mktemp -d -p /var/tmp)
 git clone $repo_url

@@ -1,0 +1,9 @@
+summary: All available LLVM tests
+discover:
+    how: fmf
+execute:
+    how: tmt
+prepare:
+    - name: packages
+      how: install
+      package: llvm

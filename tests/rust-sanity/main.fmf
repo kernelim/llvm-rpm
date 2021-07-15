@@ -1,0 +1,5 @@
+summary: Test basic cargo usage
+test: ./test.sh
+require:
+  - cargo
+  - rust

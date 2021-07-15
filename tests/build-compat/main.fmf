@@ -1,0 +1,3 @@
+summary: Make sure rebuilding LLVM still works with the new LLVM
+test: ./test.sh
+enabled: false

@@ -1,0 +1,2 @@
+summary: Check that libLLVM.so has been properly stripped
+test: ./test.sh
