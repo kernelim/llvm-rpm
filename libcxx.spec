@@ -8,7 +8,7 @@
 
 Name:		libcxx
 Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
@@ -138,6 +138,9 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Tue Jul 13 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-1
 - 12.0.1 Release
 
