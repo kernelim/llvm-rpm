@@ -1,8 +1,8 @@
-#global rc_ver 3
+%global rc_ver 1
 %global lld_srcdir lld-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
-%global maj_ver 12
+%global maj_ver 13
 %global min_ver 0
-%global patch_ver 1
+%global patch_ver 0
 
 # Don't include unittests in automatic generation of provides or requires.
 %global __provides_exclude_from ^%{_libdir}/lld/.*$
@@ -10,7 +10,7 @@
 
 Name:		lld
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -120,8 +120,8 @@ LLVM regression tests.
 
 # Generate lit config files.  Strip off the last line that initiates the
 # test run, so we can customize the configuration.
-head -n -1 %{_target_platform}/test/lit.site.cfg.py >> %{lit_cfg}
-head -n -1 %{_target_platform}/test/Unit/lit.site.cfg.py >> %{lit_unit_cfg}
+head -n -1 %{__cmake_builddir}/test/lit.site.cfg.py >> %{lit_cfg}
+head -n -1 %{__cmake_builddir}/test/Unit/lit.site.cfg.py >> %{lit_unit_cfg}
 
 # Patch lit config files to load custom config:
 for f in %{lit_cfg} %{lit_unit_cfg}; do
@@ -143,11 +143,11 @@ install -m 0755 %{SOURCE3} %{buildroot}%{_libexecdir}/tests/lld
 
 # Install unit test binaries
 install -d %{buildroot}%{_libdir}/lld/
-cp -R %{_target_platform}/unittests %{buildroot}%{_libdir}/lld/
+cp -R %{__cmake_builddir}/unittests %{buildroot}%{_libdir}/lld/
 rm -rf `find %{buildroot}%{_libdir}/lld/ -iname '*make*'`
 
 # Install gtest libraries
-cp %{_target_platform}/%{_lib}/libgtest*so* %{buildroot}%{_libdir}/lld/
+cp %{__cmake_builddir}/%{_lib}/libgtest*so* %{buildroot}%{_libdir}/lld/
 
 # Install libraries and binaries
 %cmake_install
@@ -183,6 +183,7 @@ fi
 %{_bindir}/ld.lld
 %{_bindir}/ld64.lld
 %{_bindir}/ld64.lld.darwinnew
+%{_bindir}/ld64.lld.darwinold
 %{_bindir}/wasm-ld
 
 %files devel
@@ -202,6 +203,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Fri Aug 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
+- 13.0.0-rc1 Release
+
 * Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
