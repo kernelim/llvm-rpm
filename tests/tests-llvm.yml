@@ -4,10 +4,22 @@
     tags:
       - classic
     required_packages:
+      # Required for rust and possibly other dependant packages
+      #
+      # NOTE #1: drop the requirement once the transitional period between releases is gone
+      # and llvm-compat is no longer a) needed, and b) part of the build.
+      #
+      # NOTE #2: keep it the first requirement. Depending on the order of requirements, placing it somewhere
+      # else in the list may lead to harness uninstalling and re-installing LLVM packages. That a) would be
+      # a waste of time, b) could potentially hide issues, leading to testing unexpected NVRs.
+      #
+      # - llvm-compat
+
       - rust
       - cargo
-      - binutils
+
       # the requirements below are for the integration suite
+      - binutils
       - cmake
       - llvm-devel
       - clang
@@ -15,15 +27,21 @@
       - clang-tools-extra
       - compiler-rt
       - ninja-build
-      - libcxx-devel
       - libomp-devel
-      - python-lit
       - lld
       - lldb
       - git
       - make
       - libstdc++-static
       - clang-devel
+
+      # In Fedora, python-lit is valid. In RHEL, however, the actual package is python3-lit.
+      - python-lit
+      # - python3-lit
+
+      # Required in Fedora, but not shipped with RHEL. For future reference, comment the libcxx out as needed.
+      - libcxx-devel
+
     tests:
       - rust-sanity:
           dir: ./
@@ -36,7 +54,7 @@
       # https://bugzilla.redhat.com/show_bug.cgi?id=1793250
       - libllvm-size:
           dir: ./
-          run: test `stat -L -c %s /usr/lib64/libLLVM.so` -lt 100000000
+          run: test `stat -L -c %s /usr/lib64/libLLVM.so` -lt 104857600
       # This test ensures that the spec file still builds correctly with
       # %global compat_build 1
       # FIXME: This fails, because the CI system has a hard-coded timeout of 4
@@ -47,8 +65,9 @@
       - llvm-config:
           dir: ./
           run: llvm-config --version
-      # make sure versionned llvm-config symlink is properly setup
-      - versionned-llvm-config:
+      # make sure versioned llvm-config symlink is properly setup
+      - versioned-llvm-config:
           dir: ./
-          run: llvm-config-12 --version
+          run: llvm-config-13 --version
+      # NOTE: don't forget to disable libcxx tests when libcxx is not available, by adding -DENABLE_LIBCXX=OFF.
       - integration-test-suite
