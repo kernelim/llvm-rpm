@@ -7,6 +7,7 @@
 %endif
 
 %bcond_with compat_build
+%bcond_without check
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
@@ -53,7 +54,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -408,8 +409,10 @@ rm test/tools/llvm-readobj/ELF/dependent-libraries.test
 # non reproducible errors
 rm test/tools/dsymutil/X86/swift-interface.test
 
+%if %{with check}
 # FIXME: use %%cmake_build instead of %%__ninja
 LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_builddir}
+%endif
 
 %endif
 
@@ -530,6 +533,9 @@ fi
 %endif
 
 %changelog
+* Mon Sep 13 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-2
+- Add --without=check option
+
 * Wed Aug 04 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
 - 13.0.0-rc1 Release
 
