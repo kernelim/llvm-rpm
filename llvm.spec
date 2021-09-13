@@ -54,7 +54,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -71,6 +71,7 @@ Source4:	lit.fedora.cfg.py
 Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
 # This has been backported to release/13.x and should be in 13.0.0-rc2
 Patch1:		0001-test-Fix-tools-gold-X86-comdat-nodeduplicate.ll-on-n.patch
+Patch2:		0001-XFAIL-missing-abstract-variable.ll-test-on-ppc64le.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -208,6 +209,8 @@ pathfix.py -i %{__python3} -pn \
 %endif
 
 # force off shared libs as cmake macros turns it on.
+# We need to set LLVM_DEFAULT_TARGET_TRIPLE, because llvm fails to detect it
+# correctly.
 %cmake  -G Ninja \
 	-DBUILD_SHARED_LIBS:BOOL=OFF \
 	-DLLVM_PARALLEL_LINK_JOBS=1 \
@@ -271,6 +274,7 @@ pathfix.py -i %{__python3} -pn \
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
 	-DLLVM_ABI_REVISION=%{abi_revision} \
 	\
+	-DLLVM_DEFAULT_TARGET_TRIPLE=%{_host} \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
 	-DLLVM_INSTALL_SPHINX_HTML_DIR=%{_pkgdocdir}/html \
@@ -533,6 +537,9 @@ fi
 %endif
 
 %changelog
+* Mon Sep 13 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-3
+- Pass LLVM_DEFAULT_TARGET_TRIPLE to cmake
+
 * Mon Sep 13 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-2
 - Add --without=check option
 
