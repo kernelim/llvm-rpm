@@ -1,3 +1,5 @@
+%bcond_without check
+
 %global rc_ver 1
 %global lld_srcdir lld-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 13
@@ -10,7 +12,7 @@
 
 Name:		lld
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -171,7 +173,9 @@ fi
 
 # armv7lhl tests disabled because of arm issue, see https://koji.fedoraproject.org/koji/taskinfo?taskID=33660162
 %ifnarch %{arm}
+%if %{with check}
 %cmake_build --target check-lld
+%endif
 %endif
 
 %ldconfig_scriptlets libs
@@ -203,6 +207,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Tue Sep 14 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-2
+- Add --without=check option
+
 * Fri Aug 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
 - 13.0.0-rc1 Release
 
