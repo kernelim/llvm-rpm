@@ -7,3 +7,6 @@ prepare:
     - name: packages
       how: install
       package: llvm
+provision:
+  hardware:
+    memory: ">= 4 GiB"
