@@ -11,11 +11,11 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-%global rc_ver 1
+%global rc_ver 3
 %global maj_ver 13
 %global min_ver 0
 %global patch_ver 0
-%global abi_revision 0
+%global abi_revision 1
 %global llvm_srcdir llvm-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 
 %if %{with compat_build}
@@ -54,7 +54,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	3%{?dist}
+Release:	1%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -69,8 +69,6 @@ Source4:	lit.fedora.cfg.py
 %endif
 
 Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
-# This has been backported to release/13.x and should be in 13.0.0-rc2
-Patch1:		0001-test-Fix-tools-gold-X86-comdat-nodeduplicate.ll-on-n.patch
 Patch2:		0001-XFAIL-missing-abstract-variable.ll-test-on-ppc64le.patch
 
 BuildRequires:	gcc
@@ -537,6 +535,9 @@ fi
 %endif
 
 %changelog
+* Fri Sep 17 2021 Tom Stellard <tstellar@redhta.com> - 13.0.0~rc3-1
+- 13.0.0-rc3 Release
+
 * Mon Sep 13 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-3
 - Pass LLVM_DEFAULT_TARGET_TRIPLE to cmake
 
