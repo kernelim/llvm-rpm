@@ -1,5 +1,16 @@
 summary: Test basic cargo usage
 test: ./test.sh
 require:
+# Required for rust and possibly other dependant packages
+#
+# NOTE #1: drop the requirement once the transitional period between releases is gone
+# and llvm-compat is no longer a) needed, and b) part of the build.
+#
+# NOTE #2: keep it the first requirement. Depending on the order of requirements, placing it somewhere
+# else in the list may lead to harness uninstalling and re-installing LLVM packages. That a) would be
+# a waste of time, b) could potentially hide issues, leading to testing unexpected NVRs.
+#
+#  - llvm-compat
+
   - cargo
   - rust
