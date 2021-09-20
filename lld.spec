@@ -1,6 +1,6 @@
 %bcond_without check
 
-%global rc_ver 1
+%global rc_ver 3
 %global lld_srcdir lld-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 13
 %global min_ver 0
@@ -12,7 +12,7 @@
 
 Name:		lld
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -207,6 +207,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Mon Sep 20 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-3
+- 13.0.0-rc3 Release
+
 * Tue Sep 14 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-2
 - Add --without=check option
 
