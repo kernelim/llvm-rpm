@@ -1,7 +1,7 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-%global rc_ver 1
+%global rc_ver 3
 
 %global libcxx_version 13.0.0
 %global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
@@ -138,6 +138,9 @@ install -m 0644 src/include/* %{buildroot}%{_includedir}/libcxx-internal/
 
 
 %changelog
+* Wed Sep 22 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc3-1
+- 13.0.0-rc3 Release
+
 * Mon Aug 09 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
 - 13.0.0-rc1 Release
 
