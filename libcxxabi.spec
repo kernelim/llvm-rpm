@@ -1,5 +1,5 @@
 %global toolchain clang
-%global rc_ver 1
+#global rc_ver 3
 %global libcxxabi_version 13.0.0
 %global libcxxabi_srcdir libcxxabi-%{libcxxabi_version}%{?rc_ver:rc%{rc_ver}}.src
 
@@ -101,6 +101,9 @@ cp -a include/* %{buildroot}%{_includedir}
 %{_libdir}/libc++abi.a
 
 %changelog
+* Fri Oct 01 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
+- 13.0.0 Release
+
 * Mon Aug 09 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
 - 13.0.0-rc1 Release
 
