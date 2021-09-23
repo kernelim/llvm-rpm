@@ -91,7 +91,7 @@ BuildRequires:	valgrind-devel
 %endif
 # LLVM's LineEditor library will use libedit if it is available.
 BuildRequires:	libedit-devel
-# We need python3-devel for pathfix.py.
+# We need python3-devel for %%py3_shebang_fix
 BuildRequires:	python3-devel
 BuildRequires:	python3-setuptools
 
@@ -184,7 +184,7 @@ LLVM's modified googletest sources.
 %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
 %autosetup -n %{llvm_srcdir} -p2
 
-pathfix.py -i %{__python3} -pn \
+%py3_shebang_fix \
 	test/BugPoint/compile-custom.ll.py \
 	tools/opt-viewer/*.py \
 	utils/update_cc_test_checks.py
