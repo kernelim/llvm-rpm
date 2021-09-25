@@ -1,0 +1,41 @@
+From 160d464a192f25a7e69bf63f20bdfdffe036dd42 Mon Sep 17 00:00:00 2001
+From: Tom Stellard <tstellar@redhat.com>
+Date: Wed, 29 Sep 2021 16:20:47 -0700
+Subject: [PATCH] test/ExecutionEngine: Clean up lit.local.cfg
+
+Switch to using config.root.native_target to determine if tests are
+supported.  This is a canonical form of the arch from the target
+triple.
+
+Differential Revision: https://reviews.llvm.org/D110788
+---
+ llvm/test/ExecutionEngine/lit.local.cfg | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/llvm/test/ExecutionEngine/lit.local.cfg b/llvm/test/ExecutionEngine/lit.local.cfg
+index 88e3e9b23883..72b6a9ac269e 100644
+--- a/llvm/test/ExecutionEngine/lit.local.cfg
++++ b/llvm/test/ExecutionEngine/lit.local.cfg
+@@ -1,18 +1,4 @@
+-if config.root.host_arch in ['Sparc', 'PowerPC', 'AArch64', 'SystemZ']:
+-    config.unsupported = True
+-
+-# CMake and autoconf diverge in naming or host_arch
+-if 'powerpc64' in config.root.target_triple:
+-    config.unsupported = True
+-
+-if 'aarch64' in config.root.target_triple \
+-    or 'arm64' in config.root.target_triple:
+-        config.unsupported = True
+-
+-if 'hexagon' in config.root.target_triple:
+-    config.unsupported = True
+-
+-if 'sparc' in config.root.target_triple:
++if config.root.native_target in ['Sparc', 'PowerPC', 'AArch64', 'SystemZ', 'Hexagon']:
+     config.unsupported = True
+ 
+ # ExecutionEngine tests are not expected to pass in a cross-compilation setup.
+-- 
+2.31.1
+

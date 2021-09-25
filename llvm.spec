@@ -11,11 +11,11 @@
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-%global rc_ver 3
+%global rc_ver 4
 %global maj_ver 13
 %global min_ver 0
 %global patch_ver 0
-%global abi_revision 1
+%global abi_revision 2
 %global llvm_srcdir llvm-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 
 %if %{with compat_build}
@@ -70,6 +70,13 @@ Source4:	lit.fedora.cfg.py
 
 Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
 Patch2:		0001-XFAIL-missing-abstract-variable.ll-test-on-ppc64le.patch
+# Remove config.guess, so that we get a default triple that matches gcc.
+# This ensures that clang always uses the system gcc install.
+Patch3:		0001-cmake-Remove-config.guess.patch
+# Patch3 has the effect of changing the arch triple on ppc64le from powerpc64le
+# to ppc64le, which inadvertently enabled some ExecutionEngine tests that were
+# supposed to be unsupported.  Patch4 disables these tests on ppc64le.
+Patch4:		0001-test-ExecutionEngine-Clean-up-lit.local.cfg.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -272,7 +279,6 @@ LLVM's modified googletest sources.
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
 	-DLLVM_ABI_REVISION=%{abi_revision} \
 	\
-	-DLLVM_DEFAULT_TARGET_TRIPLE=%{_host} \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
 	-DLLVM_INSTALL_SPHINX_HTML_DIR=%{_pkgdocdir}/html \
@@ -535,6 +541,9 @@ fi
 %endif
 
 %changelog
+* Fri Sep 24 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-1
+- 13.0.0-rc4 Release
+
 * Fri Sep 17 2021 Tom Stellard <tstellar@redhta.com> - 13.0.0~rc3-1
 - 13.0.0-rc3 Release
 
