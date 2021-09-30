@@ -54,7 +54,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -70,13 +70,6 @@ Source4:	lit.fedora.cfg.py
 
 Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
 Patch2:		0001-XFAIL-missing-abstract-variable.ll-test-on-ppc64le.patch
-# Remove config.guess, so that we get a default triple that matches gcc.
-# This ensures that clang always uses the system gcc install.
-Patch3:		0001-cmake-Remove-config.guess.patch
-# Patch3 has the effect of changing the arch triple on ppc64le from powerpc64le
-# to ppc64le, which inadvertently enabled some ExecutionEngine tests that were
-# supposed to be unsupported.  Patch4 disables these tests on ppc64le.
-Patch4:		0001-test-ExecutionEngine-Clean-up-lit.local.cfg.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -214,8 +207,6 @@ LLVM's modified googletest sources.
 %endif
 
 # force off shared libs as cmake macros turns it on.
-# We need to set LLVM_DEFAULT_TARGET_TRIPLE, because llvm fails to detect it
-# correctly.
 %cmake  -G Ninja \
 	-DBUILD_SHARED_LIBS:BOOL=OFF \
 	-DLLVM_PARALLEL_LINK_JOBS=1 \
@@ -541,6 +532,9 @@ fi
 %endif
 
 %changelog
+* Thu Sep 30 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-2
+- Restore config.guess for host triple detection
+
 * Fri Sep 24 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-1
 - 13.0.0-rc4 Release
 
