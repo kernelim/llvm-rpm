@@ -1,6 +1,6 @@
 %bcond_without check
 
-%global rc_ver 3
+%global rc_ver 4
 %global lld_srcdir lld-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 %global maj_ver 13
 %global min_ver 0
@@ -207,6 +207,9 @@ fi
 %{_datadir}/lld/lit.lld-test.cfg.py
 
 %changelog
+* Thu Sep 30 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-1
+- 13.0.0-rc4 Release
+
 * Mon Sep 20 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-3
 - 13.0.0-rc3 Release
 
