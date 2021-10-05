@@ -15,7 +15,9 @@
 %global maj_ver 13
 %global min_ver 0
 %global patch_ver 0
+%if !%{maj_ver} && 0%{?rc_ver}
 %global abi_revision 2
+%endif
 %global llvm_srcdir llvm-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 
 %if %{with compat_build}
@@ -54,7 +56,7 @@
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -68,7 +70,9 @@ Source3:	run-lit-tests
 Source4:	lit.fedora.cfg.py
 %endif
 
+%if 0%{?abi_revision}
 Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
+%endif
 Patch2:		0001-XFAIL-missing-abstract-variable.ll-test-on-ppc64le.patch
 
 BuildRequires:	gcc
@@ -268,7 +272,7 @@ LLVM's modified googletest sources.
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON \
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
-	-DLLVM_ABI_REVISION=%{abi_revision} \
+	%{?abi_revision:-DLLVM_ABI_REVISION=%{abi_revision}} \
 	\
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
@@ -463,7 +467,7 @@ fi
 %{_libdir}/bfd-plugins/LLVMgold.so
 %endif
 %{_libdir}/libLLVM-%{maj_ver}.%{min_ver}*.so
-%{_libdir}/libLLVM-%{maj_ver}.so.%{abi_revision}
+%{_libdir}/libLLVM-%{maj_ver}.so%{?abi_revision:.%{abi_revision}}
 %{_libdir}/libLTO.so*
 %else
 %config(noreplace) %{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
@@ -532,6 +536,9 @@ fi
 %endif
 
 %changelog
+* Mon Oct 04 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-2
+- Drop abi_revision from soname
+
 * Thu Sep 30 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
 - 13.0.0 Release
 
