@@ -54,9 +54,17 @@
 %global _dwz_low_mem_die_limit_s390x 1
 %global _dwz_max_die_limit_s390x 1000000
 
+%ifarch %{arm}
+# koji overrides the _host variable to armv7hl which does not match gcc, so
+# we need to hard-code the correct triple here.
+%global llvm_triple armv7hl-redhat-linux-gnueabi
+%else
+%global llvm_triple %{_host}
+%endif
+
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -274,6 +282,7 @@ LLVM's modified googletest sources.
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
 	%{?abi_revision:-DLLVM_ABI_REVISION=%{abi_revision}} \
 	\
+	-DLLVM_DEFAULT_TARGET_TRIPLE=%{llvm_triple} \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
 	-DLLVM_INSTALL_SPHINX_HTML_DIR=%{_pkgdocdir}/html \
@@ -536,6 +545,9 @@ fi
 %endif
 
 %changelog
+* Wed Oct 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-3
+- Set default triple
+
 * Mon Oct 04 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-2
 - Drop abi_revision from soname
 
