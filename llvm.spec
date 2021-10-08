@@ -55,16 +55,16 @@
 %global _dwz_max_die_limit_s390x 1000000
 
 %ifarch %{arm}
-# koji overrides the _host variable to armv7hl which does not match gcc, so
+# koji overrides the _gnu variable to be gnu, which is not correct for clang, so
 # we need to hard-code the correct triple here.
-%global llvm_triple armv7hl-redhat-linux-gnueabi
+%global llvm_triple armv7l-redhat-linux-gnueabihf
 %else
 %global llvm_triple %{_host}
 %endif
 
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
@@ -545,6 +545,9 @@ fi
 %endif
 
 %changelog
+* Fri Oct 08 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-4
+- Fix default triple on arm
+
 * Wed Oct 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-3
 - Set default triple
 
