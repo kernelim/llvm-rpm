@@ -42,13 +42,29 @@ root-setup() {
         break
     done
 
+    sudo yum install -y epel-release sudo
+    sudo yum install -y fedpkg createrepo wget
+
     prep-mock-config $tmpfs_build
 
-    sudo cp -a mock-config/epel-7-with-local-deps.cfg /etc/mock/
+    if [[ -e templates/epel-7.tpl ]] ; then
+	local include=templates/epel-7.tpl
+    elif [[ -e /etc/mock/epel-7-$(uname -i).cfg ]] ; then
+	local include="/etc/mock/epel-7-$(uname -i).cfg"
+    else
+	echo "Cannot define a valid Mock configuration"
+	exit -1
+    fi
+
+    echo 'include("'${include}'")' > mock-config/epel-7-with-local-deps-include.cfg
+    sudo bash -c 'cat mock-config/epel-7-with-local-deps-include.cfg > /etc/mock/epel-7-with-local-deps.cfg'
+    rm -f mock-config/epel-7-with-local-deps-include.cfg
+
+    sudo bash -c 'cat mock-config/epel-7-with-local-deps.cfg >> /etc/mock/epel-7-with-local-deps.cfg'
     rm -rf mock-config/
 
     if [[ ! -x /opt/repo/epel-7-with-local-deps ]] ; then
-	sudo mkdir /opt/repo/epel-7-with-local-deps
+	sudo mkdir -p /opt/repo/epel-7-with-local-deps
 	sudo chown $(id -u).$(id -g) /opt/repo/epel-7-with-local-deps
     fi
 
