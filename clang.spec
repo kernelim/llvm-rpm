@@ -1,13 +1,16 @@
-%global compat_build 0
 %bcond_with bootstrap
 %bcond_with stage1
 %bcond_with full_lto
 %bcond_with static_link
+%bcond_with python3
+%bcond_with compat_build
+%bcond_without check
 
-%global maj_ver 12
+%global maj_ver 13
 %global min_ver 0
 %global patch_ver 0
-#%%global rc_ver 5
+#global rc_ver 4
+%global clang_version %{maj_ver}.%{min_ver}.%{patch_ver}
 
 %global stage1ver 11.1.0
 
@@ -30,6 +33,7 @@
 	%{_bindir}/clang-refactor \
 	%{_bindir}/clang-rename \
 	%{_bindir}/clang-reorder-fields \
+	%{_bindir}/clang-repl \
 	%{_bindir}/clang-scan-deps \
 	%{_bindir}/clang-tidy \
 	%{_bindir}/clangd \
@@ -45,7 +49,7 @@
 	%{_bindir}/clang-cl \
 	%{_bindir}/clang-cpp \
 
-%if 0%{?compat_build}
+%if %{with compat_build}
 %global pkg_name clang%{maj_ver}
 # Install clang to same prefix as llvm, so that apps that use llvm-config
 # will also be able to find clang libs.
@@ -63,12 +67,6 @@
 %global pkg_libdir %{_libdir}
 %endif
 
-%if 0%{?fedora} || 0%{?rhel} > 7
-%bcond_without python3
-%else
-%bcond_with python3
-%endif
-
 %global build_install_prefix %{buildroot}%{install_prefix}
 
 %ifarch ppc64le
@@ -76,40 +74,44 @@
 %global _smp_mflags -j8
 %endif
 
-%global clang_srcdir clang-%{version}%{?rc_ver:rc%{rc_ver}}.src
-%global clang_tools_srcdir clang-tools-extra-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%global clang_srcdir clang-%{clang_version}%{?rc_ver:rc%{rc_ver}}.src
+%global clang_tools_srcdir clang-tools-extra-%{clang_version}%{?rc_ver:rc%{rc_ver}}.src
+
+%if !%{maj_ver} && 0%{?rc_ver}
+%global abi_revision 2
+%endif
 
 Name:		%pkg_name
-Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Version:	%{clang_version}%{?rc_ver:~rc%{rc_ver}}
+Release:	3%{?dist}
 Summary:	A C language family front-end for LLVM
 
 License:	NCSA
 URL:		http://llvm.org
-Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{clang_srcdir}.tar.xz
-Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{clang_srcdir}.tar.xz.sig
-%if !0%{?compat_build}
-Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{clang_tools_srcdir}.tar.xz
-Source2:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{clang_tools_srcdir}.tar.xz.sig
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{clang_version}%{?rc_ver:-rc%{rc_ver}}/%{clang_srcdir}.tar.xz
+Source3:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{clang_version}%{?rc_ver:-rc%{rc_ver}}/%{clang_srcdir}.tar.xz.sig
+%if %{without compat_build}
+Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{clang_version}%{?rc_ver:-rc%{rc_ver}}/%{clang_tools_srcdir}.tar.xz
+Source2:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{clang_version}%{?rc_ver:-rc%{rc_ver}}/%{clang_tools_srcdir}.tar.xz.sig
 %endif
 Source4:	tstellar-gpg-key.asc
-
 %if !0%{?compat_build}
-Patch21:	completion-model-cmake.patch
+Source5:	macros.%{name}
 %endif
 
-Patch4:		0001-PATCH-clang-Reorganize-gtest-integration.patch
-Patch13:    0003-PATCH-clang-Make-funwind-tables-the-default-on-all-a.patch
-Patch15:    0004-PATCH-clang-Don-t-install-static-libraries.patch
-Patch17:    0005-PATCH-clang-Prefer-gcc-toolchains-with-libgcc_s.so-w.patch
-Patch19:    0006-PATCH-clang-Partially-Revert-scan-view-Remove-Report.patch
-Patch20:    0007-PATCH-clang-Allow-__ieee128-as-an-alias-to-__float12.patch
+# Patches for clang
+Patch0:     0001-PATCH-clang-Reorganize-gtest-integration.patch
+Patch1:     0002-PATCH-clang-Make-funwind-tables-the-default-on-all-a.patch
+Patch2:     0003-PATCH-clang-Don-t-install-static-libraries.patch
+Patch3:     0001-Driver-Add-a-gcc-equivalent-triple-to-the-list-of-tr.patch
+Patch4:     0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
+Patch5:     0001-PATCH-clang-Fix-scan-build-py-executable-lookup-path.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
 BuildRequires:	cmake
 BuildRequires:	ninja-build
-%if 0%{?compat_build}
+%if %{with compat_build}
 BuildRequires:	llvm%{maj_ver}-devel = %{version}
 BuildRequires:	llvm%{maj_ver}-static = %{version}
 %else
@@ -127,11 +129,8 @@ BuildRequires:	ncurses-devel
 # should BuildRequires: emacs if it packages emacs integration files.
 BuildRequires:	emacs
 
-# These build dependencies are required for the test suite.
-%if %with python3
 # The testsuite uses /usr/bin/lit which is part of the python3-lit package.
 BuildRequires:	python3-lit
-%endif
 
 BuildRequires:	python3-sphinx
 BuildRequires:	libatomic
@@ -226,7 +225,7 @@ Runtime library for clang.
 
 %package devel
 Summary: Development header files for clang
-%if !0%{?compat_build}
+%if %{without compat_build}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 # The clang CMake files reference tools from clang-tools-extra.
 Requires: %{name}-tools-extra%{?_isa} = %{version}-%{release}
@@ -243,7 +242,7 @@ Provides: %{name}-resource-filesystem(major) = %{maj_ver}
 %description resource-filesystem
 This package owns the clang resouce directory: $libdir/clang/$version/
 
-%if !0%{?compat_build}
+%if %{without compat_build}
 %package analyzer
 Summary:	A source code analysis framework
 License:	NCSA and MIT
@@ -291,13 +290,12 @@ Requires:      python3
 %prep
 %{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE3}' --data='%{SOURCE0}'
 
-%if 0%{?compat_build}
+%if %{with compat_build}
 %autosetup -n %{clang_srcdir} -p1
 %else
 
 %{gpgverify} --keyring='%{SOURCE4}' --signature='%{SOURCE2}' --data='%{SOURCE1}'
 %setup -T -q -b 1 -n %{clang_tools_srcdir}
-%patch21 -p1 -b .comp-model
 
 # failing test case
 rm test/clang-tidy/checkers/altera-struct-pack-align.cpp
@@ -309,12 +307,12 @@ pathfix.py -i %{__python3} -pn \
 
 %setup -q -n %{clang_srcdir}
 
-%patch4  -p2 -b .gtest
-%patch13 -p2 -b .unwind-default
-%patch15 -p2 -b .no-install-static
-%patch17 -p2 -b .check-gcc_s
-%patch19 -p2 -b .scan-view-remove-files-fix
-%patch20 -p2 -b .ieee128
+%patch0 -p2 -b .p0
+%patch1 -p2 -b .p1
+%patch2 -p2 -b .p2
+%patch3 -p2 -b .p3
+%patch4 -p2 -b .p4
+%patch5 -p2 -b .p5
 
 
 # failing test case
@@ -324,7 +322,9 @@ pathfix.py -i %{__python3} -pn \
 	tools/clang-format/*.py \
 	tools/clang-format/git-clang-format \
 	utils/hmaptool/hmaptool \
-	tools/scan-view/bin/scan-view
+	tools/scan-view/bin/scan-view \
+	tools/scan-build-py/bin/* \
+	tools/scan-build-py/libexec/*
 %endif
 
 %build
@@ -368,6 +368,9 @@ cd _build
 # rpath of libraries and binaries.  llvm will skip the manual setting
 # if CAMKE_INSTALL_RPATH is set to a value, but cmake interprets this value
 # as nothing, so it sets the rpath to "" when installing.
+
+# -DLLVM_ENABLE_NEW_PASS_MANAGER=ON can be removed once this patch is committed:
+# https://reviews.llvm.org/D107628
 %cmake .. -G Ninja \
 	-DLLVM_PARALLEL_LINK_JOBS=1 \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
@@ -382,13 +385,13 @@ cd _build
 	-DCMAKE_C_FLAGS_RELWITHDEBINFO="%{optflags} -DNDEBUG" \
 	-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="%{optflags} -DNDEBUG" \
 %endif
-%if 0%{?compat_build}
+%if %{with compat_build}
 	-DCLANG_BUILD_TOOLS:BOOL=OFF \
-	-DLLVM_CONFIG:FILEPATH=%{_bindir}/llvm-config-%{maj_ver}-%{__isa_bits} \
+	-DLLVM_CONFIG:FILEPATH=%{_bindir}/llvm-config-%{maj_ver} \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix} \
 	-DCLANG_INCLUDE_TESTS:BOOL=OFF \
 %else
-%if %with python3
+%if %{with python3}
 	-DCLANG_INCLUDE_TESTS:BOOL=ON \
 	-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR=../../%{clang_tools_srcdir} \
 	-DLLVM_EXTERNAL_LIT=%{_bindir}/lit \
@@ -403,7 +406,7 @@ cd _build
 %endif
 %endif
 	\
-%if 0%{compat_build}
+%if %{with compat_build}
 	-DLLVM_TABLEGEN_EXE:FILEPATH=%{_bindir}/llvm-tblgen-%{maj_ver} \
 %else
 	-DLLVM_TABLEGEN_EXE:FILEPATH=%{_bindir}/llvm-tblgen \
@@ -418,12 +421,14 @@ cd _build
 	-DLLVM_ENABLE_EH=ON \
 	-DLLVM_ENABLE_RTTI=ON \
 	-DLLVM_BUILD_DOCS=ON \
+	-DLLVM_ENABLE_NEW_PASS_MANAGER=ON \
 	-DLLVM_ENABLE_SPHINX=OFF \
 %if %{with static_link}
 	-DCLANG_LINK_CLANG_DYLIB=OFF \
 %else
 	-DCLANG_LINK_CLANG_DYLIB=ON \
 %endif
+	%{?abi_revision:-DLLVM_ABI_REVISION=%{abi_revision}} \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	\
 	-DCLANG_BUILD_EXAMPLES:BOOL=OFF \
@@ -448,24 +453,32 @@ cd _build
 
 %ninja_install -C _build
 
-%if 0%{?compat_build}
+%if %{with compat_build}
 
 # Remove binaries/other files
 rm -Rf %{buildroot}%{install_bindir}
 rm -Rf %{buildroot}%{install_prefix}/share
 rm -Rf %{buildroot}%{install_prefix}/libexec
 
-# Move include files
-mkdir -p %{buildroot}%{pkg_includedir}
-mv  %{buildroot}/%{install_includedir}/clang %{buildroot}/%{pkg_includedir}/
-mv  %{buildroot}/%{install_includedir}/clang-c %{buildroot}/%{pkg_includedir}/
-
 %else
+
+# File in the macros file for other packages to use.  We are not doing this
+# in the compat package, because the version macros would # conflict with
+# eachother if both clang and the clang compat package were installed together.
+install -p -m0644 -D %{SOURCE5} %{buildroot}%{_rpmmacrodir}/macros.%{name}
+sed -i -e "s|@@CLANG_MAJOR_VERSION@@|%{maj_ver}|" \
+       -e "s|@@CLANG_MINOR_VERSION@@|%{min_ver}|" \
+       -e "s|@@CLANG_PATCH_VERSION@@|%{patch_ver}|" \
+       %{buildroot}%{_rpmmacrodir}/macros.%{name}
 
 # install clang python bindings
 mkdir -p %{buildroot}%{python3_sitelib}/clang/
 install -p -m644 bindings/python/clang/* %{buildroot}%{python3_sitelib}/clang/
 %py_byte_compile %{__python3} %{buildroot}%{python3_sitelib}/clang
+
+# install scanbuild-py to python sitelib.
+mv %{buildroot}%{_prefix}/lib/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
+%py_byte_compile %{__python3} %{buildroot}%{python3_sitelib}/{libear,libscanbuild}
 
 # multilib fix
 %multilib_fix_c_header --file %{_includedir}/clang/Config/config.h
@@ -509,21 +522,38 @@ pushd %{buildroot}%{_libdir}/clang/
 ln -s %{version} %{maj_ver}
 popd
 
+%endif
+
 # Create sub-directories in the clang resource directory that will be
 # populated by other packages
-mkdir -p %{buildroot}%{_libdir}/clang/%{version}/{include,lib,share}/
+mkdir -p %{buildroot}%{pkg_libdir}/clang/%{version}/{include,lib,share}/
 
-%endif
 
 # Remove clang-tidy headers.  We don't ship the libraries for these.
 rm -Rvf %{buildroot}%{_includedir}/clang-tidy/
 
+%if %{without compat_build}
 # Add a symlink in /usr/bin to clang-format-diff
 ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format-diff
+%endif
 
 %check
+%if %{without compat_build}
+%if %{with check}
+# requires lit.py from LLVM utilities
+# FIXME: Fix failing ARM tests
+LD_LIBRARY_PATH=%{buildroot}/%{_libdir} %cmake_build --target check-all || \
+%endif
+%ifarch %{arm}
+:
+%else
+true
+%endif
 
-%if !0%{?compat_build}
+%endif
+
+
+%if %{without compat_build}
 %files
 %license LICENSE.TXT
 %{clang_binaries}
@@ -533,7 +563,7 @@ ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format
 %endif
 
 %files libs
-%if !0%{?compat_build}
+%if %{without compat_build}
 %{_libdir}/clang/
 %{_libdir}/*.so.*
 %else
@@ -542,12 +572,13 @@ ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format
 %endif
 
 %files devel
-%if !0%{?compat_build}
+%if %{without compat_build}
 %{_libdir}/*.so
 %{_includedir}/clang/
 %{_includedir}/clang-c/
 %{_libdir}/cmake/*
 %dir %{_datadir}/clang/
+%{_rpmmacrodir}/macros.%{name}
 %else
 %{pkg_libdir}/*.so
 %{pkg_includedir}/clang/
@@ -560,19 +591,29 @@ ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format
 %dir %{pkg_libdir}/clang/%{version}/include/
 %dir %{pkg_libdir}/clang/%{version}/lib/
 %dir %{pkg_libdir}/clang/%{version}/share/
-%if !0%{?compat_build}
+%if %{without compat_build}
 %{pkg_libdir}/clang/%{maj_ver}
 %endif
 
-%if !0%{?compat_build}
+%if %{without compat_build}
 %files analyzer
 %{_bindir}/scan-view
 %{_bindir}/scan-build
+%{_bindir}/analyze-build
+%{_bindir}/intercept-build
+%{_bindir}/scan-build-py
 %{_libexecdir}/ccc-analyzer
 %{_libexecdir}/c++-analyzer
+%{_libexecdir}/analyze-c++
+%{_libexecdir}/analyze-cc
+%{_libexecdir}/intercept-c++
+%{_libexecdir}/intercept-cc
 %{_datadir}/scan-view/
 %{_datadir}/scan-build/
 %{_mandir}/man1/scan-build.1.*
+%{python3_sitelib}/libear
+%{python3_sitelib}/libscanbuild
+
 
 %files tools-extra
 %{clang_tools_binaries}
@@ -587,7 +628,7 @@ ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format
 %{_datadir}/clang/clang-format-diff.py*
 %{_datadir}/clang/clang-include-fixer.py*
 %{_datadir}/clang/clang-tidy-diff.py*
-%{_datadir}/clang/run-clang-tidy.py*
+%{_bindir}/run-clang-tidy
 %{_datadir}/clang/run-find-all-symbols.py*
 %{_datadir}/clang/clang-rename.py*
 
@@ -600,6 +641,57 @@ ln -s %{_datadir}/clang/clang-format-diff.py %{buildroot}%{_bindir}/clang-format
 
 %endif
 %changelog
+* Wed Oct 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-3
+- Fix gcc detection with redhat triples
+
+* Tue Oct 05 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-2
+- Drop abi_revision from soname
+
+* Fri Oct 01 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
+- 13.0.0 Release
+
+* Sat Sep 18 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-5
+- 13.0.0-rc3 Release
+
+* Tue Sep 14 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-4
+- Add --without=check option
+
+* Fri Sep 10 2021 sguelton@redhat.com - 13.0.0~rc1-3
+- Apply scan-build-py intergation patch
+
+* Thu Sep 09 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-2
+- Add macros.clang file
+
+* Fri Aug 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
+- 13.0.0-rc1 Release
+
+* Thu Jul 22 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-3
+- Fix compat build
+
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Tue Jul 13 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-1
+- 12.0.1 Release
+
+* Fri Jul 09 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc3-2
+- Fix ambiguous python shebangs
+
+* Wed Jun 30 2021 Tom Stellard <tstellar@redhat.com> - clang-12.0.1~rc3-1
+- 12.0.1-rc3 Release
+
+* Tue Jun 08 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-3
+- Only enable -funwind-tables by default on Fedora arches
+
+* Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 12.0.1~rc1-2
+- Rebuilt for Python 3.10
+
+* Thu May 27 2021 Tom Stellard <tstellar@redhat.com> - clang-12.0.1~rc1-1
+- 12.0.1-rc1 Release
+
+* Tue May 18 2021 sguelton@redhat.com - 12.0.0-2
+- Use the alternative-managed version of llvm-config
+
 * Fri Apr 16 2021 Tom Stellard <tstellar@redhat.cm> - 12.0.0-1
 - 12.0.0 Release
 
