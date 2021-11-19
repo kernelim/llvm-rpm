@@ -1,6 +1,8 @@
-#%%global rc_ver 5
-%global lld_srcdir lld-%{version}%{?rc_ver:rc%{rc_ver}}.src
-%global maj_ver 12
+%bcond_without check
+
+#global rc_ver 4
+%global lld_srcdir lld-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
+%global maj_ver 13
 %global min_ver 0
 %global patch_ver 0
 
@@ -15,7 +17,7 @@
 
 Name:		lld
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	The LLVM Linker
 
 License:	NCSA
@@ -161,6 +163,13 @@ fi
 
 %check
 
+# armv7lhl tests disabled because of arm issue, see https://koji.fedoraproject.org/koji/taskinfo?taskID=33660162
+%ifnarch %{arm}
+%if %{with check}
+%cmake_build --target check-lld
+%endif
+%endif
+
 %ldconfig_scriptlets libs
 
 %files
@@ -170,6 +179,7 @@ fi
 %{_bindir}/ld.lld
 %{_bindir}/ld64.lld
 %{_bindir}/ld64.lld.darwinnew
+%{_bindir}/ld64.lld.darwinold
 %{_bindir}/wasm-ld
 
 %files devel
@@ -181,6 +191,36 @@ fi
 %{_libdir}/liblld*.so.*
 
 %changelog
+* Wed Oct 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-2
+- Rebuild for llvm soname bump
+
+* Fri Oct 01 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
+- 13.0.0 Release
+
+* Thu Sep 30 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-1
+- 13.0.0-rc4 Release
+
+* Mon Sep 20 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-3
+- 13.0.0-rc3 Release
+
+* Tue Sep 14 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-2
+- Add --without=check option
+
+* Fri Aug 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
+- 13.0.0-rc1 Release
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Tue Jul 13 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-1
+- 12.0.1 Release
+
+* Wed Jun 30 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc3-1
+- 12.0.1-rc3 Release
+
+* Tue Jun 01 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-1
+- 12.0.1-rc1 Release
+
 * Fri Apr 16 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
 - 12.0.0 Release
 

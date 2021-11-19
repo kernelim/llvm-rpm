@@ -14,7 +14,7 @@ diff --git a/lld/CMakeLists.txt b/lld/CMakeLists.txt
 index d4e561b..a7406d1c 100644
 --- a/lld/CMakeLists.txt
 +++ b/lld/CMakeLists.txt
-@@ -65,6 +65,15 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+@@ -68,6 +68,15 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
        set(LLVM_UTILS_PROVIDED ON)
      endif()
  
@@ -30,7 +30,7 @@ index d4e561b..a7406d1c 100644
      if(EXISTS ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
        # Note: path not really used, except for checking if lit was found
        set(LLVM_LIT ${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py)
-@@ -74,12 +83,6 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+@@ -77,12 +86,6 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
          set(LLVM_UTILS_PROVIDED ON)
          set(LLD_TEST_DEPS FileCheck not)
        endif()
