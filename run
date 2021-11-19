@@ -205,16 +205,16 @@ stage1() {
 stage2() {
     pkgbuild llvm --with stage1 --without check
     pkgbuild python-lit --without check
-    pkgbuild clang --with python3 --with stage1 --with static_link
+    pkgbuild clang --with python3 --with stage1 --with static_link --without check
     pkgbuild compiler-rt --with bootstrap --with stage1
     pkgbuild libcxx --with bootstrap --with stage1
     pkgbuild libcxxabi --with stage1
-    pkgbuild lld --with stage1
+    pkgbuild lld --with stage1 --without check
 }
 
 stage3() {
     pkgbuild libcxx
-    pkgbuild lld --with stage2
+    pkgbuild lld --with stage2 --without check
 }
 
 build-all() {

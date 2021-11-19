@@ -17,7 +17,7 @@ Notes:
 
 - Clang is built as an [LTO](https://llvm.org/docs/LinkTimeOptimization.html) executable that links only to LLVM shared library, so it is fully optimized.
 - Aims to backport and preserve original Fedora package work for LLVM packages.
-- Target version 12.0.0, bootstrapped by building Clang 11.1.0;
+- Target version 13.0.0, bootstrapped by building Clang 11.1.0;
 - LLVM sub-projects `compiler-rt` and `lld` are also bootstrapped in this build
 process.
 
