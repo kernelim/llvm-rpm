@@ -1,7 +1,7 @@
 # If you need to bootstrap this, turn this on.
 # Otherwise, you have a loop with libcxxabi
 %global bootstrap 0
-#%%global rc_ver 5
+#global rc_ver 3
 
 %bcond_with bootstrap
 %bcond_with stage1
@@ -9,16 +9,17 @@
 %global stage1ver 11.1.0
 %global debug_package %{nil}
 
-%global libcxx_srcdir libcxx-%{version}%{?rc_ver:rc%{rc_ver}}.src
+%global libcxx_version 13.0.0
+%global libcxx_srcdir libcxx-%{libcxx_version}%{?rc_ver:rc%{rc_ver}}.src
 
 Name:		libcxx
-Version:	12.0.0%{?rc_ver:~rc%{rc_ver}}
+Version:	%{libcxx_version}%{?rc_ver:~rc%{rc_ver}}
 Release:	1%{?dist}
 Summary:	C++ standard library targeting C++11
 License:	MIT or NCSA
 URL:		http://libcxx.llvm.org/
-Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
-Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz.sig
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{libcxx_version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz
+Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{libcxx_version}%{?rc_ver:-rc%{rc_ver}}/%{libcxx_srcdir}.tar.xz.sig
 Source2:	tstellar-gpg-key.asc
 
 Patch0:		0001-PATCH-libcxx-Remove-monorepo-requirement.patch
@@ -176,6 +177,27 @@ install results-static/libc++.a %{buildroot}/%{_libdir}
 
 
 %changelog
+* Fri Oct 01 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
+- 13.0.0 Release
+
+* Wed Sep 22 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc3-1
+- 13.0.0-rc3 Release
+
+* Mon Aug 09 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
+- 13.0.0-rc1 Release
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Tue Jul 13 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-1
+- 12.0.1 Release
+
+* Thu Jul 01 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc3-1
+- 12.0.1-rc3 Release
+
+* Thu Jun 03 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-1
+- 12.0.1-rc1 Release
+
 * Fri Apr 16 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
 - 12.0.0 Release
 
