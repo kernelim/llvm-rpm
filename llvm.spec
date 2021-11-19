@@ -11,15 +11,19 @@
 %bcond_with stage1
 %bcond_with full_lto
 %bcond_with no_lto
+%bcond_without check
 
 %global llvm_libdir %{_libdir}/%{name}
 %global build_llvm_libdir %{buildroot}%{llvm_libdir}
-#%%global rc_ver 5
-%global llvm_srcdir llvm-%{version}%{?rc_ver:rc%{rc_ver}}.src
-%global maj_ver 12
+#global rc_ver 4
+%global maj_ver 13
 %global min_ver 0
 %global patch_ver 0
 %global stage1ver 11.1.0
+%if !%{maj_ver} && 0%{?rc_ver}
+%global abi_revision 2
+%endif
+%global llvm_srcdir llvm-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:rc%{rc_ver}}.src
 
 %if %{with compat_build}
 %global pkg_name llvm%{maj_ver}
@@ -36,7 +40,9 @@
 %global pkg_name llvm
 %global install_prefix /usr
 %global install_libdir %{_libdir}
+%global pkg_bindir %{_bindir}
 %global pkg_libdir %{install_libdir}
+%global exec_suffix %{nil}
 %endif
 
 %if 0%{?rhel}
@@ -55,15 +61,27 @@
 %global optflags %(echo %{optflags} | sed 's/-g / /')
 %endif
 
+# Lower memory usage of dwz on s390x
+%global _dwz_low_mem_die_limit_s390x 1
+%global _dwz_max_die_limit_s390x 1000000
+
+%ifarch %{arm}
+# koji overrides the _gnu variable to be gnu, which is not correct for clang, so
+# we need to hard-code the correct triple here.
+%global llvm_triple armv7l-redhat-linux-gnueabihf
+%else
+%global llvm_triple %{_host}
+%endif
+
 Name:		%{pkg_name}
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:~rc%{rc_ver}}
-Release:	1%{?dist}
+Release:	4%{?dist}
 Summary:	The Low Level Virtual Machine
 
 License:	NCSA
 URL:		http://llvm.org
-Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{llvm_srcdir}.tar.xz
-Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{version}%{?rc_ver:-rc%{rc_ver}}/%{llvm_srcdir}.tar.xz.sig
+Source0:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:-rc%{rc_ver}}/%{llvm_srcdir}.tar.xz
+Source1:	https://github.com/llvm/llvm-project/releases/download/llvmorg-%{maj_ver}.%{min_ver}.%{patch_ver}%{?rc_ver:-rc%{rc_ver}}/%{llvm_srcdir}.tar.xz.sig
 Source2:	tstellar-gpg-key.asc
 
 %if %{without compat_build}
@@ -71,7 +89,10 @@ Source3:	run-lit-tests
 Source4:	lit.fedora.cfg.py
 %endif
 
-Patch0:     0001-PATCH-llvm-Make-source-interleave-prefix-test-case-c.patch
+%if 0%{?abi_revision}
+Patch0:		0001-cmake-Allow-shared-libraries-to-customize-the-soname.patch
+%endif
+Patch2:		0001-XFAIL-missing-abstract-variable.ll-test-on-ppc64le.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -80,6 +101,7 @@ BuildRequires:	ninja-build
 BuildRequires:	zlib-devel
 BuildRequires:	libffi-devel
 BuildRequires:	ncurses-devel
+BuildRequires:	python3-psutil
 BuildRequires:	python3-sphinx
 # BuildRequires:	python3-recommonmark
 BuildRequires:	multilib-rpm-config
@@ -92,7 +114,7 @@ BuildRequires:	valgrind-devel
 %endif
 # LLVM's LineEditor library will use libedit if it is available.
 BuildRequires:	libedit-devel
-# We need python3-devel for pathfix.py.
+# We need python3-devel for %%py3_shebang_fix
 BuildRequires:	python3-devel
 BuildRequires:	python3-setuptools
 
@@ -186,14 +208,6 @@ Static libraries for the LLVM compiler infrastructure.
 Summary:	LLVM regression tests
 Requires:	%{name}%{?_isa} = %{version}-%{release}
 Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
-Requires:	python3-lit
-# The regression tests need gold.
-Requires:	binutils
-# This is for llvm-config
-Requires:	%{name}-devel%{?_isa} = %{version}-%{release}
-# Bugpoint tests require gcc
-Requires:	gcc
-Requires:	findutils
 
 Provides:	llvm-test(major) = %{maj_ver}
 
@@ -238,7 +252,7 @@ export LD_LIBRARY_PATH=/opt/llvm-stage1-%{stage1ver}/lib
 # Because of these failures, lto is disabled for now.
 %global _lto_cflags %{nil}
 
-%ifarch s390 %{arm} %ix86
+%ifarch s390 s390x %{arm} %ix86
 # Decrease debuginfo verbosity to reduce memory consumption during final library linking
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
@@ -286,6 +300,7 @@ cd _build
 	\
 	-DLLVM_INCLUDE_TESTS:BOOL=ON \
 	-DLLVM_BUILD_TESTS:BOOL=ON \
+	-DLLVM_LIT_EXTRA_ARGS=-v \
 	\
 	-DLLVM_INCLUDE_EXAMPLES:BOOL=ON \
 	-DLLVM_BUILD_EXAMPLES:BOOL=OFF \
@@ -321,11 +336,12 @@ cd _build
 	-DCMAKE_CXX_COMPILER=clang++ \
 %endif
 	-DLLVM_BUILD_LLVM_DYLIB:BOOL=ON \
-	-DLLVM_DYLIB_EXPORT_ALL:BOOL=ON \
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DLLVM_BUILD_EXTERNAL_COMPILER_RT:BOOL=ON \
 	-DLLVM_INSTALL_TOOLCHAIN_ONLY:BOOL=OFF \
+	%{?abi_revision:-DLLVM_ABI_REVISION=%{abi_revision}} \
 	\
+	-DLLVM_DEFAULT_TARGET_TRIPLE=%{llvm_triple} \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DCMAKE_INSTALL_PREFIX=%{install_prefix}
 
@@ -347,18 +363,12 @@ export PATH=/opt/llvm-stage1-%{stage1ver}/bin:$PATH
 
 %ninja_install -C _build
 
+mkdir -p %{buildroot}/%{_bindir}
 
 %if %{without compat_build}
-mkdir -p %{buildroot}/%{_bindir}
-mv %{buildroot}/%{_bindir}/llvm-config %{buildroot}/%{_bindir}/llvm-config-%{__isa_bits}
-
-# ghost presence
-touch %{buildroot}%{_bindir}/llvm-config
 
 # Fix some man pages
-mkdir -p %{buildroot}%{_mandir}/man1
-ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config-%{__isa_bits}.1
-# mv %{buildroot}%{_mandir}/man1/*tblgen.1 %{buildroot}%{_mandir}/man1/llvm-tblgen.1
+# ln -s llvm-config.1 %{buildroot}%{_mandir}/man1/llvm-config%{exec_suffix}-%{__isa_bits}.1
 
 # Install binaries needed for lit tests
 # %global test_binaries llvm-isel-fuzzer llvm-opt-fuzzer
@@ -396,56 +406,6 @@ cp -R utils/unittest %{install_srcdir}/utils/
 cp utils/update_cc_test_checks.py %{install_srcdir}/utils/
 cp -R utils/UpdateTestChecks %{install_srcdir}/utils/
 
-# One of the lit tests references this file
-install -d %{install_srcdir}/docs/CommandGuide/
-install -m 0644 docs/CommandGuide/dsymutil.rst %{install_srcdir}/docs/CommandGuide/
-
-%if 0
-# Generate lit config files.  Strip off the last lines that initiates the
-# test run, so we can customize the configuration.
-head -n -2 %{_vpath_builddir}/test/lit.site.cfg.py >> %{lit_cfg}
-head -n -2 %{_vpath_builddir}/test/Unit/lit.site.cfg.py >> %{lit_unit_cfg}
-%endif
-
-# Install custom fedora config file
-cp %{SOURCE4} %{buildroot}%{lit_fedora_cfg}
-
-%if 0
-# Patch lit config files to load custom fedora config:
-for f in %{lit_cfg} %{lit_unit_cfg}; do
-  echo "lit_config.load_config(config, '%{lit_fedora_cfg}')" >> $f
-done
-
-install -d %{buildroot}%{_libexecdir}/tests/llvm
-install -m 0755 %{SOURCE3} %{buildroot}%{_libexecdir}/tests/llvm
-
-# Install lit tests.  We need to put these in a tarball otherwise rpm will complain
-# about some of the test inputs having the wrong object file format.
-install -d %{buildroot}%{_datadir}/llvm/
-
-# The various tar options are there to make sur the archive is the same on 32 and 64 bit arch, i.e.
-# the archive creation is reproducible. Move arch-specific content out of the tarball
-mv %{lit_cfg} %{install_srcdir}/%{_arch}.site.cfg.py
-mv %{lit_unit_cfg} %{install_srcdir}/%{_arch}.Unit.site.cfg.py
-
-tar --sort=name --mtime='UTC 2020-01-01' -c test/ | gzip -n > %{install_srcdir}/test.tar.gz
-
-# Install the unit test binaries
-mkdir -p %{build_llvm_libdir}
-cp -R %{_vpath_builddir}/unittests %{build_llvm_libdir}/
-rm -rf `find %{build_llvm_libdir} -iname 'cmake*'`
-
-# Install libraries used for testing
-install -m 0755 %{build_libdir}/BugpointPasses.so %{buildroot}%{_libdir}
-install -m 0755 %{build_libdir}/LLVMHello.so %{buildroot}%{_libdir}
-
-# Install test inputs for PDB tests
-echo "%{_datadir}/llvm/src/unittests/DebugInfo/PDB" > %{build_llvm_libdir}/unittests/DebugInfo/PDB/llvm.srcdir.txt
-mkdir -p %{buildroot}%{_datadir}/llvm/src/unittests/DebugInfo/PDB/
-cp -R unittests/DebugInfo/PDB/Inputs %{buildroot}%{_datadir}/llvm/src/unittests/DebugInfo/PDB/
-
-%endif
-
 %if %{with gold}
 # Add symlink to lto plugin in the binutils plugin directory.
 %{__mkdir_p} %{buildroot}%{_libdir}/bfd-plugins/
@@ -455,7 +415,6 @@ ln -s %{_libdir}/LLVMgold.so %{buildroot}%{_libdir}/bfd-plugins/
 %else
 
 # Add version suffix to binaries
-mkdir -p %{buildroot}/%{_bindir}
 for f in %{buildroot}/%{install_bindir}/*; do
   filename=`basename $f`
   ln -s ../../../%{install_bindir}/$filename %{buildroot}/%{_bindir}/$filename%{exec_suffix}
@@ -467,7 +426,6 @@ ln -s ../../../%{install_includedir}/llvm %{buildroot}/%{pkg_includedir}/llvm
 ln -s ../../../%{install_includedir}/llvm-c %{buildroot}/%{pkg_includedir}/llvm-c
 
 # Fix multi-lib
-mv %{buildroot}%{_bindir}/llvm-config{%{exec_suffix},%{exec_suffix}-%{__isa_bits}}
 %multilib_fix_c_header --file %{install_includedir}/llvm/Config/llvm-config.h
 
 # Create ld.so.conf.d entry
@@ -477,24 +435,50 @@ cat >> %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf << EOF
 EOF
 
 # Add version suffix to man pages and move them to mandir.
-mkdir -p %{buildroot}/%{_mandir}/man1
-for f in %{build_install_prefix}/share/man/man1/*; do
-  filename=`basename $f | cut -f 1 -d '.'`
-  mv $f %{buildroot}%{_mandir}/man1/$filename%{exec_suffix}.1
-done
+# mkdir -p %{buildroot}/%{_mandir}/man1
+# for f in %{build_install_prefix}/share/man/man1/*; do
+#   filename=`basename $f | cut -f 1 -d '.'`
+#  mv $f %{buildroot}%{_mandir}/man1/$filename%{exec_suffix}.1
+# done
 
 # Remove opt-viewer, since this is just a compatibility package.
 rm -Rf %{build_install_prefix}/share/opt-viewer
 
 %endif
 
+# llvm-config special casing. llvm-config is managed by update-alternatives.
+# the original file must remain available for compatibility with the CMake
+# infrastructure. Without compat, cmake points to the symlink, with compat it
+# points to the original file.
+
+%if %{without compat_build}
+
+mv %{buildroot}/%{pkg_bindir}/llvm-config %{buildroot}/%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+# We still maintain a versionned symlink for consistency across llvm versions.
+# This is specific to the non-compat build and matches the exec prefix for
+# compat builds. An isa-agnostic versionned symlink is also maintained in the (un)install
+# steps.
+(cd %{buildroot}/%{pkg_bindir} ; ln -s llvm-config%{exec_suffix}-%{__isa_bits} llvm-config-%{maj_ver}-%{__isa_bits} )
+# ghost presence
+touch %{buildroot}%{_bindir}/llvm-config-%{maj_ver}
+
+%else
+
+rm %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
+(cd %{buildroot}/%{pkg_bindir} ; ln -s llvm-config llvm-config%{exec_suffix}-%{__isa_bits} )
+
+%endif
+
+# ghost presence
+touch %{buildroot}%{_bindir}/llvm-config%{exec_suffix}
+
+
 
 %check
 
-%if 0
-%if %{with bootstrap}
-source /opt/rh//devtoolset-7/enable
-%endif
+# Disable check section on arm due to some kind of memory related failure.
+# Possibly related to https://bugzilla.redhat.com/show_bug.cgi?id=1920183
+%ifnarch %{arm}
 
 # TODO: Fix the failures below
 %ifarch %{arm}
@@ -504,33 +488,41 @@ rm test/tools/llvm-readobj/ELF/dependent-libraries.test
 # non reproducible errors
 rm test/tools/dsymutil/X86/swift-interface.test
 
+%if %{with check}
 # FIXME: use %%cmake_build instead of %%__ninja
 LD_LIBRARY_PATH=%{buildroot}/%{pkg_libdir}  %{__ninja} check-all -C %{_vpath_builddir}
 %endif
 
+%endif
+
 %ldconfig_scriptlets libs
 
-%if %{without compat_build}
-
 %post devel
-%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config llvm-config %{_bindir}/llvm-config-%{__isa_bits} %{__isa_bits}
+%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config%{exec_suffix} llvm-config%{exec_suffix} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
+%if %{without compat_build}
+%{_sbindir}/update-alternatives --install %{_bindir}/llvm-config-%{maj_ver} llvm-config-%{maj_ver} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits} %{__isa_bits}
+%endif
 
 %postun devel
 if [ $1 -eq 0 ]; then
-  %{_sbindir}/update-alternatives --remove llvm-config %{_bindir}/llvm-config-%{__isa_bits}
-fi
-
+  %{_sbindir}/update-alternatives --remove llvm-config%{exec_suffix} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+%if %{without compat_build}
+  %{_sbindir}/update-alternatives --remove llvm-config-%{maj_ver} %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
 %endif
+fi
 
 %files
 %license LICENSE.TXT
 %exclude %{_mandir}/man1/llvm-config*
-%{_mandir}/man1/*
+#%{_mandir}/man1/*
 %{_bindir}/*
 
+%exclude %{_bindir}/llvm-config%{exec_suffix}
+%exclude %{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+
 %if %{without compat_build}
-%exclude %{_bindir}/llvm-config
-%exclude %{_bindir}/llvm-config-%{__isa_bits}
+%exclude %{_bindir}/llvm-config-%{maj_ver}
+%exclude %{pkg_bindir}/llvm-config-%{maj_ver}-%{__isa_bits}
 %exclude %{_bindir}/not
 %exclude %{_bindir}/count
 %exclude %{_bindir}/yaml-bench
@@ -539,7 +531,6 @@ fi
 #%exclude %{_bindir}/llvm-opt-fuzzer
 %{_datadir}/opt-viewer
 %else
-%exclude %{pkg_bindir}/llvm-config
 %{pkg_bindir}
 %endif
 
@@ -552,6 +543,7 @@ fi
 %{_libdir}/bfd-plugins/LLVMgold.so
 %endif
 %{_libdir}/libLLVM-%{maj_ver}.%{min_ver}*.so
+%{_libdir}/libLLVM-%{maj_ver}.so%{?abi_revision:.%{abi_revision}}
 %{_libdir}/libLTO.so*
 %else
 %config(noreplace) %{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
@@ -566,18 +558,19 @@ fi
 
 %files devel
 %license LICENSE.TXT
+
+%ghost %{_bindir}/llvm-config%{exec_suffix}
+%{pkg_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
+#%{_mandir}/man1/llvm-config*
+
 %if %{without compat_build}
-%ghost %{_bindir}/llvm-config
-%{_bindir}/llvm-config-%{__isa_bits}
-%{_mandir}/man1/llvm-config*
 %{_includedir}/llvm
 %{_includedir}/llvm-c
 %{_libdir}/libLLVM.so
 %{_libdir}/cmake/llvm
+%{pkg_bindir}/llvm-config-%{maj_ver}-%{__isa_bits}
+%ghost %{_bindir}/llvm-config-%{maj_ver}
 %else
-%{_bindir}/llvm-config%{exec_suffix}-%{__isa_bits}
-%{pkg_bindir}/llvm-config
-%{_mandir}/man1/llvm-config%{exec_suffix}.1.gz
 %{install_includedir}/llvm
 %{install_includedir}/llvm-c
 %{pkg_includedir}/llvm
@@ -600,22 +593,12 @@ fi
 
 %files test
 %license LICENSE.TXT
-#%{_libexecdir}/tests/llvm/
-#%{llvm_libdir}/unittests/
-#%{_datadir}/llvm/src/unittests
-#%{_datadir}/llvm/src/test.tar.gz
-#%{_datadir}/llvm/src/%{_arch}.site.cfg.py*
-#%{_datadir}/llvm/src/%{_arch}.Unit.site.cfg.py*
-%{_datadir}/llvm/lit.fedora.cfg.py*
-%{_datadir}/llvm/src/docs/CommandGuide/dsymutil.rst
 %{_bindir}/not
 %{_bindir}/count
 %{_bindir}/yaml-bench
 %{_bindir}/lli-child-target
 #%{_bindir}/llvm-isel-fuzzer
 #%{_bindir}/llvm-opt-fuzzer
-#%{_libdir}/BugpointPasses.so
-#%{_libdir}/LLVMHello.so
 
 %files googletest
 %license LICENSE.TXT
@@ -625,6 +608,72 @@ fi
 %endif
 
 %changelog
+* Fri Oct 08 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-4
+- Fix default triple on arm
+
+* Wed Oct 06 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-3
+- Set default triple
+
+* Mon Oct 04 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-2
+- Drop abi_revision from soname
+
+* Thu Sep 30 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0-1
+- 13.0.0 Release
+
+* Thu Sep 30 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-2
+- Restore config.guess for host triple detection
+
+* Fri Sep 24 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc4-1
+- 13.0.0-rc4 Release
+
+* Fri Sep 17 2021 Tom Stellard <tstellar@redhta.com> - 13.0.0~rc3-1
+- 13.0.0-rc3 Release
+
+* Mon Sep 13 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-3
+- Pass LLVM_DEFAULT_TARGET_TRIPLE to cmake
+
+* Mon Sep 13 2021 Konrad Kleine <kkleine@redhat.com> - 13.0.0~rc1-2
+- Add --without=check option
+
+* Wed Aug 04 2021 Tom Stellard <tstellar@redhat.com> - 13.0.0~rc1-1
+- 13.0.0-rc1 Release
+
+* Thu Jul 22 2021 sguelton@redhat.com - 12.0.1-3
+- Maintain versionned link to llvm-config
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 12.0.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Mon Jul 12 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1-1
+- 12.0.1 Release
+
+* Wed Jun 30 2021 Tom Stellard <tstellar@redhat.com> - llvm-12.0.1~rc3-1
+- 12.0.1-rc3 Release
+
+* Fri May 28 2021 Tom Stellard <tstellar@redhat.com> - 12.0.1~rc1-2
+- Stop installing lit tests
+
+* Wed May 26 2021 Tom Stellard <tstellar@redhat.com> - llvm-12.0.1~rc1-1
+- 12.0.1-rc1 Release
+
+* Mon May 17 2021 sguelton@redhat.com - 12.0.0-7
+- Fix handling of llvm-config
+
+* Mon May 03 2021 kkleine@redhat.com - 12.0.0-6
+- More verbose builds thanks to python3-psutil
+
+* Sat May 01 2021 sguelton@redhat.com - 12.0.0-5
+- Fix llvm-config install
+
+* Tue Apr 27 2021 sguelton@redhat.com - 12.0.0-4
+- Provide default empty value for exec_suffix when not in compat mode
+
+* Tue Apr 27 2021 sguelton@redhat.com - 12.0.0-3
+- Fix llvm-config install
+
+* Tue Apr 20 2021 sguelton@redhat.com - 12.0.0-2
+- Backport compat package fix
+
 * Thu Apr 15 2021 Tom Stellard <tstellar@redhat.com> - 12.0.0-1
 - 12.0.0 Release
 

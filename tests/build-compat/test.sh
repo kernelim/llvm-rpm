@@ -1,6 +1,4 @@
-#!/bin/bash
-
-set -ex
+#!/bin/sh -eux
 
 dnf download --disablerepo=* --enablerepo=test-llvm --source llvm
 
